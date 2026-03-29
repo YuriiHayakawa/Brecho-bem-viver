@@ -1,16 +1,21 @@
 from fastapi import FastAPI
 from app.api.routes.health import router as health_router
+from app.api.routes.db_teste import router as db_router
+from app.api.routes.user import router as users_router
 from app.core.config import settings
-
-
+from app.models import User, Product, Sale
 
 app = FastAPI(title=settings.APP_NAME)
 
 
 # Rotas
 app.include_router(health_router, prefix="/health")
+app.include_router(db_router, prefix="/db")
+app.include_router(users_router, prefix="/users", tags=["Users"])
 
 @app.get("/", summary="Root")
 async def root():
-    """Endpoint raiz simples para validação rápida."""
-    return {"message": f"{settings.APP_NAME} está em execução.", "env": settings.APP_ENV}
+    return {
+        "message": f"{settings.APP_NAME} está em execução.",
+        "env": settings.APP_ENV
+    }
