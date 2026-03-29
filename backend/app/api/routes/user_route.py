@@ -3,14 +3,13 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.user import User
-from app.schemas.user import UserCreate, UserResponse
+from app.schemas.user_schema import UserCreate, UserResponse
 
 router = APIRouter()
 
-@router.get("/", summary="Listar usuários")
+@router.get("/", response_model=list[UserResponse], summary="Listar usuários")
 def list_users(db: Session = Depends(get_db)):
-    users = db.query(User).all()
-    return users
+    return db.query(User).all()
 
 @router.post("/", response_model=UserResponse, summary="Criar usuário")
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
