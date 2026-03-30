@@ -31,4 +31,9 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_product)
 
+    new_product.code = f"BZR-{new_product.id:04d}"
+
+    db.commit()
+    db.refresh(new_product)
+
     return new_product
