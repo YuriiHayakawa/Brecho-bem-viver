@@ -18,6 +18,7 @@ class Product(Base):
     created_at = Column(TIMESTAMP, nullable=False, server_default=text("NOW()"))
     id_user = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     user = relationship("User", back_populates="products")
+    images = relationship("ProductImage", back_populates="product")
     sale = relationship("Sale", back_populates="product", uselist=False)
 
     __table_args__ = (CheckConstraint("status IN ('disponivel', 'reservada', 'vendida')", name="check_product_status"),)
