@@ -21,8 +21,12 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     new_product = Product(
         name=product.name,
         description=product.description,
+        defect_description=product.defect_description,
+        has_defect=bool(product.defect_description and product.defect_description.strip()),
         size=product.size,
         category=product.category,
+        brand=product.brand,
+        gender=product.gender,
         price=product.price,
         id_user=product.id_user
     )

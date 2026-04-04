@@ -8,6 +8,8 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
     phone: str
+    pix_key: str
+    pix_key_type: str
     role: str
 
 
@@ -16,6 +18,8 @@ class UserResponse(BaseModel):
     name: str
     email: EmailStr
     phone: str
+    pix_key: str
+    pix_key_type: str
     role: str
     created_at: datetime
 

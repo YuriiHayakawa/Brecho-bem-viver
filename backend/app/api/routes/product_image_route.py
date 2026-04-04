@@ -45,7 +45,7 @@ def create_product_image(product_id: int,file: UploadFile = File(...),db: Sessio
     if not product:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
 
-    # validação simples de tipo
+    # validação de tipo
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="O arquivo enviado não é uma imagem")
 
