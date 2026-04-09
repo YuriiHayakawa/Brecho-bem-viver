@@ -17,7 +17,7 @@ class User(Base):
     products = relationship("Product", back_populates="user")
 
     __table_args__ = (
-    CheckConstraint("role IN ('admin', 'vendedor')", name="check_user_role"),
+    CheckConstraint("role IN ('admin', 'user')", name="check_user_role"),
     CheckConstraint(
         "pix_key_type IN ('telefone', 'email', 'cpf', 'aleatoria')",
         name="check_user_pix_key_type"
