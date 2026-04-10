@@ -2,6 +2,14 @@
 backend/uploads/*
 !backend/uploads/.gitkeep
 
+# Node.js
+frontend/node_modules/
+node_modules/
+
+# Python venv
+backend/.venv/
+.venv/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

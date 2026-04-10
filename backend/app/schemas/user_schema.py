@@ -10,7 +10,6 @@ class UserCreate(BaseModel):
     phone: str
     pix_key: str
     pix_key_type: str
-    role: str
 
 
 class UserResponse(BaseModel):
