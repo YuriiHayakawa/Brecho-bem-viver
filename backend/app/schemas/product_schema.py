@@ -16,6 +16,15 @@ class ProductCreate(BaseModel):
     id_user: int
 
 
+class ProductImageEmbed(BaseModel):
+    id: int
+    image_url: str
+    is_cover: bool
+    position: int
+
+    model_config = {"from_attributes": True}
+
+
 class ProductResponse(BaseModel):
     id: int
     name: str
@@ -31,9 +40,13 @@ class ProductResponse(BaseModel):
     active: bool
     code: str | None
     reserved_until: datetime | None
+    reserved_by_user_id: int | None
     created_at: datetime
     id_user: int
+    images: list[ProductImageEmbed] = []
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}
+
+
+class ReserveRequest(BaseModel):
+    user_id: int

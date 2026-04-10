@@ -1,16 +1,50 @@
+from datetime import datetime, timedelta
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.product import Product
 from app.models.user import User
-from app.schemas.product_schema import ProductCreate, ProductResponse
+from app.schemas.product_schema import ProductCreate, ProductResponse, ReserveRequest
 
 router = APIRouter()
 
+
 @router.get("/", response_model=list[ProductResponse], summary="Listar produtos")
 def list_products(db: Session = Depends(get_db)):
-    return db.query(Product).all()
+    return db.query(Product).filter(Product.active == True).all()
+
+
+@router.get("/{product_id}", response_model=ProductResponse, summary="Detalhe do produto")
+def get_product(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Produto não encontrado")
+    return product
+
+
+@router.patch("/{product_id}/reserve", response_model=ProductResponse, summary="Reservar produto")
+def reserve_product(product_id: int, data: ReserveRequest, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Produto não encontrado")
+
+    if product.status != "disponivel":
+        raise HTTPException(status_code=400, detail="Produto não está disponível para reserva")
+
+    user = db.query(User).filter(User.id == data.user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+
+    product.status = "reservada"
+    product.reserved_until = datetime.now() + timedelta(hours=48)
+    product.reserved_by_user_id = data.user_id
+
+    db.commit()
+    db.refresh(product)
+    return product
+
 
 @router.post("/", response_model=ProductResponse, summary="Criar Produto")
 def create_product(product: ProductCreate, db: Session = Depends(get_db)):
@@ -36,7 +70,6 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     db.refresh(new_product)
 
     new_product.code = f"BZR-{new_product.id:04d}"
-
     db.commit()
     db.refresh(new_product)
 

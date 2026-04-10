@@ -1,0 +1,142 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #FFFFFF;
+  border-bottom: 2px solid #0041D9;
+  box-shadow: 0 2px 12px rgba(0, 65, 217, 0.08);
+}
+
+.navbar-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+}
+
+.navbar-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nb {
+  display: block;
+  height: 4px;
+  background: #0041D9;
+  transform: skewX(-8deg);
+  border-radius: 1px;
+}
+.nb.bar-1 { width: 24px; }
+.nb.bar-2 { width: 36px; }
+.nb.bar-3 { width: 28px; }
+.nb.bar-4 { width: 42px; }
+
+.navbar-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  line-height: 1;
+}
+
+.navbar-sebrae {
+  font-size: 1.125rem;
+  font-weight: 800;
+  font-style: italic;
+  color: #0041D9;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.navbar-bazar {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #6B7280;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Usuário */
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #0041D9;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.navbar-user-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.navbar-logout {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.875rem;
+  background: none;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 6px;
+  color: #6B7280;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.navbar-logout svg {
+  width: 16px;
+  height: 16px;
+}
+
+.navbar-logout:hover {
+  border-color: #DC2626;
+  color: #DC2626;
+  background: #FEF2F2;
+}
+
+@media (max-width: 480px) {
+  .navbar-user-name,
+  .navbar-logout span {
+    display: none;
+  }
+  .navbar-logout {
+    padding: 0.4rem 0.5rem;
+  }
+}

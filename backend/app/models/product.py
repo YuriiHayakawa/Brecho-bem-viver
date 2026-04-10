@@ -19,10 +19,15 @@ class Product(Base):
     active = Column(Boolean, nullable=False, server_default=text("TRUE"))
     code = Column(String(30), unique=True, nullable=True)
     reserved_until = Column(TIMESTAMP, nullable=True)
+    reserved_by_user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     created_at = Column(TIMESTAMP, nullable=False, server_default=text("NOW()"))
     id_user = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    user = relationship("User", back_populates="products")
+
+    user = relationship("User", back_populates="products", foreign_keys=[id_user])
+    reserved_by = relationship("User", foreign_keys=[reserved_by_user_id])
     images = relationship("ProductImage", back_populates="product")
     sale = relationship("Sale", back_populates="product", uselist=False)
 
-    __table_args__ = (CheckConstraint("status IN ('disponivel', 'reservada', 'vendida')", name="check_product_status"),)
+    __table_args__ = (
+        CheckConstraint("status IN ('disponivel', 'reservada', 'vendida')", name="check_product_status"),
+    )
