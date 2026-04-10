@@ -1,23 +1,17 @@
-import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import LoginPage from './pages/Login/LoginPage';
 
 function App() {
   return (
-    <div className="app-container">
-      <header className="app-header">
-        <h1>Bazar Sebrae - Frontend</h1>
-        <p>Interface inicial carregada com sucesso.</p>
-      </header>
-
-      <main>
-        <section className="card">
-          <h2>Bem-vindo(a)!</h2>
-          <p>
-            Esta é a base inicial do frontend em React. A partir daqui você pode
-            começar a construir as páginas e componentes da aplicação.
-          </p>
-        </section>
-      </main>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        {/* Redireciona raiz para login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* Placeholder para o dashboard (próxima página) */}
+        <Route path="/dashboard" element={<div style={{ padding: '2rem', fontFamily: 'sans-serif' }}>Dashboard em construção 🚧</div>} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

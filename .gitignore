@@ -1,3 +1,7 @@
+# Uploads (arquivos enviados pelos usuários)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
