@@ -5,11 +5,8 @@ from app.api.routes.db_teste import router as db_router
 from app.api.routes.user_route import router as users_router
 from app.api.routes.product_route import router as product_router
 from app.api.routes.product_image_route import router as product_image_router
-<<<<<<< HEAD
-from app.api.routes.sale_route import router as sales_router
-=======
 from app.api.routes.auth_route import router as auth_router
->>>>>>> e01cfe3 (feature: adicionando docker ao projeto e criando a página de login)
+from app.api.routes.sale_route import router as sales_router
 from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
 from app.models import User, Product, Sale
