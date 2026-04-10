@@ -1,0 +1,486 @@
+/* ─────────────────────────────────────────────
+   TOKENS — Identidade Visual Sebrae
+   ───────────────────────────────────────────── */
+:root {
+  --azul-sebrae:    #0041D9;
+  --azul-escuro:    #0023A9;
+  --azul-medio:     #005EB8;
+  --magenta-sebrae: #CD5BE8;
+  --branco:         #FFFFFF;
+  --cinza-texto:    #4B5563;
+  --cinza-borda:    #E5E7EB;
+  --cinza-fundo:    #F9FAFB;
+  --erro:           #DC2626;
+  --erro-fundo:     #FEF2F2;
+  --sombra-azul:    rgba(0, 65, 217, 0.25);
+}
+
+/* ─────────────────────────────────────────────
+   LAYOUT PRINCIPAL
+   ───────────────────────────────────────────── */
+.login-wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  font-family: 'Barlow', system-ui, -apple-system, sans-serif;
+}
+
+/* ─────────────────────────────────────────────
+   PAINEL ESQUERDO — MARCA
+   ───────────────────────────────────────────── */
+.login-brand {
+  position: relative;
+  width: 45%;
+  background: var(--azul-sebrae);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 3rem 3rem 3rem 4rem;
+}
+
+/* Elemento decorativo diagonal (característica Sebrae) */
+.brand-diagonal {
+  position: absolute;
+  top: 0;
+  right: -60px;
+  width: 120px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  transform: skewX(-8deg);
+  pointer-events: none;
+}
+
+.brand-diagonal::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -80px;
+  width: 80px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  transform: skewX(-8deg);
+}
+
+/* Fundo com gradiente diagonal sutil */
+.login-brand::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    var(--azul-escuro) 0%,
+    var(--azul-sebrae) 50%,
+    var(--azul-medio) 100%
+  );
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.brand-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  width: 100%;
+}
+
+/* ─────────────────────────────────────────────
+   BARRAS GRÁFICAS SEBRAE
+   ───────────────────────────────────────────── */
+.sebrae-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sebrae-bars .bar {
+  display: block;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 1px;
+  transform: skewX(-8deg);
+  transform-origin: left center;
+}
+
+.top-bars .bar-1 { width: 52px; }
+.top-bars .bar-2 { width: 80px; }
+.top-bars .bar-3 { width: 64px; }
+.top-bars .bar-4 { width: 96px; }
+
+.bottom-bars .bar-4 { width: 96px; opacity: 0.5; }
+.bottom-bars .bar-3 { width: 64px; opacity: 0.4; }
+.bottom-bars .bar-2 { width: 80px; opacity: 0.3; }
+.bottom-bars .bar-1 { width: 52px; opacity: 0.2; }
+
+/* ─────────────────────────────────────────────
+   LOGO
+   ───────────────────────────────────────────── */
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.logo-symbol {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 0.5rem 0;
+}
+
+.logo-bar {
+  display: block;
+  height: 6px;
+  background: var(--branco);
+  border-radius: 1px;
+  transform: skewX(-8deg);
+}
+
+.logo-bar.s1 { width: 36px; }
+.logo-bar.s2 { width: 54px; }
+.logo-bar.s3 { width: 44px; }
+.logo-bar.s4 { width: 62px; }
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.logo-name {
+  font-size: 2.75rem;
+  font-weight: 800;
+  font-style: italic;
+  color: var(--branco);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.logo-subtitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────────
+   DIVISOR E SLOGAN
+   ───────────────────────────────────────────── */
+.brand-divider {
+  width: 48px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.4);
+  transform: skewX(-8deg);
+}
+
+.brand-slogan {
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+/* ─────────────────────────────────────────────
+   PAINEL DIREITO — FORMULÁRIO
+   ───────────────────────────────────────────── */
+.login-form-panel {
+  flex: 1;
+  background: var(--branco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+}
+
+.login-form-container {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ─────────────────────────────────────────────
+   LOGO MOBILE
+   ───────────────────────────────────────────── */
+.mobile-logo {
+  display: none;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mobile-logo-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.mobile-logo-bars .bar {
+  display: block;
+  height: 4px;
+  background: var(--azul-sebrae);
+  transform: skewX(-8deg);
+}
+
+.mobile-logo-bars .bar-1 { width: 28px; }
+.mobile-logo-bars .bar-2 { width: 40px; }
+.mobile-logo-bars .bar-3 { width: 32px; }
+
+.mobile-logo-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  font-style: italic;
+  color: var(--azul-sebrae);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────────
+   CABEÇALHO DO FORM
+   ───────────────────────────────────────────── */
+.form-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.form-subtitle {
+  font-size: 0.925rem;
+  color: var(--cinza-texto);
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────────
+   FORMULÁRIO
+   ───────────────────────────────────────────── */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  letter-spacing: 0.01em;
+}
+
+.field-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.field-icon {
+  position: absolute;
+  left: 0.875rem;
+  width: 18px;
+  height: 18px;
+  color: #9CA3AF;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.field-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 3rem 0 2.75rem;
+  border: 1.5px solid var(--cinza-borda);
+  border-radius: 8px;
+  background: var(--cinza-fundo);
+  font-size: 0.9375rem;
+  color: #111827;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  outline: none;
+}
+
+.field-input::placeholder {
+  color: #9CA3AF;
+}
+
+.field-input:hover {
+  border-color: #D1D5DB;
+  background: var(--branco);
+}
+
+.field-input:focus {
+  border-color: var(--azul-sebrae);
+  background: var(--branco);
+  box-shadow: 0 0 0 3px var(--sombra-azul);
+}
+
+.toggle-password {
+  position: absolute;
+  right: 0.875rem;
+  width: 20px;
+  height: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9CA3AF;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.toggle-password:hover {
+  color: var(--azul-sebrae);
+}
+
+.toggle-password svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ─────────────────────────────────────────────
+   ERRO
+   ───────────────────────────────────────────── */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--erro-fundo);
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  color: var(--erro);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.error-message svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ─────────────────────────────────────────────
+   BOTÃO ENTRAR
+   ───────────────────────────────────────────── */
+.btn-login {
+  width: 100%;
+  height: 50px;
+  background: var(--azul-sebrae);
+  color: var(--branco);
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: inherit;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+  transform: skewX(-3deg);
+  margin-top: 0.25rem;
+  box-shadow: 0 4px 14px var(--sombra-azul);
+}
+
+.btn-login:hover:not(:disabled) {
+  background: var(--azul-escuro);
+  box-shadow: 0 6px 20px var(--sombra-azul);
+}
+
+.btn-login:active:not(:disabled) {
+  transform: skewX(-3deg) scale(0.99);
+}
+
+.btn-login:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─────────────────────────────────────────────
+   RODAPÉ
+   ───────────────────────────────────────────── */
+.form-footer {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #9CA3AF;
+  line-height: 1.6;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--cinza-borda);
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVO
+   ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .login-wrapper {
+    flex-direction: column;
+  }
+
+  .login-brand {
+    display: none;
+  }
+
+  .login-form-panel {
+    padding: 2.5rem 1.5rem;
+    align-items: flex-start;
+    padding-top: 3rem;
+  }
+
+  .login-form-container {
+    max-width: 100%;
+  }
+
+  .mobile-logo {
+    display: flex;
+  }
+}
+
+@media (max-width: 1024px) {
+  .login-brand {
+    width: 40%;
+    padding: 2.5rem 2rem 2.5rem 2.5rem;
+  }
+
+  .logo-name {
+    font-size: 2.25rem;
+  }
+
+  .brand-slogan {
+    font-size: 1.35rem;
+  }
+}
