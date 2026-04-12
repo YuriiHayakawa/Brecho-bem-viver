@@ -76,7 +76,7 @@ export default function ProductDetailPage() {
       <Navbar />
       <div className="detail-error">
         <p>{error || 'Produto não encontrado.'}</p>
-        <button onClick={() => navigate('/dashboard')}>← Voltar ao catálogo</button>
+        <button onClick={() => navigate('/catalogo')}>← Voltar ao catálogo</button>
       </div>
     </div>
   );
@@ -102,7 +102,7 @@ export default function ProductDetailPage() {
 
       <main className="detail-main">
         {/* Breadcrumb */}
-        <button className="back-btn" onClick={() => navigate('/dashboard')}>
+        <button className="back-btn" onClick={() => navigate('/catalogo')}>
           <svg viewBox="0 0 20 20" fill="none">
             <path d="M12 4l-6 6 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
