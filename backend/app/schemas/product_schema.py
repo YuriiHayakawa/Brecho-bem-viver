@@ -25,6 +25,15 @@ class ProductImageEmbed(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class SellerEmbed(BaseModel):
+    id: int
+    name: str
+    pix_key: str
+    pix_key_type: str
+
+    model_config = {"from_attributes": True}
+
+
 class ProductResponse(BaseModel):
     id: int
     name: str
@@ -44,6 +53,7 @@ class ProductResponse(BaseModel):
     created_at: datetime
     id_user: int
     images: list[ProductImageEmbed] = []
+    user: SellerEmbed | None = None
 
     model_config = {"from_attributes": True}
 

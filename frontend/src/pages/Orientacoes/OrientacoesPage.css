@@ -1,0 +1,223 @@
+/* ─────────────────────────────────────────────
+   ORIENTAÇÕES
+   ───────────────────────────────────────────── */
+.orientacoes-page {
+  min-height: calc(100vh - 64px);
+  background: #F9FAFB;
+  font-family: 'Barlow', system-ui, -apple-system, sans-serif;
+}
+
+/* Hero */
+.orientacoes-hero {
+  position: relative;
+  background: linear-gradient(135deg, #0023A9 0%, #0041D9 55%, #005EB8 100%);
+  overflow: hidden;
+  padding: 2.5rem 1.5rem 3rem;
+}
+
+.orientacoes-hero-diagonal {
+  position: absolute;
+  top: 0;
+  right: -40px;
+  width: 200px;
+  height: 100%;
+  background: rgba(255,255,255,0.06);
+  transform: skewX(-8deg);
+  pointer-events: none;
+}
+
+.orientacoes-hero-diagonal::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -80px;
+  width: 120px;
+  height: 100%;
+  background: rgba(255,255,255,0.04);
+  transform: skewX(-8deg);
+}
+
+.orientacoes-hero-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.orientacoes-hero-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.orientacoes-hero-bars span {
+  display: block;
+  height: 6px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 1px;
+  transform: skewX(-8deg);
+}
+
+.orientacoes-hero-bars span:nth-child(1) { width: 36px; }
+.orientacoes-hero-bars span:nth-child(2) { width: 56px; }
+.orientacoes-hero-bars span:nth-child(3) { width: 44px; }
+.orientacoes-hero-bars span:nth-child(4) { width: 68px; }
+
+.orientacoes-title {
+  font-size: 2rem;
+  font-weight: 800;
+  font-style: italic;
+  color: #fff;
+  margin: 0 0 0.25rem;
+  letter-spacing: -0.02em;
+}
+
+.orientacoes-subtitle {
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.78);
+  margin: 0;
+}
+
+/* Conteúdo */
+.orientacoes-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+}
+
+.orientacoes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+/* Card */
+.orientacao-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #E5E7EB;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.orientacao-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: #0041D9;
+  transform: skewY(-4deg);
+  transform-origin: top left;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.orientacao-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 65, 217, 0.12);
+  border-color: #C7D7FD;
+}
+
+.orientacao-card:hover::before {
+  opacity: 1;
+}
+
+.orientacao-numero {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #0041D9;
+  letter-spacing: 0.08em;
+  background: rgba(0,65,217,0.08);
+  border-radius: 4px;
+  padding: 0.2rem 0.5rem;
+  width: fit-content;
+  transform: skewX(-4deg);
+}
+
+.orientacao-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, rgba(0,65,217,0.1), rgba(0,65,217,0.05));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.orientacao-icon svg {
+  width: 22px;
+  height: 22px;
+  color: #0041D9;
+}
+
+.orientacao-titulo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.3rem;
+}
+
+.orientacao-descricao {
+  font-size: 0.875rem;
+  color: #6B7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Nota de rodapé */
+.orientacoes-footer-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  background: rgba(0,65,217,0.05);
+  border: 1px solid rgba(0,65,217,0.15);
+  border-radius: 10px;
+}
+
+.orientacoes-footer-note svg {
+  width: 20px;
+  height: 20px;
+  color: #0041D9;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.orientacoes-footer-note p {
+  font-size: 0.875rem;
+  color: #374151;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Responsivo */
+@media (max-width: 900px) {
+  .orientacoes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 580px) {
+  .orientacoes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .orientacoes-title {
+    font-size: 1.5rem;
+  }
+}

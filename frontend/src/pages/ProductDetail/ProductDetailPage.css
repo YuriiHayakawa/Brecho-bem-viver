@@ -427,10 +427,161 @@
   cursor: pointer;
 }
 
+/* ── Seção PIX ── */
+.pix-section {
+  border: 1.5px solid #E0E7FF;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 0.25rem;
+}
+
+.pix-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #EEF2FF;
+  border-bottom: 1.5px solid #E0E7FF;
+}
+
+.pix-header svg {
+  width: 18px;
+  height: 18px;
+  color: #0041D9;
+  flex-shrink: 0;
+}
+
+.pix-header h3 {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0041D9;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pix-body {
+  display: flex;
+  gap: 1.25rem;
+  padding: 1rem;
+  align-items: center;
+}
+
+.pix-qrcode-wrapper {
+  flex-shrink: 0;
+  width: 130px;
+  height: 130px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pix-qrcode-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.pix-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.pix-seller-name {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.pix-seller-name svg {
+  width: 16px;
+  height: 16px;
+  color: #6B7280;
+  flex-shrink: 0;
+}
+
+.pix-key-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pix-key-type-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #0041D9;
+  background: #EEF2FF;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.pix-key-value {
+  font-size: 0.8rem;
+  color: #374151;
+  font-family: monospace;
+  word-break: break-all;
+}
+
+.btn-copy-pix {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.875rem;
+  background: #0041D9;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.825rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+  align-self: flex-start;
+}
+
+.btn-copy-pix svg {
+  width: 14px;
+  height: 14px;
+}
+
+.btn-copy-pix:hover {
+  background: #0023A9;
+}
+
+.pix-notice {
+  font-size: 0.75rem;
+  color: #9CA3AF;
+  line-height: 1.4;
+}
+
 /* ── Responsivo ── */
 @media (max-width: 768px) {
   .detail-content {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+  }
+
+  .pix-body {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pix-qrcode-wrapper {
+    width: 160px;
+    height: 160px;
+    align-self: center;
   }
 }

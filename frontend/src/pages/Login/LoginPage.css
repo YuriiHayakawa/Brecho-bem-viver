@@ -200,10 +200,10 @@
 
 .login-form-container {
   width: 100%;
-  max-width: 420px;
+  max-width: 480px;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.75rem;
 }
 
 /* ─────────────────────────────────────────────
@@ -432,6 +432,128 @@
 }
 
 /* ─────────────────────────────────────────────
+   ABAS — LOGIN / CRIAR CONTA
+   ───────────────────────────────────────────── */
+.form-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--cinza-borda);
+  margin-bottom: 0.25rem;
+}
+
+.form-tab {
+  flex: 1;
+  height: 44px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #9CA3AF;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.form-tab:hover {
+  color: var(--azul-sebrae);
+}
+
+.form-tab.active {
+  color: var(--azul-sebrae);
+  border-bottom-color: var(--azul-sebrae);
+}
+
+/* ─────────────────────────────────────────────
+   FORMULÁRIO DE CADASTRO
+   ───────────────────────────────────────────── */
+
+/* Reduz o gap para caber mais campos verticalmente */
+.register-form {
+  gap: 1rem;
+}
+
+/* Linha com dois campos lado a lado */
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.875rem;
+}
+
+/* Wrapper do select para mostrar seta customizada */
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper::after {
+  content: '';
+  position: absolute;
+  right: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid #9CA3AF;
+  pointer-events: none;
+}
+
+/* Select com mesmo estilo do input */
+.field-select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  padding-right: 2.5rem; /* espaço para a seta */
+}
+
+.field-select:focus {
+  border-color: var(--azul-sebrae);
+  background: var(--branco);
+  box-shadow: 0 0 0 3px var(--sombra-azul);
+}
+
+/* ─────────────────────────────────────────────
+   ESTADO DE SUCESSO DO CADASTRO
+   ───────────────────────────────────────────── */
+.register-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 3rem 1rem;
+  text-align: center;
+  animation: fadeIn 0.4s ease;
+}
+
+.register-success svg {
+  width: 56px;
+  height: 56px;
+  color: #16A34A;
+}
+
+.register-success h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.register-success p {
+  font-size: 0.925rem;
+  color: var(--cinza-texto);
+  margin: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─────────────────────────────────────────────
    RODAPÉ
    ───────────────────────────────────────────── */
 .form-footer {
@@ -467,6 +589,11 @@
 
   .mobile-logo {
     display: flex;
+  }
+
+  /* Empilha os pares de campos no mobile */
+  .field-row {
+    grid-template-columns: 1fr;
   }
 }
 

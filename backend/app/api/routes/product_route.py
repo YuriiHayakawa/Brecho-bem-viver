@@ -1,12 +1,14 @@
 from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.product import Product
 from app.models.user import User
 from app.schemas.product_schema import ProductCreate, ProductResponse, ReserveRequest
+from app.utils.pix import generate_pix_qrcode_png
 
 router = APIRouter()
 
@@ -44,6 +46,25 @@ def reserve_product(product_id: int, data: ReserveRequest, db: Session = Depends
     db.commit()
     db.refresh(product)
     return product
+
+
+@router.get("/{product_id}/pix-qrcode", summary="QR Code PIX do vendedor")
+def get_pix_qrcode(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Produto não encontrado")
+
+    seller = db.query(User).filter(User.id == product.id_user).first()
+    if not seller:
+        raise HTTPException(status_code=404, detail="Vendedor não encontrado")
+
+    png_bytes = generate_pix_qrcode_png(
+        pix_key=seller.pix_key,
+        pix_key_type=seller.pix_key_type,
+        seller_name=seller.name,
+    )
+
+    return Response(content=png_bytes, media_type="image/png")
 
 
 @router.post("/", response_model=ProductResponse, summary="Criar Produto")

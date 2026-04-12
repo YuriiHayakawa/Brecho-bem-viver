@@ -4,10 +4,19 @@ import Navbar from '../../components/Navbar/Navbar';
 import { fetchProduct, reserveProduct } from '../../services/api';
 import './ProductDetailPage.css';
 
+const BASE_URL = 'http://localhost:8000';
+
 const STATUS_LABEL = {
   disponivel: 'Disponível',
   reservada: 'Reservado',
   vendida: 'Vendido',
+};
+
+const PIX_KEY_TYPE_LABEL = {
+  cpf: 'CPF',
+  telefone: 'Telefone',
+  email: 'E-mail',
+  aleatoria: 'Chave Aleatória',
 };
 
 const GENDER_LABEL = {
@@ -28,6 +37,7 @@ export default function ProductDetailPage() {
   const [reserving, setReserving] = useState(false);
   const [reserveSuccess, setReserveSuccess] = useState(false);
   const [reserveError, setReserveError] = useState('');
+  const [pixCopied, setPixCopied] = useState(false);
 
   const user = JSON.parse(sessionStorage.getItem('user') || '{}');
 
@@ -77,6 +87,14 @@ export default function ProductDetailPage() {
     : null;
 
   const isReservedByMe = product.reserved_by_user_id === user.id;
+  const seller = product.user;
+
+  function handleCopyPix() {
+    if (!seller?.pix_key) return;
+    navigator.clipboard.writeText(seller.pix_key);
+    setPixCopied(true);
+    setTimeout(() => setPixCopied(false), 2500);
+  }
 
   return (
     <div className="detail-wrapper">
@@ -223,6 +241,71 @@ export default function ProductDetailPage() {
                 </div>
               )}
             </div>
+
+            {/* ── Seção PIX ── */}
+            {seller && (
+              <div className="pix-section">
+                <div className="pix-header">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M6.5 6.5h.01M17.5 6.5h.01M6.5 17.5h.01M12 12h.01M17.5 17.5h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+                  </svg>
+                  <h3>Pagamento via PIX</h3>
+                </div>
+
+                <div className="pix-body">
+                  <div className="pix-qrcode-wrapper">
+                    <img
+                      src={`${BASE_URL}/products/${product.id}/pix-qrcode`}
+                      alt="QR Code PIX"
+                      className="pix-qrcode-img"
+                    />
+                  </div>
+
+                  <div className="pix-info">
+                    <div className="pix-seller-name">
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"/>
+                      </svg>
+                      <span>{seller.name}</span>
+                    </div>
+
+                    <div className="pix-key-row">
+                      <span className="pix-key-type-badge">
+                        {PIX_KEY_TYPE_LABEL[seller.pix_key_type] || seller.pix_key_type}
+                      </span>
+                      <span className="pix-key-value">{seller.pix_key}</span>
+                    </div>
+
+                    <button className="btn-copy-pix" onClick={handleCopyPix}>
+                      {pixCopied ? (
+                        <>
+                          <svg viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd"/>
+                          </svg>
+                          Chave copiada!
+                        </>
+                      ) : (
+                        <>
+                          <svg viewBox="0 0 20 20" fill="none">
+                            <rect x="7" y="7" width="10" height="10" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+                            <path d="M13 7V5a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                          </svg>
+                          Copiar chave PIX
+                        </>
+                      )}
+                    </button>
+
+                    <p className="pix-notice">
+                      Escaneie o QR Code ou copie a chave para pagar
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </main>
