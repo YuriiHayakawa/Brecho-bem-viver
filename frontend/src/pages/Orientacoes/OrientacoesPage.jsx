@@ -1,4 +1,3 @@
-import Navbar from '../../components/Navbar/Navbar';
 import './OrientacoesPage.css';
 
 const ORIENTACOES = [
@@ -76,9 +75,7 @@ const ORIENTACOES = [
 
 export default function OrientacoesPage() {
   return (
-    <>
-      <Navbar />
-      <main className="orientacoes-page">
+    <main className="orientacoes-page">
 
         {/* Hero */}
         <div className="orientacoes-hero">
@@ -124,6 +121,5 @@ export default function OrientacoesPage() {
         </div>
 
       </main>
-    </>
   );
 }

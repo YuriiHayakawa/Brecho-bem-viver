@@ -1,11 +1,8 @@
-import Navbar from '../../components/Navbar/Navbar';
 import './DashboardPage.css';
 
 export default function DashboardPage() {
   return (
-    <>
-      <Navbar />
-      <main className="dashboard-page">
+    <main className="dashboard-page">
 
         <div className="dashboard-hero">
           <div className="dashboard-hero-diagonal" />
@@ -64,6 +61,5 @@ export default function DashboardPage() {
         </div>
 
       </main>
-    </>
   );
 }

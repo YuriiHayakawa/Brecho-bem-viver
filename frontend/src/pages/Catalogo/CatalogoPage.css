@@ -67,6 +67,44 @@
   padding: 1.75rem 1.5rem 3rem;
 }
 
+/* ── Barra de ações ── */
+.catalogo-actions-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.catalogo-btn-novo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1.25rem;
+  height: 42px;
+  background: #0041D9;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transform: skewX(-3deg);
+  box-shadow: 0 4px 12px rgba(0,65,217,0.25);
+  transition: background 0.2s, box-shadow 0.2s;
+  letter-spacing: 0.02em;
+}
+
+.catalogo-btn-novo:hover {
+  background: #0023A9;
+  box-shadow: 0 6px 18px rgba(0,65,217,0.35);
+}
+
+.catalogo-btn-novo svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
 /* ── Filtros ── */
 .catalogo-filters-bar {
   display: flex;

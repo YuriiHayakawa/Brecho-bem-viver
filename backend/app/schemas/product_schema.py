@@ -58,5 +58,17 @@ class ProductResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class ProductUpdate(BaseModel):
+    name:               str | None = None
+    description:        str | None = None
+    defect_description: str | None = None
+    has_defect:         bool | None = None
+    size:               str | None = None
+    category:           str | None = None
+    brand:              str | None = None
+    gender:             str | None = None
+    price:              Decimal | None = None
+
+
 class ReserveRequest(BaseModel):
     user_id: int

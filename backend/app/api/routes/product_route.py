@@ -1,21 +1,29 @@
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.product import Product
 from app.models.user import User
-from app.schemas.product_schema import ProductCreate, ProductResponse, ReserveRequest
+from app.schemas.product_schema import ProductCreate, ProductUpdate, ProductResponse, ReserveRequest
 from app.utils.pix import generate_pix_qrcode_png
 
 router = APIRouter()
 
 
 @router.get("/", response_model=list[ProductResponse], summary="Listar produtos")
-def list_products(db: Session = Depends(get_db)):
-    return db.query(Product).filter(Product.active == True).all()
+def list_products(
+    user_id: Optional[int] = Query(None, description="Filtrar por dono do produto"),
+    db: Session = Depends(get_db),
+):
+    query = db.query(Product).filter(Product.active == True)
+    if user_id is not None:
+        query = query.filter(Product.id_user == user_id)
+    return query.all()
 
 
 @router.get("/{product_id}", response_model=ProductResponse, summary="Detalhe do produto")
@@ -95,3 +103,17 @@ def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     db.refresh(new_product)
 
     return new_product
+
+
+@router.put("/{product_id}", response_model=ProductResponse, summary="Atualizar produto")
+def update_product(product_id: int, data: ProductUpdate, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Produto não encontrado")
+
+    for field, value in data.model_dump(exclude_unset=True).items():
+        setattr(product, field, value)
+
+    db.commit()
+    db.refresh(product)
+    return product

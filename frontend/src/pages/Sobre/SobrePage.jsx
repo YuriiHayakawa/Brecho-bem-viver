@@ -1,4 +1,3 @@
-import Navbar from '../../components/Navbar/Navbar';
 import './SobrePage.css';
 
 const PILARES = [
@@ -44,9 +43,7 @@ const STATS = [
 
 export default function SobrePage() {
   return (
-    <>
-      <Navbar />
-      <main className="sobre-page">
+    <main className="sobre-page">
 
         {/* Hero */}
         <div className="sobre-hero">
@@ -122,6 +119,5 @@ export default function SobrePage() {
 
         </div>
       </main>
-    </>
   );
 }
