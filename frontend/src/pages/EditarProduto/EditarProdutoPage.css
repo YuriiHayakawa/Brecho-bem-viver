@@ -1,0 +1,60 @@
+/* ── Editar Produto — overrides & extras ── */
+
+/* Hero com gradiente invertido para diferenciar */
+.ep-hero {
+  background: linear-gradient(135deg, #0023A9 0%, #0041D9 60%, #1D6FBF 100%) !important;
+}
+
+/* Skeletons de carregamento */
+.ep-skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ep-skeleton {
+  height: 80px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #E5E7EB 25%, #F3F4F6 50%, #E5E7EB 75%);
+  background-size: 200% 100%;
+  animation: ep-shimmer 1.4s infinite;
+}
+
+@keyframes ep-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Existing images label */
+.ep-existing-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.75rem;
+}
+
+.ep-existing-images {
+  margin-bottom: 1rem;
+}
+
+/* "Nova" badge on newly added images */
+.ep-new-badge-wrap {
+  position: relative;
+}
+
+.ep-new-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: #0041D9;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+}

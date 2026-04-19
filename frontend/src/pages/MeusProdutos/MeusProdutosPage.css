@@ -1,0 +1,453 @@
+/* ─────────────────────────────────────────────
+   MEUS PRODUTOS PAGE
+   ───────────────────────────────────────────── */
+.mp-page {
+  min-height: 100vh;
+  background: #F3F4F6;
+  font-family: 'Barlow', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Hero ── */
+.mp-hero {
+  position: relative;
+  background: linear-gradient(135deg, #0041D9 0%, #0023A9 100%);
+  padding: 2.5rem 2rem 2rem;
+  overflow: hidden;
+}
+
+.mp-hero-diagonal {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -8deg,
+    transparent,
+    transparent 24px,
+    rgba(255,255,255,0.03) 24px,
+    rgba(255,255,255,0.03) 28px
+  );
+  pointer-events: none;
+}
+
+.mp-hero-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  max-width: 960px;
+}
+
+.mp-hero-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.mp-hero-bars span {
+  display: block;
+  height: 5px;
+  background: rgba(255,255,255,0.85);
+  border-radius: 1px;
+  transform: skewX(-8deg);
+}
+
+.mp-hero-bars span:nth-child(1) { width: 20px; }
+.mp-hero-bars span:nth-child(2) { width: 36px; }
+.mp-hero-bars span:nth-child(3) { width: 28px; }
+.mp-hero-bars span:nth-child(4) { width: 44px; }
+
+.mp-hero-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.mp-hero-sub {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.72);
+  margin: 0.25rem 0 0;
+  font-weight: 500;
+}
+
+/* ── Content ── */
+.mp-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.75rem 1.5rem 3rem;
+}
+
+/* ── Stats ── */
+.mp-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.mp-stat {
+  background: #fff;
+  border-radius: 12px;
+  border: 1.5px solid #E5E7EB;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.mp-stat-val {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1;
+}
+
+.mp-stat-lbl {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.mp-stat--green .mp-stat-val { color: #16A34A; }
+.mp-stat--yellow .mp-stat-val { color: #D97706; }
+.mp-stat--gray .mp-stat-val   { color: #6B7280; }
+
+/* ── Actions bar ── */
+.mp-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  gap: 1rem;
+}
+
+.mp-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.mp-btn-new {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #0041D9;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem 1.1rem;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.15s;
+  white-space: nowrap;
+}
+
+.mp-btn-new:hover {
+  background: #0023A9;
+  transform: translateY(-1px);
+}
+
+.mp-btn-new svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ── Skeleton ── */
+.mp-skeleton {
+  height: 96px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #E5E7EB 25%, #F3F4F6 50%, #E5E7EB 75%);
+  background-size: 200% 100%;
+  animation: mp-shimmer 1.4s infinite;
+}
+
+@keyframes mp-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Empty state ── */
+.mp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3.5rem 1rem;
+  text-align: center;
+  color: #6B7280;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.mp-empty svg {
+  width: 48px;
+  height: 48px;
+  opacity: 0.5;
+}
+
+.mp-empty-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  opacity: 0.3;
+}
+
+.mp-empty-bars span {
+  display: block;
+  height: 6px;
+  background: #0041D9;
+  border-radius: 1px;
+  transform: skewX(-8deg);
+}
+
+.mp-empty-bars span:nth-child(1) { width: 32px; }
+.mp-empty-bars span:nth-child(2) { width: 56px; }
+.mp-empty-bars span:nth-child(3) { width: 44px; }
+
+/* ── List ── */
+.mp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Row ── */
+.mp-row {
+  background: #fff;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 14px;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  transition: box-shadow 0.18s, border-color 0.18s, transform 0.15s;
+}
+
+.mp-row:hover {
+  box-shadow: 0 4px 16px rgba(0,65,217,0.1);
+  border-color: #C7D7FA;
+  transform: translateY(-1px);
+}
+
+/* Image */
+.mp-row-img {
+  width: 80px;
+  min-height: 80px;
+  flex-shrink: 0;
+  overflow: hidden;
+  cursor: pointer;
+  background: #F9FAFB;
+}
+
+.mp-row-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.2s;
+}
+
+.mp-row:hover .mp-row-img img {
+  transform: scale(1.04);
+}
+
+.mp-row-img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+  background: #F3F4F6;
+}
+
+.mp-row-img-placeholder span {
+  display: block;
+  height: 4px;
+  background: #D1D5DB;
+  border-radius: 1px;
+  transform: skewX(-8deg);
+}
+
+.mp-row-img-placeholder span:nth-child(1) { width: 20px; }
+.mp-row-img-placeholder span:nth-child(2) { width: 32px; }
+.mp-row-img-placeholder span:nth-child(3) { width: 24px; }
+
+/* Info */
+.mp-row-info {
+  flex: 1;
+  min-width: 0;
+  padding: 0.875rem 1rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  justify-content: center;
+}
+
+.mp-row-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.1rem;
+}
+
+.mp-row-category {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #0041D9;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.mp-row-code {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #9CA3AF;
+  letter-spacing: 0.04em;
+}
+
+.mp-row-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mp-row-brand {
+  font-size: 0.8rem;
+  color: #6B7280;
+  margin: 0;
+  font-weight: 500;
+}
+
+.mp-row-bottom {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-top: 0.2rem;
+}
+
+.mp-row-price {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #111827;
+}
+
+/* Status badge */
+.mp-row-status {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mp-status--green  { background: #DCFCE7; color: #15803D; }
+.mp-status--yellow { background: #FEF9C3; color: #A16207; }
+.mp-status--gray   { background: #F3F4F6; color: #6B7280; }
+
+/* Actions */
+.mp-row-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex-shrink: 0;
+  border-left: 1.5px solid #E5E7EB;
+}
+
+.mp-btn-view,
+.mp-btn-edit {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0 1.1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: background 0.15s, color 0.15s;
+  min-width: 60px;
+}
+
+.mp-btn-view {
+  color: #6B7280;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.mp-btn-view:hover {
+  background: #F3F4F6;
+  color: #0041D9;
+}
+
+.mp-btn-edit {
+  color: #0041D9;
+}
+
+.mp-btn-edit:hover {
+  background: rgba(0,65,217,0.06);
+  color: #0023A9;
+}
+
+.mp-btn-view svg,
+.mp-btn-edit svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .mp-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .mp-hero {
+    padding: 1.75rem 1rem 1.5rem;
+  }
+
+  .mp-content {
+    padding: 1.25rem 1rem 2.5rem;
+  }
+
+  .mp-row-img {
+    width: 64px;
+  }
+
+  .mp-row-info {
+    padding: 0.75rem;
+  }
+
+  .mp-btn-view span,
+  .mp-btn-edit span {
+    display: none;
+  }
+
+  .mp-btn-view,
+  .mp-btn-edit {
+    padding: 0 0.75rem;
+  }
+}

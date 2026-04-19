@@ -39,7 +39,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
         phone=user.phone,
         pix_key=clean_pix_key,
         pix_key_type=user.pix_key_type,
-        role="user"
+        role="user"  # auto-cadastro via tela sempre como user
     )
 
     db.add(new_user)
