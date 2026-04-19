@@ -14,10 +14,10 @@ class User(Base):
     pix_key = Column(String(255), nullable=False)
     pix_key_type = Column(String(20), nullable=False)
     created_at = Column(TIMESTAMP, nullable=False, server_default=text("NOW()"))
-    products = relationship("Product", back_populates="user")
+    products = relationship("Product", back_populates="user", foreign_keys="Product.id_user")
 
     __table_args__ = (
-    CheckConstraint("role IN ('admin', 'user')", name="check_user_role"),
+    CheckConstraint("role IN ('admin', 'vendedor', 'user')", name="check_user_role"),
     CheckConstraint(
         "pix_key_type IN ('telefone', 'email', 'cpf', 'aleatoria')",
         name="check_user_pix_key_type"
