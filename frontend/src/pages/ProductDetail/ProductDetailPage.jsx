@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Navbar from '../../components/Navbar/Navbar';
 import { fetchProduct, reserveProduct } from '../../services/api';
 import './ProductDetailPage.css';
 
@@ -8,42 +7,134 @@ const BASE_URL = 'http://localhost:8000';
 
 const STATUS_LABEL = {
   disponivel: 'Disponível',
-  reservada: 'Reservado',
-  vendida: 'Vendido',
+  reservada:  'Reservado',
+  vendida:    'Vendido',
 };
 
 const PIX_KEY_TYPE_LABEL = {
-  cpf: 'CPF',
-  telefone: 'Telefone',
-  email: 'E-mail',
+  cpf:       'CPF',
+  telefone:  'Telefone',
+  email:     'E-mail',
   aleatoria: 'Chave Aleatória',
 };
 
 const GENDER_LABEL = {
   masculino: 'Masculino',
-  feminino: 'Feminino',
-  unissex: 'Unissex',
-  infantil: 'Infantil',
+  feminino:  'Feminino',
+  unissex:   'Unissex',
+  infantil:  'Infantil',
 };
 
-export default function ProductDetailPage() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+// ─────────────────────────────────────────────
+// Lightbox
+// ─────────────────────────────────────────────
+function Lightbox({ images, startIndex, productName, onClose }) {
+  const [index, setIndex] = useState(startIndex);
 
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [activeImage, setActiveImage] = useState(0);
-  const [reserving, setReserving] = useState(false);
+  const prev = useCallback(() => setIndex(i => (i - 1 + images.length) % images.length), [images.length]);
+  const next = useCallback(() => setIndex(i => (i + 1) % images.length), [images.length]);
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === 'Escape')     onClose();
+      if (e.key === 'ArrowLeft')  prev();
+      if (e.key === 'ArrowRight') next();
+    }
+    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [onClose, prev, next]);
+
+  const url = `${BASE_URL}${images[index].image_url}`;
+
+  return (
+    <div className="lb-overlay" onClick={onClose}>
+
+      {/* Barra superior */}
+      <div className="lb-topbar" onClick={e => e.stopPropagation()}>
+        <span className="lb-title">{productName}</span>
+        <div className="lb-topbar-right">
+          <span className="lb-counter">{index + 1} / {images.length}</span>
+          <button className="lb-close" onClick={onClose} aria-label="Fechar">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Imagem central */}
+      <div className="lb-stage" onClick={e => e.stopPropagation()}>
+        {images.length > 1 && (
+          <button className="lb-arrow lb-arrow--left" onClick={prev} aria-label="Anterior">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        )}
+
+        <div className="lb-img-wrapper">
+          <img
+            key={url}
+            src={url}
+            alt={`${productName} — foto ${index + 1}`}
+            className="lb-img"
+          />
+        </div>
+
+        {images.length > 1 && (
+          <button className="lb-arrow lb-arrow--right" onClick={next} aria-label="Próxima">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        )}
+      </div>
+
+      {/* Thumbnails */}
+      {images.length > 1 && (
+        <div className="lb-thumbs" onClick={e => e.stopPropagation()}>
+          {images.map((img, i) => (
+            <button
+              key={img.id}
+              className={`lb-thumb ${i === index ? 'active' : ''}`}
+              onClick={() => setIndex(i)}
+            >
+              <img src={`${BASE_URL}${img.image_url}`} alt={`miniatura ${i + 1}`} />
+            </button>
+          ))}
+        </div>
+      )}
+
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
+// Página principal
+// ─────────────────────────────────────────────
+export default function ProductDetailPage() {
+  const { id }     = useParams();
+  const navigate   = useNavigate();
+
+  const [product, setProduct]           = useState(null);
+  const [loading, setLoading]           = useState(true);
+  const [error, setError]               = useState('');
+  const [activeImage, setActiveImage]   = useState(0);
+  const [lightbox, setLightbox]         = useState(null); // null | index
+  const [reserving, setReserving]       = useState(false);
   const [reserveSuccess, setReserveSuccess] = useState(false);
   const [reserveError, setReserveError] = useState('');
-  const [pixCopied, setPixCopied] = useState(false);
+  const [pixCopied, setPixCopied]       = useState(false);
 
   const user = JSON.parse(sessionStorage.getItem('user') || '{}');
 
   useEffect(() => {
     fetchProduct(id)
-      .then(data => { setProduct(data); })
+      .then(data => setProduct(data))
       .catch(() => setError('Produto não encontrado.'))
       .finally(() => setLoading(false));
   }, [id]);
@@ -62,33 +153,6 @@ export default function ProductDetailPage() {
     }
   }
 
-  if (loading) return (
-    <div className="detail-wrapper">
-      <Navbar />
-      <div className="detail-loading">
-        <div className="detail-skeleton" />
-      </div>
-    </div>
-  );
-
-  if (error || !product) return (
-    <div className="detail-wrapper">
-      <Navbar />
-      <div className="detail-error">
-        <p>{error || 'Produto não encontrado.'}</p>
-        <button onClick={() => navigate('/catalogo')}>← Voltar ao catálogo</button>
-      </div>
-    </div>
-  );
-
-  const images = product.images || [];
-  const activeImageUrl = images[activeImage]
-    ? `http://localhost:8000${images[activeImage].image_url}`
-    : null;
-
-  const isReservedByMe = product.reserved_by_user_id === user.id;
-  const seller = product.user;
-
   function handleCopyPix() {
     if (!seller?.pix_key) return;
     navigator.clipboard.writeText(seller.pix_key);
@@ -96,12 +160,39 @@ export default function ProductDetailPage() {
     setTimeout(() => setPixCopied(false), 2500);
   }
 
+  if (loading) return (
+    <div className="detail-wrapper">
+      <div className="detail-loading"><div className="detail-skeleton" /></div>
+    </div>
+  );
+
+  if (error || !product) return (
+    <div className="detail-wrapper">
+      <div className="detail-error">
+        <p>{error || 'Produto não encontrado.'}</p>
+        <button onClick={() => navigate('/catalogo')}>← Voltar ao catálogo</button>
+      </div>
+    </div>
+  );
+
+  const images          = product.images || [];
+  const activeImageUrl  = images[activeImage] ? `${BASE_URL}${images[activeImage].image_url}` : null;
+  const isReservedByMe  = product.reserved_by_user_id === user.id;
+  const seller          = product.user;
+
   return (
     <div className="detail-wrapper">
-      <Navbar />
+      {/* Lightbox */}
+      {lightbox !== null && images.length > 0 && (
+        <Lightbox
+          images={images}
+          startIndex={lightbox}
+          productName={product.name}
+          onClose={() => setLightbox(null)}
+        />
+      )}
 
       <main className="detail-main">
-        {/* Breadcrumb */}
         <button className="back-btn" onClick={() => navigate('/catalogo')}>
           <svg viewBox="0 0 20 20" fill="none">
             <path d="M12 4l-6 6 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -110,11 +201,25 @@ export default function ProductDetailPage() {
         </button>
 
         <div className="detail-content">
-          {/* Galeria */}
+          {/* ── Galeria ── */}
           <div className="detail-gallery">
-            <div className="gallery-main">
+            <div
+              className="gallery-main"
+              onClick={() => images.length > 0 && setLightbox(activeImage)}
+              style={{ cursor: images.length > 0 ? 'zoom-in' : 'default' }}
+            >
               {activeImageUrl ? (
-                <img src={activeImageUrl} alt={product.name} />
+                <>
+                  <img src={activeImageUrl} alt={product.name} />
+                  <div className="gallery-zoom-hint">
+                    <svg viewBox="0 0 20 20" fill="none">
+                      <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" strokeWidth="1.5"/>
+                      <path d="M13 13l3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      <path d="M8.5 6.5v4M6.5 8.5h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                    Ampliar
+                  </div>
+                </>
               ) : (
                 <div className="gallery-placeholder">
                   <div className="gallery-bars">
@@ -136,14 +241,14 @@ export default function ProductDetailPage() {
                     className={`thumb ${i === activeImage ? 'active' : ''}`}
                     onClick={() => setActiveImage(i)}
                   >
-                    <img src={`http://localhost:8000${img.image_url}`} alt={`Foto ${i + 1}`} />
+                    <img src={`${BASE_URL}${img.image_url}`} alt={`Foto ${i + 1}`} />
                   </button>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Informações */}
+          {/* ── Informações ── */}
           <div className="detail-info">
             <div className="detail-header">
               {product.code && <span className="detail-code">{product.code}</span>}
@@ -193,7 +298,6 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            {/* Ação de reserva */}
             <div className="detail-action">
               {reserveSuccess || (product.status === 'reservada' && isReservedByMe) ? (
                 <div className="reserve-success">
@@ -207,14 +311,8 @@ export default function ProductDetailPage() {
                 </div>
               ) : product.status === 'disponivel' ? (
                 <>
-                  {reserveError && (
-                    <p className="reserve-error">{reserveError}</p>
-                  )}
-                  <button
-                    className="btn-reserve"
-                    onClick={handleReserve}
-                    disabled={reserving}
-                  >
+                  {reserveError && <p className="reserve-error">{reserveError}</p>}
+                  <button className="btn-reserve" onClick={handleReserve} disabled={reserving}>
                     {reserving ? (
                       <span className="btn-loading">
                         <svg className="spinner" viewBox="0 0 24 24" fill="none">
@@ -222,9 +320,7 @@ export default function ProductDetailPage() {
                         </svg>
                         Reservando...
                       </span>
-                    ) : (
-                      'Reservar produto'
-                    )}
+                    ) : 'Reservar produto'}
                   </button>
                   <p className="reserve-notice">A reserva é válida por 48 horas</p>
                 </>
@@ -236,13 +332,10 @@ export default function ProductDetailPage() {
                   Este produto já está reservado
                 </div>
               ) : (
-                <div className="unavailable-badge sold">
-                  Este produto já foi vendido
-                </div>
+                <div className="unavailable-badge sold">Este produto já foi vendido</div>
               )}
             </div>
 
-            {/* ── Seção PIX ── */}
             {seller && (
               <div className="pix-section">
                 <div className="pix-header">
@@ -255,16 +348,10 @@ export default function ProductDetailPage() {
                   </svg>
                   <h3>Pagamento via PIX</h3>
                 </div>
-
                 <div className="pix-body">
                   <div className="pix-qrcode-wrapper">
-                    <img
-                      src={`${BASE_URL}/products/${product.id}/pix-qrcode`}
-                      alt="QR Code PIX"
-                      className="pix-qrcode-img"
-                    />
+                    <img src={`${BASE_URL}/products/${product.id}/pix-qrcode`} alt="QR Code PIX" className="pix-qrcode-img"/>
                   </div>
-
                   <div className="pix-info">
                     <div className="pix-seller-name">
                       <svg viewBox="0 0 20 20" fill="currentColor">
@@ -272,14 +359,10 @@ export default function ProductDetailPage() {
                       </svg>
                       <span>{seller.name}</span>
                     </div>
-
                     <div className="pix-key-row">
-                      <span className="pix-key-type-badge">
-                        {PIX_KEY_TYPE_LABEL[seller.pix_key_type] || seller.pix_key_type}
-                      </span>
+                      <span className="pix-key-type-badge">{PIX_KEY_TYPE_LABEL[seller.pix_key_type] || seller.pix_key_type}</span>
                       <span className="pix-key-value">{seller.pix_key}</span>
                     </div>
-
                     <button className="btn-copy-pix" onClick={handleCopyPix}>
                       {pixCopied ? (
                         <>
@@ -298,10 +381,7 @@ export default function ProductDetailPage() {
                         </>
                       )}
                     </button>
-
-                    <p className="pix-notice">
-                      Escaneie o QR Code ou copie a chave para pagar
-                    </p>
+                    <p className="pix-notice">Escaneie o QR Code ou copie a chave para pagar</p>
                   </div>
                 </div>
               </div>

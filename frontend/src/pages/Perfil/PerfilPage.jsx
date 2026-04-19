@@ -1,4 +1,3 @@
-import Navbar from '../../components/Navbar/Navbar';
 import './PerfilPage.css';
 
 const PIX_LABELS = {
@@ -16,9 +15,7 @@ export default function PerfilPage() {
     : 'U';
 
   return (
-    <>
-      <Navbar />
-      <main className="perfil-page">
+    <main className="perfil-page">
 
         {/* Hero */}
         <div className="perfil-hero">
@@ -75,7 +72,6 @@ export default function PerfilPage() {
         </div>
 
       </main>
-    </>
   );
 }
 

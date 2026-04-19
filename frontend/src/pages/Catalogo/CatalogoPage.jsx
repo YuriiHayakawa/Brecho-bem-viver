@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../../components/Navbar/Navbar';
 import { fetchProducts } from '../../services/api';
 import './CatalogoPage.css';
+
 
 const STATUS_LABEL = {
   disponivel: 'Disponível',
@@ -43,8 +43,6 @@ export default function CatalogoPage() {
 
   return (
     <div className="catalogo-wrapper">
-      <Navbar />
-
       <div className="catalogo-hero">
         <div className="catalogo-hero-bars">
           <span className="chb b1" /><span className="chb b2" />
@@ -57,6 +55,19 @@ export default function CatalogoPage() {
       </div>
 
       <main className="catalogo-main">
+        {/* Barra de ações */}
+        <div className="catalogo-actions-bar">
+          <button
+            className="catalogo-btn-novo"
+            onClick={() => navigate('/novo-produto')}
+          >
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clipRule="evenodd"/>
+            </svg>
+            Novo produto
+          </button>
+        </div>
+
         {/* Filtros */}
         <div className="catalogo-filters-bar">
           <div className="catalogo-search-wrapper">
