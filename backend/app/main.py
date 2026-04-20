@@ -37,15 +37,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# CORS — permite chamadas do frontend local
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 # Rotas
 app.include_router(health_router, prefix="/health")
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
