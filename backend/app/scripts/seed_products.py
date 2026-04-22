@@ -146,9 +146,8 @@ def seed_products():
     db = SessionLocal()
 
     try:
-        # Pega o primeiro usuário disponível como dono dos produtos
-        user = db.query(User).first()
-        if not user:
+        users = db.query(User).all()
+        if not users:
             print("❌ Nenhum usuário encontrado. Rode seed_users.py antes.")
             return
 
@@ -161,6 +160,8 @@ def seed_products():
                 print(f"  ⚠️  Ignorado (já existe): {dados['name']}")
                 ignorados += 1
                 continue
+
+            user = users[i % len(users)]
 
             produto = Product(
                 name=dados["name"],
@@ -176,11 +177,14 @@ def seed_products():
             )
 
             db.add(produto)
-            db.flush()  # para gerar o ID antes do commit
+            db.flush()
 
             produto.code = f"BZR-{produto.id:04d}"
             inseridos += 1
-            print(f"  ✅ Inserido: {dados['name']} — R$ {dados['price']:.2f} ({dados['category']}, {dados['size']})")
+            print(
+                f"  ✅ Inserido: {dados['name']} — R$ {dados['price']:.2f} "
+                f"({dados['category']}, {dados['size']}) | dono: {user.name}"
+            )
 
         db.commit()
         print(f"\n📊 Resultado: {inseridos} inserido(s), {ignorados} ignorado(s).")
