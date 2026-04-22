@@ -13,6 +13,8 @@ from app.api.routes.auth_route import router as auth_router
 from app.api.routes.sale_route import router as sales_router
 from app.api.routes.report_user_route import router as reports_user_router
 from app.api.routes.report_admin_route import router as reports_admin_router
+from app.api.routes.report_admin_user_route import router as reports_admin_user_router
+from app.api.routes.report_admin_remaining_route import router as reports_admin_remaining_router
 
 from app.core.config import settings
 from app.database import engine, Base
@@ -47,8 +49,10 @@ app.include_router(users_router, prefix="/users", tags=["Users"])
 app.include_router(product_router, prefix="/products", tags=["Products"])
 app.include_router(product_image_router, tags=["Product Images"])
 app.include_router(sales_router, prefix="/sales", tags=["Sales"])
-app.include_router(reports_user_router, prefix="/reports", tags=["Reports"])
+app.include_router(reports_user_router, prefix="/reports", tags=["Reports User"])
 app.include_router(reports_admin_router, prefix="/reports/admin", tags=["Reports Admin"])
+app.include_router(reports_admin_user_router, prefix="/reports/admin", tags=["Reports Admin"])
+app.include_router(reports_admin_remaining_router, prefix="/reports/admin", tags=["Reports Admin"])
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 
