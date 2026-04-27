@@ -10,17 +10,17 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
+from app.core.security import hash_password
 from app.database import SessionLocal, engine, Base
 from app.models.user import User
 
-# Garante que as tabelas existam
 Base.metadata.create_all(bind=engine)
 
 USUARIOS_FAKE = [
     {
         "name": "Admin Sebrae",
         "email": "admin@sebrae.com.br",
-        "password_hash": "admin123",
+        "password": "admin123",
         "phone": "11999990001",
         "role": "admin",
         "pix_key": "admin@sebrae.com.br",
@@ -29,7 +29,7 @@ USUARIOS_FAKE = [
     {
         "name": "Ana Paula Ferreira",
         "email": "ana.ferreira@email.com",
-        "password_hash": "senha123",
+        "password": "senha123",
         "phone": "11988880001",
         "role": "user",
         "pix_key": "11988880001",
@@ -38,7 +38,7 @@ USUARIOS_FAKE = [
     {
         "name": "Carlos Eduardo Lima",
         "email": "carlos.lima@email.com",
-        "password_hash": "senha123",
+        "password": "senha123",
         "phone": "21977770002",
         "role": "user",
         "pix_key": "12345678901",
@@ -47,7 +47,7 @@ USUARIOS_FAKE = [
     {
         "name": "Mariana Costa",
         "email": "mariana.costa@email.com",
-        "password_hash": "senha123",
+        "password": "senha123",
         "phone": "31966660003",
         "role": "user",
         "pix_key": "3b4f7a92-1c2d-4e5f-a6b7-8c9d0e1f2a3b",
@@ -56,7 +56,7 @@ USUARIOS_FAKE = [
     {
         "name": "Roberto Alves",
         "email": "roberto.alves@email.com",
-        "password_hash": "senha123",
+        "password": "senha123",
         "phone": "41955550004",
         "role": "user",
         "pix_key": "roberto.alves@email.com",
@@ -80,7 +80,16 @@ def seed_users():
                 ignorados += 1
                 continue
 
-            usuario = User(**dados)
+            usuario = User(
+                name=dados["name"],
+                email=dados["email"],
+                password_hash=hash_password(dados["password"]),
+                phone=dados["phone"],
+                role=dados["role"],
+                pix_key=dados["pix_key"],
+                pix_key_type=dados["pix_key_type"],
+            )
+
             db.add(usuario)
             inseridos += 1
             print(f"  ✅ Inserido: {dados['name']} ({dados['email']}) — role: {dados['role']}")

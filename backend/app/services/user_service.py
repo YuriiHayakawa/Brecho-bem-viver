@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
+from app.core.security import hash_password
 from app.models.user import User
 from app.schemas.user_schema import UserCreate, UserResponse
 
@@ -26,10 +27,12 @@ def create_user(db: Session, user_data: UserCreate) -> UserResponse:
     if user_data.pix_key_type == "telefone" and len(clean_pix_key) not in [10, 11]:
         raise HTTPException(status_code=400, detail="Telefone inválido")
 
+    hashed_password = hash_password(user_data.password)
+
     new_user = User(
         name=user_data.name,
         email=user_data.email,
-        password_hash=user_data.password,
+        password_hash=hashed_password,
         phone=user_data.phone,
         pix_key=clean_pix_key,
         pix_key_type=user_data.pix_key_type,
