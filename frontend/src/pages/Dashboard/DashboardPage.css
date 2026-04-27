@@ -278,19 +278,12 @@
   white-space: nowrap;
 }
 
-/* ── Painel stack (coluna direita) ── */
-.db-panel-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
 /* ── Grid principal (donut + coluna direita) ── */
 .db-main-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 /* ── Painel genérico ── */
@@ -315,11 +308,19 @@
 .db-panel--ring {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+}
+
+.db-panel-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 /* ── Painel — Doação ── */
 .db-panel--donation {
   border-top: 3px solid #F43F5E;
+  flex: 1;
 }
 
 .db-donation-top {
