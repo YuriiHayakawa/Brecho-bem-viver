@@ -12,8 +12,8 @@ import OrientacoesPage   from './pages/Orientacoes/OrientacoesPage';
 import SobrePage         from './pages/Sobre/SobrePage';
 
 function ProtectedRoute({ children }) {
-  const user = sessionStorage.getItem('user');
-  if (!user) return <Navigate to="/login" replace />;
+  const token = sessionStorage.getItem('token');
+  if (!token) return <Navigate to="/login" replace />;
   return <Layout>{children}</Layout>;
 }
 
