@@ -1,61 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchMyReport } from '../../services/api';
 import './DashboardPage.css';
 
 /* ─────────────────────────────────────────────
-   Gráfico de barras — CSS puro, sem biblioteca
+   Helpers
    ───────────────────────────────────────────── */
-function BarChart({ report }) {
-  const bars = [
-    { label: 'Total',    value: report.total_products,     color: 'var(--bar-blue)',   bg: 'var(--bar-blue-bg)'   },
-    { label: 'Ativos',   value: report.remaining_products, color: 'var(--bar-green)',  bg: 'var(--bar-green-bg)'  },
-    { label: 'Vendidos', value: report.sold_products,      color: 'var(--bar-gray)',   bg: 'var(--bar-gray-bg)'   },
-  ];
-
-  const max = Math.max(report.total_products, 1); // evita divisão por zero
-
-  return (
-    <div className="db-card db-chart-card">
-      <div className="db-card-header">
-        <svg viewBox="0 0 24 24" fill="none">
-          <path d="M3 3v18h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          <rect x="7"  y="10" width="3" height="8" rx="1" fill="currentColor" opacity="0.7"/>
-          <rect x="13" y="6"  width="3" height="12" rx="1" fill="currentColor" opacity="0.5"/>
-          <rect x="19" y="13" width="3" height="5" rx="1" fill="currentColor" opacity="0.4"/>
-        </svg>
-        <h3>Seus produtos</h3>
-      </div>
-
-      <div className="db-chart-area">
-        {bars.map(bar => (
-          <div key={bar.label} className="db-bar-col">
-            {/* Valor acima da barra */}
-            <span className="db-bar-value" style={{ color: bar.color }}>
-              {bar.value}
-            </span>
-
-            {/* Track + barra animada */}
-            <div className="db-bar-track">
-              <div
-                className="db-bar-fill"
-                style={{
-                  height: `${(bar.value / max) * 100}%`,
-                  background: bar.color,
-                }}
-              />
-            </div>
-
-            {/* Pill colorida + label */}
-            <div className="db-bar-pill" style={{ background: bar.bg, color: bar.color }}>
-              {bar.label}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function greeting() {
   const h = new Date().getHours();
   if (h < 12) return 'Bom dia';
@@ -64,11 +14,116 @@ function greeting() {
 }
 
 function fmtBRL(value) {
-  return Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  return Number(value).toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  });
 }
 
+function todayLabel() {
+  return new Date().toLocaleDateString('pt-BR', {
+    weekday: 'long', day: 'numeric', month: 'long',
+  });
+}
+
+/* ─────────────────────────────────────────────
+   Donut Ring — SVG puro, animado no mount
+   ───────────────────────────────────────────── */
+function DonutRing({ total, sold, active }) {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setReady(true), 120);
+    return () => clearTimeout(t);
+  }, []);
+
+  const R   = 78;
+  const SW  = 16;
+  const C   = 2 * Math.PI * R;
+  const GAP = 4;
+
+  const soldPct   = total > 0 ? sold   / total : 0;
+  const activePct = total > 0 ? active / total : 0;
+
+  const soldArc   = Math.max(soldPct   * C - GAP, 0);
+  const activeArc = Math.max(activePct * C - GAP, 0);
+
+  const soldOffset   = C / 4;
+  const activeOffset = C / 4 - soldPct * C;
+
+  const soldPctLabel   = Math.round(soldPct   * 100);
+  const activePctLabel = Math.round(activePct * 100);
+
+  return (
+    <div className="ring-wrap">
+      <svg viewBox="0 0 180 180" className="ring-svg">
+        <circle cx="90" cy="90" r={R} fill="none" stroke="#EAECF0" strokeWidth={SW} />
+
+        {active > 0 && (
+          <circle
+            cx="90" cy="90" r={R}
+            fill="none"
+            stroke="#10B981"
+            strokeWidth={SW}
+            strokeLinecap="round"
+            strokeDasharray={`${ready ? activeArc : 0} ${C}`}
+            strokeDashoffset={activeOffset}
+            style={{ transition: 'stroke-dasharray 0.85s cubic-bezier(.4,0,.2,1) .15s' }}
+          />
+        )}
+
+        {sold > 0 && (
+          <circle
+            cx="90" cy="90" r={R}
+            fill="none"
+            stroke="#0041D9"
+            strokeWidth={SW}
+            strokeLinecap="round"
+            strokeDasharray={`${ready ? soldArc : 0} ${C}`}
+            strokeDashoffset={soldOffset}
+            style={{ transition: 'stroke-dasharray 0.85s cubic-bezier(.4,0,.2,1) .35s' }}
+          />
+        )}
+
+        <text x="90" y="80" textAnchor="middle" fontSize="34" fontWeight="800"
+          fill="#111827" fontFamily="Barlow, system-ui, sans-serif">
+          {total}
+        </text>
+        <text x="90" y="99" textAnchor="middle" fontSize="10.5" fontWeight="700"
+          fill="#9CA3AF" fontFamily="Barlow, system-ui, sans-serif" letterSpacing="1.2">
+          PRODUTOS
+        </text>
+      </svg>
+
+      <div className="ring-legend">
+        <div className="ring-legend-item">
+          <span className="ring-dot ring-dot--blue" />
+          <div className="ring-legend-body">
+            <span className="ring-legend-val">{sold}</span>
+            <span className="ring-legend-lbl">Vendidos</span>
+          </div>
+          <span className="ring-legend-pct">{soldPctLabel}%</span>
+        </div>
+        <div className="ring-legend-sep" />
+        <div className="ring-legend-item">
+          <span className="ring-dot ring-dot--green" />
+          <div className="ring-legend-body">
+            <span className="ring-legend-val">{active}</span>
+            <span className="ring-legend-lbl">Ativos</span>
+          </div>
+          <span className="ring-legend-pct">{activePctLabel}%</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Page
+   ───────────────────────────────────────────── */
 export default function DashboardPage() {
-  const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+  const navigate  = useNavigate();
+  const user      = JSON.parse(sessionStorage.getItem('user') || '{}');
   const firstName = user.name?.split(' ')[0] || 'Usuário';
 
   const [report, setReport]   = useState(null);
@@ -81,11 +136,6 @@ export default function DashboardPage() {
       .catch(() => setError('Não foi possível carregar o painel.'))
       .finally(() => setLoading(false));
   }, []);
-
-  /* ── Derivações ── */
-  const soldPct = report && report.total_products > 0
-    ? Math.round((report.sold_products / report.total_products) * 100)
-    : 0;
 
   return (
     <main className="db-page">
@@ -100,23 +150,28 @@ export default function DashboardPage() {
           <div className="db-hero-text">
             <p className="db-greeting">{greeting()},</p>
             <h1 className="db-hero-title">{firstName}!</h1>
-            <p className="db-hero-sub">Aqui está o resumo dos seus produtos no bazar</p>
+            <p className="db-hero-date">{todayLabel()}</p>
           </div>
         </div>
       </div>
 
-      <div className="db-content">
+      {/* ── Corpo ── */}
+      <div className="db-body">
 
-        {/* ── Loading ── */}
+        {/* Loading */}
         {loading && (
-          <div className="db-skeleton-grid">
-            {[...Array(4)].map((_, i) => <div key={i} className="db-skeleton" />)}
+          <div className="db-skeletons">
+            <div className="db-sk db-sk--strip" />
+            <div className="db-sk-row">
+              <div className="db-sk db-sk--main" />
+              <div className="db-sk db-sk--side" />
+            </div>
           </div>
         )}
 
-        {/* ── Erro ── */}
+        {/* Erro */}
         {error && (
-          <div className="db-error">
+          <div className="db-error-state">
             <svg viewBox="0 0 24 24" fill="none">
               <circle cx="12" cy="12" r="10" stroke="#DC2626" strokeWidth="1.5"/>
               <path d="M12 8v4M12 16h.01" stroke="#DC2626" strokeWidth="1.5" strokeLinecap="round"/>
@@ -125,140 +180,93 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* ── Dados ── */}
+        {/* Dados */}
         {!loading && !error && report && (
           <>
-            {/* ── Estado vazio ── */}
-            {report.total_products === 0 && (
+            {report.total_products === 0 ? (
               <div className="db-empty">
-                <div className="db-empty-bars">
-                  <span /><span /><span />
+                <div className="db-empty-ring">
+                  <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="38" fill="none" stroke="#E5E7EB" strokeWidth="10"/>
+                    <circle cx="50" cy="50" r="38" fill="none" stroke="#0041D9" strokeWidth="10"
+                      strokeDasharray="60 179" strokeDashoffset="47" strokeLinecap="round" opacity="0.25"/>
+                  </svg>
                 </div>
-                <h2>Você ainda não tem produtos cadastrados</h2>
-                <p>Cadastre seu primeiro produto e comece a vender no bazar.</p>
-                <button className="db-btn-primary" onClick={() => navigate('/novo-produto')}>
+                <h2>Nenhum produto ainda</h2>
+                <p>Cadastre seu primeiro item e comece a acompanhar seu desempenho aqui.</p>
+                <button className="db-cta" onClick={() => navigate('/novo-produto')}>
                   <svg viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clipRule="evenodd"/>
                   </svg>
                   Cadastrar primeiro produto
                 </button>
               </div>
-            )}
-
-            {/* ── Métricas ── */}
-            {report.total_products > 0 && (
+            ) : (
               <>
-                {/* Cards principais */}
-                <div className="db-stats-grid">
-
-                  <div className="db-stat-card db-stat--blue">
-                    <div className="db-stat-icon">
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
-                        <rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
-                        <rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
-                        <rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
-                      </svg>
-                    </div>
-                    <div className="db-stat-body">
-                      <span className="db-stat-value">{report.total_products}</span>
-                      <span className="db-stat-label">Total de anúncios</span>
-                    </div>
+                {/* ── Strip de números ── */}
+                <div className="db-strip">
+                  <div className="db-strip-item">
+                    <span className="db-strip-num">{report.total_products}</span>
+                    <span className="db-strip-lbl">Total de anúncios</span>
                   </div>
-
-                  <div className="db-stat-card db-stat--green">
-                    <div className="db-stat-icon">
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5"/>
-                        <path d="M8 12l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
-                    <div className="db-stat-body">
-                      <span className="db-stat-value">{report.remaining_products}</span>
-                      <span className="db-stat-label">Ativos no bazar</span>
-                    </div>
+                  <div className="db-strip-div" />
+                  <div className="db-strip-item">
+                    <span className="db-strip-num db-strip-num--green">{report.remaining_products}</span>
+                    <span className="db-strip-lbl">Ativos no bazar</span>
                   </div>
-
-                  <div className="db-stat-card db-stat--gray">
-                    <div className="db-stat-icon">
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 5h14M9 21a1 1 0 100-2 1 1 0 000 2zm10 0a1 1 0 100-2 1 1 0 000 2z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
-                    <div className="db-stat-body">
-                      <span className="db-stat-value">{report.sold_products}</span>
-                      <span className="db-stat-label">Vendidos</span>
-                    </div>
+                  <div className="db-strip-div" />
+                  <div className="db-strip-item">
+                    <span className="db-strip-num db-strip-num--blue">{report.sold_products}</span>
+                    <span className="db-strip-lbl">Vendidos</span>
                   </div>
-
-                  <div className="db-stat-card db-stat--indigo">
-                    <div className="db-stat-icon">
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M12 3L16 7H13V17H16L12 21L8 17H11V7H8L12 3Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
-                    <div className="db-stat-body">
-                      <span className="db-stat-value db-stat-value--sm">{fmtBRL(report.total_sales_value)}</span>
-                      <span className="db-stat-label">Total arrecadado</span>
-                    </div>
-                  </div>
-
                 </div>
 
-                {/* Progresso + Doação */}
-                <div className="db-secondary-grid">
+                {/* ── Painel principal ── */}
+                <div className="db-main-grid">
 
-                  {/* Progresso de vendas */}
-                  <div className="db-card">
-                    <div className="db-card-header">
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M3 3v18h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                        <path d="M7 16l4-5 4 3 4-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                      <h3>Progresso de vendas</h3>
-                    </div>
-                    <div className="db-progress-wrap">
-                      <div className="db-progress-labels">
-                        <span>{report.sold_products} vendido{report.sold_products !== 1 ? 's' : ''}</span>
-                        <span className="db-progress-pct">{soldPct}%</span>
-                      </div>
-                      <div className="db-progress-track">
-                        <div className="db-progress-bar" style={{ width: `${soldPct}%` }} />
-                      </div>
-                      <div className="db-progress-legend">
-                        <span className="db-legend-dot db-legend-dot--green" />
-                        <span>{report.remaining_products} ativo{report.remaining_products !== 1 ? 's' : ''}</span>
-                        <span className="db-legend-dot db-legend-dot--gray" />
-                        <span>{report.sold_products} vendido{report.sold_products !== 1 ? 's' : ''}</span>
-                      </div>
-                    </div>
+                  {/* Donut */}
+                  <div className="db-panel db-panel--ring">
+                    <p className="db-panel-label">Distribuição dos seus produtos</p>
+                    <DonutRing
+                      total={report.total_products}
+                      sold={report.sold_products}
+                      active={report.remaining_products}
+                    />
                   </div>
 
-                  {/* Doação esperada */}
-                  <div className="db-card db-card--donation">
-                    <div className="db-card-header">
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
-                      </svg>
-                      <h3>Contribuição social</h3>
-                    </div>
-                    <div className="db-donation-body">
-                      <p className="db-donation-value">{fmtBRL(report.total_expected_donation)}</p>
-                      <p className="db-donation-label">doação esperada com suas vendas</p>
-                      <p className="db-donation-desc">
-                        Parte do valor de cada venda é destinada como doação,
-                        gerando impacto positivo na comunidade.
+                  {/* Financeiro */}
+                  <div className="db-panel-stack">
+
+                    <div className="db-panel db-panel--revenue">
+                      <p className="db-panel-label">Total arrecadado</p>
+                      <p className="db-big-num">{fmtBRL(report.total_sales_value)}</p>
+                      <div className="db-revenue-bar">
+                        <div className="db-revenue-fill" />
+                      </div>
+                      <p className="db-panel-hint">
+                        soma de todas as suas vendas realizadas
                       </p>
                     </div>
-                  </div>
 
+                    <div className="db-panel db-panel--donation">
+                      <div className="db-donation-top">
+                        <p className="db-panel-label">Contribuição social</p>
+                        <span className="db-heart-icon">
+                          <svg viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
+                          </svg>
+                        </span>
+                      </div>
+                      <p className="db-big-num db-big-num--rose">{fmtBRL(report.total_expected_donation)}</p>
+                      <p className="db-panel-hint">
+                        valor de doação gerado pelas suas vendas
+                      </p>
+                    </div>
+
+                  </div>
                 </div>
               </>
             )}
-
-            {/* ── Gráfico de barras ── */}
-            <BarChart report={report} />
-
           </>
         )}
       </div>
