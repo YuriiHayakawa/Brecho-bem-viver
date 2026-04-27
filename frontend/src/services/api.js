@@ -44,6 +44,16 @@ export async function fetchCurrentUser() {
   return data;
 }
 
+// ── Relatórios ────────────────────────────────────────
+export async function fetchMyReport() {
+  const response = await fetch(`${BASE_URL}/reports/me`, {
+    headers: { ...authHeader() },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar relatório');
+  return data;
+}
+
 // ── Produtos ──────────────────────────────────────────
 export async function fetchProducts() {
   const response = await fetch(`${BASE_URL}/products/`);
