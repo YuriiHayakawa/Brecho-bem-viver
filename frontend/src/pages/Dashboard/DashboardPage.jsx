@@ -144,8 +144,6 @@ export default function DashboardPage() {
       <div className="db-hero">
         <div className="db-hero-diagonal" />
         <div className="db-hero-inner">
-
-          {/* Saudação */}
           <div className="db-hero-left">
             <div className="db-hero-bars">
               <span /><span /><span /><span />
@@ -156,31 +154,6 @@ export default function DashboardPage() {
               <p className="db-hero-date">{todayLabel()}</p>
             </div>
           </div>
-
-          {/* Métricas no hero */}
-          <div className="db-hero-stats">
-            <div className="db-hero-stat">
-              <span className="db-hero-stat-num">
-                {loading ? '—' : (report?.total_products ?? '—')}
-              </span>
-              <span className="db-hero-stat-lbl">Total de anúncios</span>
-            </div>
-            <div className="db-hero-stat-div" />
-            <div className="db-hero-stat">
-              <span className="db-hero-stat-num db-hero-stat-num--green">
-                {loading ? '—' : (report?.remaining_products ?? '—')}
-              </span>
-              <span className="db-hero-stat-lbl">Ativos no bazar</span>
-            </div>
-            <div className="db-hero-stat-div" />
-            <div className="db-hero-stat">
-              <span className="db-hero-stat-num db-hero-stat-num--sky">
-                {loading ? '—' : (report?.sold_products ?? '—')}
-              </span>
-              <span className="db-hero-stat-lbl">Vendidos</span>
-            </div>
-          </div>
-
         </div>
       </div>
 
@@ -190,6 +163,12 @@ export default function DashboardPage() {
         {/* Loading */}
         {loading && (
           <div className="db-skeletons">
+            <div className="db-sk-row db-sk-row--4">
+              <div className="db-sk db-sk--card" />
+              <div className="db-sk db-sk--card" />
+              <div className="db-sk db-sk--card" />
+              <div className="db-sk db-sk--card" />
+            </div>
             <div className="db-sk-row">
               <div className="db-sk db-sk--main" />
               <div className="db-sk db-sk--side" />
@@ -231,6 +210,68 @@ export default function DashboardPage() {
               </div>
             ) : (
               <>
+                {/* ── Grid de 4 cards ── */}
+                <div className="db-stat-grid">
+
+                  {/* Total de anúncios */}
+                  <div className="db-stat-card db-stat--blue">
+                    <div className="db-stat-icon">
+                      <svg viewBox="0 0 20 20" fill="none">
+                        <rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+                        <rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+                        <rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+                        <rect x="11" y="11" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+                      </svg>
+                    </div>
+                    <div className="db-stat-body">
+                      <span className="db-stat-value">{report.total_products}</span>
+                      <span className="db-stat-label">Total de anúncios</span>
+                    </div>
+                  </div>
+
+                  {/* Ativos no bazar */}
+                  <div className="db-stat-card db-stat--green">
+                    <div className="db-stat-icon">
+                      <svg viewBox="0 0 20 20" fill="none">
+                        <path d="M4 10.5l4 4 8-8" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                    <div className="db-stat-body">
+                      <span className="db-stat-value">{report.remaining_products}</span>
+                      <span className="db-stat-label">Ativos no bazar</span>
+                    </div>
+                  </div>
+
+                  {/* Vendidos */}
+                  <div className="db-stat-card db-stat--indigo">
+                    <div className="db-stat-icon">
+                      <svg viewBox="0 0 20 20" fill="none">
+                        <path d="M3 4h2l1.5 7h8l1.5-5H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        <circle cx="9" cy="15.5" r="1.25" stroke="currentColor" strokeWidth="1.5"/>
+                        <circle cx="14" cy="15.5" r="1.25" stroke="currentColor" strokeWidth="1.5"/>
+                      </svg>
+                    </div>
+                    <div className="db-stat-body">
+                      <span className="db-stat-value">{report.sold_products}</span>
+                      <span className="db-stat-label">Vendidos</span>
+                    </div>
+                  </div>
+
+                  {/* Contribuição social */}
+                  <div className="db-stat-card db-stat--rose">
+                    <div className="db-stat-icon">
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
+                      </svg>
+                    </div>
+                    <div className="db-stat-body">
+                      <span className="db-stat-value db-stat-value--sm">{fmtBRL(report.total_expected_donation)}</span>
+                      <span className="db-stat-label">Contribuição social</span>
+                    </div>
+                  </div>
+
+                </div>
+
                 {/* ── Painel principal ── */}
                 <div className="db-main-grid">
 
@@ -244,36 +285,18 @@ export default function DashboardPage() {
                     />
                   </div>
 
-                  {/* Financeiro */}
-                  <div className="db-panel-stack">
-
-                    <div className="db-panel db-panel--revenue">
-                      <p className="db-panel-label">Total arrecadado</p>
-                      <p className="db-big-num">{fmtBRL(report.total_sales_value)}</p>
-                      <div className="db-revenue-bar">
-                        <div className="db-revenue-fill" />
-                      </div>
-                      <p className="db-panel-hint">
-                        soma de todas as suas vendas realizadas
-                      </p>
+                  {/* Total arrecadado */}
+                  <div className="db-panel db-panel--revenue">
+                    <p className="db-panel-label">Total arrecadado</p>
+                    <p className="db-big-num">{fmtBRL(report.total_sales_value)}</p>
+                    <div className="db-revenue-bar">
+                      <div className="db-revenue-fill" />
                     </div>
-
-                    <div className="db-panel db-panel--donation">
-                      <div className="db-donation-top">
-                        <p className="db-panel-label">Contribuição social</p>
-                        <span className="db-heart-icon">
-                          <svg viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
-                          </svg>
-                        </span>
-                      </div>
-                      <p className="db-big-num db-big-num--rose">{fmtBRL(report.total_expected_donation)}</p>
-                      <p className="db-panel-hint">
-                        valor de doação gerado pelas suas vendas
-                      </p>
-                    </div>
-
+                    <p className="db-panel-hint">
+                      soma de todas as suas vendas realizadas
+                    </p>
                   </div>
+
                 </div>
               </>
             )}
