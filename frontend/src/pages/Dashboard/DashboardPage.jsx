@@ -1,7 +1,60 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { fetchMyReport } from '../../services/api';
 import './DashboardPage.css';
+
+/* ─────────────────────────────────────────────
+   Gráfico de barras — CSS puro, sem biblioteca
+   ───────────────────────────────────────────── */
+function BarChart({ report }) {
+  const bars = [
+    { label: 'Total',    value: report.total_products,     color: 'var(--bar-blue)',   bg: 'var(--bar-blue-bg)'   },
+    { label: 'Ativos',   value: report.remaining_products, color: 'var(--bar-green)',  bg: 'var(--bar-green-bg)'  },
+    { label: 'Vendidos', value: report.sold_products,      color: 'var(--bar-gray)',   bg: 'var(--bar-gray-bg)'   },
+  ];
+
+  const max = Math.max(report.total_products, 1); // evita divisão por zero
+
+  return (
+    <div className="db-card db-chart-card">
+      <div className="db-card-header">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M3 3v18h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          <rect x="7"  y="10" width="3" height="8" rx="1" fill="currentColor" opacity="0.7"/>
+          <rect x="13" y="6"  width="3" height="12" rx="1" fill="currentColor" opacity="0.5"/>
+          <rect x="19" y="13" width="3" height="5" rx="1" fill="currentColor" opacity="0.4"/>
+        </svg>
+        <h3>Seus produtos</h3>
+      </div>
+
+      <div className="db-chart-area">
+        {bars.map(bar => (
+          <div key={bar.label} className="db-bar-col">
+            {/* Valor acima da barra */}
+            <span className="db-bar-value" style={{ color: bar.color }}>
+              {bar.value}
+            </span>
+
+            {/* Track + barra animada */}
+            <div className="db-bar-track">
+              <div
+                className="db-bar-fill"
+                style={{
+                  height: `${(bar.value / max) * 100}%`,
+                  background: bar.color,
+                }}
+              />
+            </div>
+
+            {/* Pill colorida + label */}
+            <div className="db-bar-pill" style={{ background: bar.bg, color: bar.color }}>
+              {bar.label}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function greeting() {
   const h = new Date().getHours();
@@ -15,8 +68,7 @@ function fmtBRL(value) {
 }
 
 export default function DashboardPage() {
-  const navigate = useNavigate();
-  const user     = JSON.parse(sessionStorage.getItem('user') || '{}');
+  const user = JSON.parse(sessionStorage.getItem('user') || '{}');
   const firstName = user.name?.split(' ')[0] || 'Usuário';
 
   const [report, setReport]   = useState(null);
@@ -204,58 +256,8 @@ export default function DashboardPage() {
               </>
             )}
 
-            {/* ── Ações rápidas ── */}
-            <div className="db-actions-section">
-              <h2 className="db-section-title">Ações rápidas</h2>
-              <div className="db-actions-grid">
-
-                <button className="db-action-card" onClick={() => navigate('/meus-produtos')}>
-                  <div className="db-action-icon db-action-icon--blue">
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <path d="M3 4h2l1.5 7h8l1.5-5H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      <circle cx="9" cy="15.5" r="1.5" stroke="currentColor" strokeWidth="1.5"/>
-                      <circle cx="14" cy="15.5" r="1.5" stroke="currentColor" strokeWidth="1.5"/>
-                    </svg>
-                  </div>
-                  <span className="db-action-label">Meus Produtos</span>
-                  <span className="db-action-hint">Gerencie seus anúncios</span>
-                </button>
-
-                <button className="db-action-card" onClick={() => navigate('/novo-produto')}>
-                  <div className="db-action-icon db-action-icon--green">
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5"/>
-                      <path d="M12 8v8M8 12h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                    </svg>
-                  </div>
-                  <span className="db-action-label">Novo Produto</span>
-                  <span className="db-action-hint">Cadastre um novo item</span>
-                </button>
-
-                <button className="db-action-card" onClick={() => navigate('/catalogo')}>
-                  <div className="db-action-icon db-action-icon--indigo">
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <path d="M4 6h16M4 10h16M4 14h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                      <circle cx="18" cy="14" r="3" stroke="currentColor" strokeWidth="1.5"/>
-                    </svg>
-                  </div>
-                  <span className="db-action-label">Catálogo</span>
-                  <span className="db-action-hint">Explore todos os produtos</span>
-                </button>
-
-                <button className="db-action-card" onClick={() => navigate('/perfil')}>
-                  <div className="db-action-icon db-action-icon--gray">
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.5"/>
-                      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                    </svg>
-                  </div>
-                  <span className="db-action-label">Meu Perfil</span>
-                  <span className="db-action-hint">Dados e chave PIX</span>
-                </button>
-
-              </div>
-            </div>
+            {/* ── Gráfico de barras ── */}
+            <BarChart report={report} />
 
           </>
         )}
