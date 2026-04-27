@@ -144,14 +144,43 @@ export default function DashboardPage() {
       <div className="db-hero">
         <div className="db-hero-diagonal" />
         <div className="db-hero-inner">
-          <div className="db-hero-bars">
-            <span /><span /><span /><span />
+
+          {/* Saudação */}
+          <div className="db-hero-left">
+            <div className="db-hero-bars">
+              <span /><span /><span /><span />
+            </div>
+            <div className="db-hero-text">
+              <p className="db-greeting">{greeting()},</p>
+              <h1 className="db-hero-title">{firstName}!</h1>
+              <p className="db-hero-date">{todayLabel()}</p>
+            </div>
           </div>
-          <div className="db-hero-text">
-            <p className="db-greeting">{greeting()},</p>
-            <h1 className="db-hero-title">{firstName}!</h1>
-            <p className="db-hero-date">{todayLabel()}</p>
+
+          {/* Métricas no hero */}
+          <div className="db-hero-stats">
+            <div className="db-hero-stat">
+              <span className="db-hero-stat-num">
+                {loading ? '—' : (report?.total_products ?? '—')}
+              </span>
+              <span className="db-hero-stat-lbl">Total de anúncios</span>
+            </div>
+            <div className="db-hero-stat-div" />
+            <div className="db-hero-stat">
+              <span className="db-hero-stat-num db-hero-stat-num--green">
+                {loading ? '—' : (report?.remaining_products ?? '—')}
+              </span>
+              <span className="db-hero-stat-lbl">Ativos no bazar</span>
+            </div>
+            <div className="db-hero-stat-div" />
+            <div className="db-hero-stat">
+              <span className="db-hero-stat-num db-hero-stat-num--sky">
+                {loading ? '—' : (report?.sold_products ?? '—')}
+              </span>
+              <span className="db-hero-stat-lbl">Vendidos</span>
+            </div>
           </div>
+
         </div>
       </div>
 
@@ -161,7 +190,6 @@ export default function DashboardPage() {
         {/* Loading */}
         {loading && (
           <div className="db-skeletons">
-            <div className="db-sk db-sk--strip" />
             <div className="db-sk-row">
               <div className="db-sk db-sk--main" />
               <div className="db-sk db-sk--side" />
@@ -203,24 +231,6 @@ export default function DashboardPage() {
               </div>
             ) : (
               <>
-                {/* ── Strip de números ── */}
-                <div className="db-strip">
-                  <div className="db-strip-item">
-                    <span className="db-strip-num">{report.total_products}</span>
-                    <span className="db-strip-lbl">Total de anúncios</span>
-                  </div>
-                  <div className="db-strip-div" />
-                  <div className="db-strip-item">
-                    <span className="db-strip-num db-strip-num--green">{report.remaining_products}</span>
-                    <span className="db-strip-lbl">Ativos no bazar</span>
-                  </div>
-                  <div className="db-strip-div" />
-                  <div className="db-strip-item">
-                    <span className="db-strip-num db-strip-num--blue">{report.sold_products}</span>
-                    <span className="db-strip-lbl">Vendidos</span>
-                  </div>
-                </div>
-
                 {/* ── Painel principal ── */}
                 <div className="db-main-grid">
 
