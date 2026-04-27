@@ -203,10 +203,10 @@
 }
 .db-cta svg { width: 18px; height: 18px; }
 
-/* ── Grid de 4 cards de stat ── */
+/* ── Grid de 3 cards de stat ── */
 .db-stat-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
 }
 
@@ -278,7 +278,14 @@
   white-space: nowrap;
 }
 
-/* ── Grid principal (donut + receita) ── */
+/* ── Painel stack (coluna direita) ── */
+.db-panel-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Grid principal (donut + coluna direita) ── */
 .db-main-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -310,13 +317,47 @@
   flex-direction: column;
 }
 
+/* ── Painel — Doação ── */
+.db-panel--donation {
+  border-top: 3px solid #F43F5E;
+}
+
+.db-donation-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.db-donation-top .db-panel-label {
+  margin-bottom: 0;
+}
+
+.db-heart-icon {
+  width: 36px;
+  height: 36px;
+  background: rgba(244,63,94,0.10);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #F43F5E;
+  flex-shrink: 0;
+}
+.db-heart-icon svg { width: 18px; height: 18px; }
+
+.db-big-num--rose { color: #F43F5E; }
+
+.db-donation-desc {
+  font-size: 0.85rem;
+  color: #6B7280;
+  line-height: 1.65;
+  margin: 0.5rem 0 0;
+}
+
 /* ── Painel — Receita ── */
 .db-panel--revenue {
   border-top: 3px solid #0041D9;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
 
 .db-big-num {
@@ -439,12 +480,6 @@
 }
 
 /* ── Responsive ── */
-@media (max-width: 900px) {
-  .db-stat-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 @media (max-width: 860px) {
   .db-main-grid {
     grid-template-columns: 1fr;
@@ -471,12 +506,16 @@
   .db-hero-title { font-size: 1.65rem; }
 
   .db-stat-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 0.75rem;
   }
 
+  .db-stat-card { flex-direction: column; gap: 0.5rem; padding: 1rem; }
+  .db-stat-icon { width: 36px; height: 36px; }
+  .db-stat-value { font-size: 1.5rem; }
+
   .db-sk-row--4 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .db-panel { padding: 1.25rem; }

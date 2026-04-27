@@ -210,7 +210,7 @@ export default function DashboardPage() {
               </div>
             ) : (
               <>
-                {/* ── Grid de 4 cards ── */}
+                {/* ── Grid de 3 cards ── */}
                 <div className="db-stat-grid">
 
                   {/* Total de anúncios */}
@@ -257,19 +257,6 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  {/* Contribuição social */}
-                  <div className="db-stat-card db-stat--rose">
-                    <div className="db-stat-icon">
-                      <svg viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
-                      </svg>
-                    </div>
-                    <div className="db-stat-body">
-                      <span className="db-stat-value db-stat-value--sm">{fmtBRL(report.total_expected_donation)}</span>
-                      <span className="db-stat-label">Contribuição social</span>
-                    </div>
-                  </div>
-
                 </div>
 
                 {/* ── Painel principal ── */}
@@ -285,18 +272,39 @@ export default function DashboardPage() {
                     />
                   </div>
 
-                  {/* Total arrecadado */}
-                  <div className="db-panel db-panel--revenue">
-                    <p className="db-panel-label">Total arrecadado</p>
-                    <p className="db-big-num">{fmtBRL(report.total_sales_value)}</p>
-                    <div className="db-revenue-bar">
-                      <div className="db-revenue-fill" />
-                    </div>
-                    <p className="db-panel-hint">
-                      soma de todas as suas vendas realizadas
-                    </p>
-                  </div>
+                  {/* Coluna direita: Contribuição social + Total arrecadado */}
+                  <div className="db-panel-stack">
 
+                    {/* Contribuição social */}
+                    <div className="db-panel db-panel--donation">
+                      <div className="db-donation-top">
+                        <p className="db-panel-label">Contribuição social</p>
+                        <span className="db-heart-icon">
+                          <svg viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
+                          </svg>
+                        </span>
+                      </div>
+                      <p className="db-big-num db-big-num--rose">{fmtBRL(report.total_expected_donation)}</p>
+                      <p className="db-donation-desc">
+                        Uma parte do valor de cada venda realizada no Bazar Sebrae é destinada a instituições sociais parceiras.
+                        Esse é o total que suas vendas já contribuíram para essa causa.
+                      </p>
+                    </div>
+
+                    {/* Total arrecadado */}
+                    <div className="db-panel db-panel--revenue">
+                      <p className="db-panel-label">Total arrecadado</p>
+                      <p className="db-big-num">{fmtBRL(report.total_sales_value)}</p>
+                      <div className="db-revenue-bar">
+                        <div className="db-revenue-fill" />
+                      </div>
+                      <p className="db-panel-hint">
+                        soma de todas as suas vendas realizadas
+                      </p>
+                    </div>
+
+                  </div>
                 </div>
               </>
             )}
