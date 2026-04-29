@@ -5,6 +5,7 @@ import uuid
 from fastapi import HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
+from app.models.user import User
 from app.models.product import Product
 from app.models.product_image import ProductImage
 from app.schemas.product_image_schema import ProductImageResponse
@@ -29,15 +30,16 @@ def list_product_images(db: Session, product_id: int) -> list[ProductImageRespon
 def create_product_image(
     db: Session,
     product_id: int,
-    file: UploadFile
+    file: UploadFile,
+    current_user: User
 ) -> ProductImageResponse:
     product = db.query(Product).filter(Product.id == product_id).first()
 
     if not product:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
 
-    if not file.content_type or not file.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="O arquivo enviado não é uma imagem")
+    if product.id_user != current_user.id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Sem permissão para adicionar imagem")
 
     last_image = (
         db.query(ProductImage)

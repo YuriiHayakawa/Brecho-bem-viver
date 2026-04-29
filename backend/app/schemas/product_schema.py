@@ -13,7 +13,6 @@ class ProductCreate(BaseModel):
     brand: str
     gender: str
     price: Decimal
-    id_user: int
 
 
 class ProductImageEmbed(BaseModel):

@@ -5,9 +5,11 @@ from fastapi import HTTPException
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
+from app.models.user import User
 from app.models.product import Product
 from app.models.user import User
 from app.schemas.product_schema import ProductCreate, ProductUpdate, ProductResponse, ReserveRequest
+from app.schemas.product_label_schema import ProductLabelDataResponse
 from app.utils.pix import generate_pix_qrcode_png
 
 
@@ -29,23 +31,19 @@ def get_product(db: Session, product_id: int) -> ProductResponse:
     return product
 
 
-def reserve_product(db: Session, product_id: int, data: ReserveRequest) -> ProductResponse:
+def reserve_product(db: Session,product_id: int,current_user: User) -> ProductResponse:
+
     product = db.query(Product).filter(Product.id == product_id).first()
 
     if not product:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
 
     if product.status != "disponivel":
-        raise HTTPException(status_code=400, detail="Produto não está disponível para reserva")
-
-    user = db.query(User).filter(User.id == data.user_id).first()
-
-    if not user:
-        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+        raise HTTPException(status_code=400, detail="Produto não disponível")
 
     product.status = "reservada"
     product.reserved_until = datetime.now() + timedelta(hours=48)
-    product.reserved_by_user_id = data.user_id
+    product.reserved_by_user_id = current_user.id
 
     db.commit()
     db.refresh(product)
@@ -73,11 +71,7 @@ def get_pix_qrcode(db: Session, product_id: int) -> Response:
     return Response(content=png_bytes, media_type="image/png")
 
 
-def create_product(db: Session, product_data: ProductCreate) -> ProductResponse:
-    user = db.query(User).filter(User.id == product_data.id_user).first()
-
-    if not user:
-        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+def create_product(db: Session,product_data: ProductCreate,current_user: User) -> ProductResponse:
 
     new_product = Product(
         name=product_data.name,
@@ -89,7 +83,7 @@ def create_product(db: Session, product_data: ProductCreate) -> ProductResponse:
         brand=product_data.brand,
         gender=product_data.gender,
         price=product_data.price,
-        id_user=product_data.id_user
+        id_user=current_user.id
     )
 
     db.add(new_product)
@@ -103,22 +97,57 @@ def create_product(db: Session, product_data: ProductCreate) -> ProductResponse:
     return new_product
 
 
-def update_product(db: Session, product_id: int, data: ProductUpdate) -> ProductResponse:
+def update_product(db: Session,product_id: int,data: ProductUpdate,current_user: User) -> ProductResponse:
+
     product = db.query(Product).filter(Product.id == product_id).first()
 
     if not product:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
 
-    update_data = data.model_dump(exclude_unset=True)
+    if product.id_user != current_user.id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Você não tem permissão para editar este produto")
 
-    if "defect_description" in update_data:
-        defect_description = update_data["defect_description"]
-        update_data["has_defect"] = bool(defect_description and defect_description.strip())
-
-    for field, value in update_data.items():
+    for field, value in data.model_dump(exclude_unset=True).items():
         setattr(product, field, value)
 
     db.commit()
     db.refresh(product)
 
     return product
+
+def delete_product(db: Session,product_id: int,current_user: User):
+
+    product = db.query(Product).filter(Product.id == product_id).first()
+
+    if not product:
+        raise HTTPException(status_code=404, detail="Produto não encontrado")
+
+    if product.id_user != current_user.id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Você não tem permissão para deletar este produto")
+
+    db.delete(product)
+    db.commit()
+
+    return {"message": "Produto deletado com sucesso"}
+
+def get_product_label_data(db: Session, product_id: int) -> ProductLabelDataResponse:
+    product = db.query(Product).filter(Product.id == product_id).first()
+
+    if not product:
+        raise HTTPException(status_code=404, detail="Produto não encontrado")
+
+    seller = db.query(User).filter(User.id == product.id_user).first()
+
+    if not seller:
+        raise HTTPException(status_code=404, detail="Vendedor não encontrado")
+
+    return ProductLabelDataResponse(
+        product_id=product.id,
+        product_code=product.code,
+        product_name=product.name,
+        price=product.price,
+        seller_name=seller.name,
+        pix_key=seller.pix_key,
+        pix_key_type=seller.pix_key_type,
+        qr_code_url=f"/products/{product.id}/pix-qrcode"
+    )
