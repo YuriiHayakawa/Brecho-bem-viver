@@ -83,6 +83,7 @@ export default function Navbar({ collapsed, onToggle, mobileOpen, onCloseMobile 
   useEffect(() => { onCloseMobile?.(); }, [location.pathname]);
 
   function handleLogout() {
+    sessionStorage.removeItem('token');
     sessionStorage.removeItem('user');
     navigate('/login');
   }
