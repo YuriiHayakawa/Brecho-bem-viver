@@ -109,7 +109,6 @@ export default function NovoProdutoPage() {
         price: parseFloat(form.price),
         has_defect: form.has_defect,
         defect_description: form.has_defect ? form.defect_description.trim() : '',
-        id_user: user.id,
       });
 
       // 2. Faz upload das imagens em sequência

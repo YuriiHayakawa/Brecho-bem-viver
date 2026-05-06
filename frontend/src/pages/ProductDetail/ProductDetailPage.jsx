@@ -143,7 +143,7 @@ export default function ProductDetailPage() {
     setReserving(true);
     setReserveError('');
     try {
-      const updated = await reserveProduct(id, user.id);
+      const updated = await reserveProduct(id);
       setProduct(updated);
       setReserveSuccess(true);
     } catch (err) {
