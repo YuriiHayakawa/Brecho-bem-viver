@@ -166,3 +166,10 @@ export async function fetchProductImages(productId) {
   if (!response.ok) throw new Error(data.detail || 'Erro ao buscar imagens');
   return data;
 }
+
+export async function fetchProductLabelData(productId) {
+  const response = await fetch(`${BASE_URL}/products/${productId}/label-data`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar dados da etiqueta');
+  return data;
+}
