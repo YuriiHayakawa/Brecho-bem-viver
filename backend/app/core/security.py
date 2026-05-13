@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta, timezone
-import os
+from app.core.config import settings
 
 import jwt
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-SECRET_KEY = os.getenv("SECRET_KEY", "troque-essa-chave-em-producao")
+SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
