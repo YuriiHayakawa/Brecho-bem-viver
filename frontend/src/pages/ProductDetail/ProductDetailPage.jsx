@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { fetchProduct, reserveProduct } from '../../services/api';
+import { fetchProduct, reserveProduct, fetchProductLabelData } from '../../services/api';
 import './ProductDetailPage.css';
 
 const BASE_URL = 'http://localhost:8000';
@@ -24,6 +24,138 @@ const GENDER_LABEL = {
   unissex:   'Unissex',
   infantil:  'Infantil',
 };
+
+const PIX_KEY_LABEL = {
+  cpf:       'CPF',
+  telefone:  'Telefone',
+  email:     'E-mail',
+  aleatoria: 'Chave Aleatória',
+};
+
+// ─────────────────────────────────────────────
+// Modal de Etiqueta
+// ─────────────────────────────────────────────
+function LabelModal({ productId, productName, onClose }) {
+  const [data, setData]       = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState('');
+
+  useEffect(() => {
+    fetchProductLabelData(productId)
+      .then(setData)
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
+
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, [productId]);
+
+  function handlePrint() {
+    window.print();
+  }
+
+  return (
+    <div className="label-overlay" onClick={onClose}>
+      <div className="label-modal" onClick={e => e.stopPropagation()}>
+
+        {/* Cabeçalho do modal */}
+        <div className="label-modal-header">
+          <span className="label-modal-title">Etiqueta do produto</span>
+          <button className="label-modal-close" onClick={onClose} aria-label="Fechar">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        {/* Conteúdo */}
+        {loading && (
+          <div className="label-loading">
+            <div className="label-sk" /><div className="label-sk" /><div className="label-sk label-sk--sm" />
+          </div>
+        )}
+
+        {error && (
+          <div className="label-error">
+            <svg viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="10" r="8" stroke="#DC2626" strokeWidth="1.5"/>
+              <path d="M10 6v4M10 13h.01" stroke="#DC2626" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            {error}
+          </div>
+        )}
+
+        {!loading && !error && data && (
+          <>
+            {/* ── A etiqueta em si (área imprimível) ── */}
+            <div className="label-card" id="label-print-area">
+
+              {/* Topo azul Sebrae */}
+              <div className="label-top">
+                <div className="label-brand-bars">
+                  <span /><span /><span /><span />
+                </div>
+                <div className="label-brand-text">
+                  <span className="label-brand-name">SEBRAE</span>
+                  <span className="label-brand-sub">Bazar</span>
+                </div>
+                {data.product_code && (
+                  <span className="label-code">#{data.product_code}</span>
+                )}
+              </div>
+
+              {/* Corpo */}
+              <div className="label-body">
+                <h2 className="label-product-name">{data.product_name}</h2>
+
+                <div className="label-price-block">
+                  <span className="label-price-label">Preço</span>
+                  <span className="label-price">
+                    {Number(data.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  </span>
+                </div>
+
+                <div className="label-divider" />
+
+                <div className="label-pix-section">
+                  <div className="label-pix-left">
+                    <p className="label-seller-name">{data.seller_name}</p>
+                    <div className="label-pix-row">
+                      <span className="label-pix-type">{PIX_KEY_LABEL[data.pix_key_type] || data.pix_key_type}</span>
+                      <span className="label-pix-key">{data.pix_key}</span>
+                    </div>
+                    <p className="label-pix-hint">Escaneie o QR Code para pagar via PIX</p>
+                  </div>
+                  <div className="label-qr">
+                    <img
+                      src={`${BASE_URL}${data.qr_code_url}`}
+                      alt="QR Code PIX"
+                    />
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Ação */}
+            <div className="label-actions">
+              <button className="label-btn-print" onClick={handlePrint}>
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M5 7V3h10v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <rect x="3" y="7" width="14" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+                  <path d="M7 15v2h6v-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="15" cy="11" r="1" fill="currentColor"/>
+                </svg>
+                Imprimir etiqueta
+              </button>
+            </div>
+          </>
+        )}
+
+      </div>
+    </div>
+  );
+}
 
 // ─────────────────────────────────────────────
 // Lightbox
@@ -129,6 +261,7 @@ export default function ProductDetailPage() {
   const [reserveSuccess, setReserveSuccess] = useState(false);
   const [reserveError, setReserveError] = useState('');
   const [pixCopied, setPixCopied]       = useState(false);
+  const [labelOpen, setLabelOpen]       = useState(false);
 
   const user = JSON.parse(sessionStorage.getItem('user') || '{}');
 
@@ -143,7 +276,7 @@ export default function ProductDetailPage() {
     setReserving(true);
     setReserveError('');
     try {
-      const updated = await reserveProduct(id, user.id);
+      const updated = await reserveProduct(id);
       setProduct(updated);
       setReserveSuccess(true);
     } catch (err) {
@@ -192,13 +325,30 @@ export default function ProductDetailPage() {
         />
       )}
 
+      {labelOpen && (
+        <LabelModal
+          productId={id}
+          productName={product.name}
+          onClose={() => setLabelOpen(false)}
+        />
+      )}
+
       <main className="detail-main">
-        <button className="back-btn" onClick={() => navigate('/catalogo')}>
-          <svg viewBox="0 0 20 20" fill="none">
-            <path d="M12 4l-6 6 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          Voltar ao catálogo
-        </button>
+        <div className="detail-topbar">
+          <button className="back-btn" onClick={() => navigate('/catalogo')}>
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="M12 4l-6 6 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Voltar ao catálogo
+          </button>
+          <button className="label-trigger-btn" onClick={() => setLabelOpen(true)}>
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="M4 4h5.172a2 2 0 011.414.586l5.828 5.828a2 2 0 010 2.828l-3.172 3.172a2 2 0 01-2.828 0L4.586 10.586A2 2 0 014 9.172V4z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+              <circle cx="7.5" cy="7.5" r="1" fill="currentColor"/>
+            </svg>
+            Gerar etiqueta
+          </button>
+        </div>
 
         <div className="detail-content">
           {/* ── Galeria ── */}
