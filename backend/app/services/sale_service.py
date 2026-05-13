@@ -39,8 +39,11 @@ def create_sale(db: Session, sale_data: SaleCreate) -> SaleResponse:
     if not product:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
 
-    if product.status == "vendida" or product.active is False:
+    if product.status == "vendida":
         raise HTTPException(status_code=400, detail="Produto já vendido")
+
+    if product.active is False:
+        raise HTTPException(status_code=400, detail="Produto inativo")
 
     existing_sale = db.query(Sale).filter(Sale.id_product == product.id).first()
     if existing_sale:

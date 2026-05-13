@@ -14,6 +14,8 @@ from app.utils.pix import generate_pix_qrcode_png
 
 
 def list_products(db: Session, user_id: Optional[int] = None) -> list[ProductResponse]:
+    release_expired_reservations(db)
+
     query = db.query(Product).filter(Product.active == True)
 
     if user_id is not None:
@@ -30,8 +32,8 @@ def get_product(db: Session, product_id: int) -> ProductResponse:
 
     return product
 
-
-def reserve_product(db: Session,product_id: int,current_user: User) -> ProductResponse:
+def reserve_product(db: Session, product_id: int, current_user: User) -> ProductResponse:
+    release_expired_reservations(db)
 
     product = db.query(Product).filter(Product.id == product_id).first()
 
@@ -42,13 +44,31 @@ def reserve_product(db: Session,product_id: int,current_user: User) -> ProductRe
         raise HTTPException(status_code=400, detail="Produto não disponível")
 
     product.status = "reservada"
-    product.reserved_until = datetime.now() + timedelta(hours=48)
+    product.reserved_until = datetime.now() + timedelta(hours=24)
     product.reserved_by_user_id = current_user.id
 
     db.commit()
     db.refresh(product)
 
     return product
+
+def release_expired_reservations(db: Session):
+    expired_products = (
+        db.query(Product)
+        .filter(
+            Product.status == "reservada",
+            Product.reserved_until < datetime.now()
+        )
+        .all()
+    )
+
+    for product in expired_products:
+        product.status = "disponivel"
+        product.reserved_until = None
+        product.reserved_by_user_id = None
+
+    if expired_products:
+        db.commit()
 
 
 def get_pix_qrcode(db: Session, product_id: int) -> Response:
@@ -115,8 +135,7 @@ def update_product(db: Session,product_id: int,data: ProductUpdate,current_user:
 
     return product
 
-def delete_product(db: Session,product_id: int,current_user: User):
-
+def delete_product(db: Session, product_id: int, current_user: User):
     product = db.query(Product).filter(Product.id == product_id).first()
 
     if not product:
@@ -125,10 +144,11 @@ def delete_product(db: Session,product_id: int,current_user: User):
     if product.id_user != current_user.id and current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Você não tem permissão para deletar este produto")
 
-    db.delete(product)
+    product.active = False
     db.commit()
+    db.refresh(product)
 
-    return {"message": "Produto deletado com sucesso"}
+    return {"message": "Produto removido com sucesso"}
 
 def get_product_label_data(db: Session, product_id: int) -> ProductLabelDataResponse:
     product = db.query(Product).filter(Product.id == product_id).first()
