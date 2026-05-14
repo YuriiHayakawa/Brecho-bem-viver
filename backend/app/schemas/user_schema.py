@@ -25,3 +25,9 @@ class UserResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+class UserUpdate(BaseModel):
+    name: str | None = None
+    phone: str | None = None
+    pix_key: str | None = None
+    pix_key_type: str | None = None

@@ -1,49 +1,515 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Navbar from '../../components/Navbar/Navbar';
-import { fetchProduct, reserveProduct } from '../../services/api';
+import { fetchProduct, reserveProduct, fetchProductLabelData, createSale } from '../../services/api';
 import './ProductDetailPage.css';
 
 const BASE_URL = 'http://localhost:8000';
 
 const STATUS_LABEL = {
   disponivel: 'Disponível',
-  reservada: 'Reservado',
-  vendida: 'Vendido',
+  reservada:  'Reservado',
+  vendida:    'Vendido',
 };
 
 const PIX_KEY_TYPE_LABEL = {
-  cpf: 'CPF',
-  telefone: 'Telefone',
-  email: 'E-mail',
+  cpf:       'CPF',
+  telefone:  'Telefone',
+  email:     'E-mail',
   aleatoria: 'Chave Aleatória',
 };
 
 const GENDER_LABEL = {
   masculino: 'Masculino',
-  feminino: 'Feminino',
-  unissex: 'Unissex',
-  infantil: 'Infantil',
+  feminino:  'Feminino',
+  unissex:   'Unissex',
+  infantil:  'Infantil',
 };
 
-export default function ProductDetailPage() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+const PIX_KEY_LABEL = {
+  cpf:       'CPF',
+  telefone:  'Telefone',
+  email:     'E-mail',
+  aleatoria: 'Chave Aleatória',
+};
 
-  const [product, setProduct] = useState(null);
+// ─────────────────────────────────────────────
+// Modal de Etiqueta
+// ─────────────────────────────────────────────
+function LabelModal({ productId, productName, onClose }) {
+  const [data, setData]       = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [activeImage, setActiveImage] = useState(0);
-  const [reserving, setReserving] = useState(false);
+  const [error, setError]     = useState('');
+
+  useEffect(() => {
+    fetchProductLabelData(productId)
+      .then(setData)
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
+
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, [productId]);
+
+  function handlePrint() {
+    window.print();
+  }
+
+  return (
+    <div className="label-overlay" onClick={onClose}>
+      <div className="label-modal" onClick={e => e.stopPropagation()}>
+
+        {/* Cabeçalho do modal */}
+        <div className="label-modal-header">
+          <span className="label-modal-title">Etiqueta do produto</span>
+          <button className="label-modal-close" onClick={onClose} aria-label="Fechar">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        {/* Conteúdo */}
+        {loading && (
+          <div className="label-loading">
+            <div className="label-sk" /><div className="label-sk" /><div className="label-sk label-sk--sm" />
+          </div>
+        )}
+
+        {error && (
+          <div className="label-error">
+            <svg viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="10" r="8" stroke="#DC2626" strokeWidth="1.5"/>
+              <path d="M10 6v4M10 13h.01" stroke="#DC2626" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            {error}
+          </div>
+        )}
+
+        {!loading && !error && data && (
+          <>
+            {/* ── A etiqueta em si (prévia no modal) ── */}
+            <div className="label-card">
+
+              {/* Topo azul Sebrae */}
+              <div className="label-top">
+                <div className="label-brand-bars">
+                  <span /><span /><span /><span />
+                </div>
+                <div className="label-brand-text">
+                  <span className="label-brand-name">SEBRAE</span>
+                  <span className="label-brand-sub">Bazar</span>
+                </div>
+                {data.product_code && (
+                  <span className="label-code">#{data.product_code}</span>
+                )}
+              </div>
+
+              {/* Corpo */}
+              <div className="label-body">
+                <h2 className="label-product-name">{data.product_name}</h2>
+
+                <div className="label-price-block">
+                  <span className="label-price-label">Preço</span>
+                  <span className="label-price">
+                    {Number(data.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  </span>
+                </div>
+
+                <div className="label-divider" />
+
+                <div className="label-pix-section">
+                  <div className="label-pix-left">
+                    <p className="label-seller-name">{data.seller_name}</p>
+                    <div className="label-pix-row">
+                      <span className="label-pix-type">{PIX_KEY_LABEL[data.pix_key_type] || data.pix_key_type}</span>
+                      <span className="label-pix-key">{data.pix_key}</span>
+                    </div>
+                    <p className="label-pix-hint">Escaneie o QR Code para pagar via PIX</p>
+                  </div>
+                  <div className="label-qr">
+                    <img
+                      src={`${BASE_URL}${data.qr_code_url}`}
+                      alt="QR Code PIX"
+                    />
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* ── Template de impressão A4 (oculto na tela) ── */}
+            <div id="label-print-area" aria-hidden="true">
+              <div className="lp-page">
+                <div className="lp-card">
+
+                  {/* Header azul Sebrae */}
+                  <div className="lp-header">
+                    <div className="lp-header-diag" />
+                    <div className="lp-header-inner">
+                      <div className="lp-brand-group">
+                        <div className="lp-bars">
+                          <span /><span /><span /><span />
+                        </div>
+                        <div>
+                          <p className="lp-brand-name">SEBRAE</p>
+                          <p className="lp-brand-sub">Bazar Solidário</p>
+                        </div>
+                      </div>
+                      {data.product_code && (
+                        <div className="lp-code-wrap">
+                          <p className="lp-code-label">Código do produto</p>
+                          <p className="lp-code-val">{data.product_code}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Corpo */}
+                  <div className="lp-body">
+
+                    <h1 className="lp-name">{data.product_name}</h1>
+
+                    <div className="lp-price-box">
+                      <div>
+                        <p className="lp-price-lbl">Preço de venda</p>
+                        <p className="lp-price">
+                          {Number(data.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                        </p>
+                      </div>
+                      <svg className="lp-tag-icon" viewBox="0 0 48 48" fill="none">
+                        <path d="M10 10h15.515a3 3 0 012.121.879L41.12 24.364a3 3 0 010 4.243L29.192 40.535a3 3 0 01-4.243 0L10.88 26.05A3 3 0 0110 23.93V10z" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round"/>
+                        <circle cx="17" cy="17" r="2.5" fill="currentColor"/>
+                      </svg>
+                    </div>
+
+                    <div className="lp-sep">
+                      <span className="lp-sep-line" />
+                      <span className="lp-sep-text">Pagamento via PIX</span>
+                      <span className="lp-sep-line" />
+                    </div>
+
+                    <div className="lp-pix-block">
+                      <div className="lp-pix-info">
+                        <p className="lp-seller-lbl">Vendedor</p>
+                        <p className="lp-seller-name">{data.seller_name}</p>
+                        <div className="lp-pix-row">
+                          <span className="lp-pix-type">
+                            {PIX_KEY_LABEL[data.pix_key_type] || data.pix_key_type}
+                          </span>
+                          <span className="lp-pix-key">{data.pix_key}</span>
+                        </div>
+                        <p className="lp-pix-hint">
+                          Escaneie o QR Code ou utilize a chave PIX acima para efetuar o pagamento
+                        </p>
+                      </div>
+                      <div className="lp-qr">
+                        <img src={`${BASE_URL}${data.qr_code_url}`} alt="QR Code PIX" />
+                        <span className="lp-qr-badge">PIX</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Rodapé */}
+                  <div className="lp-footer">
+                    <div className="lp-footer-bars">
+                      <span /><span /><span /><span />
+                    </div>
+                    <p className="lp-footer-text">
+                      Bazar Solidário Sebrae · Adquira com propósito e apoie o empreendedorismo
+                    </p>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            {/* Ação */}
+            <div className="label-actions">
+              <button className="label-btn-print" onClick={handlePrint}>
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M5 7V3h10v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <rect x="3" y="7" width="14" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+                  <path d="M7 15v2h6v-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="15" cy="11" r="1" fill="currentColor"/>
+                </svg>
+                Imprimir etiqueta
+              </button>
+            </div>
+          </>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
+// Modal de Registrar Venda
+// ─────────────────────────────────────────────
+function SaleModal({ product, onClose, onSuccess }) {
+  const [form, setForm] = useState({
+    buyer_name: '',
+    buyer_phone: '',
+    sale_value: product.price ?? '',
+  });
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState('');
+  const [success, setSuccess]   = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      await createSale({
+        product_code: product.code,
+        buyer_name:   form.buyer_name.trim(),
+        buyer_phone:  form.buyer_phone.trim() || undefined,
+        sale_value:   parseFloat(form.sale_value),
+      });
+      setSuccess(true);
+      setTimeout(() => { onSuccess(); onClose(); }, 1800);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="sale-overlay" onClick={onClose}>
+      <div className="sale-modal" onClick={e => e.stopPropagation()}>
+
+        {/* Cabeçalho */}
+        <div className="sale-modal-header">
+          <div className="sale-modal-title-group">
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="M4 4h12v2H4V4zM4 8h12v8a1 1 0 01-1 1H5a1 1 0 01-1-1V8z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+              <path d="M7 11h2M7 14h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            <span>Registrar venda</span>
+          </div>
+          <button className="label-modal-close" onClick={onClose} aria-label="Fechar">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        {/* Info do produto */}
+        <div className="sale-product-info">
+          {product.code && <span className="sale-product-code">{product.code}</span>}
+          <span className="sale-product-name">{product.name}</span>
+        </div>
+
+        {success ? (
+          <div className="sale-success-msg">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd"/>
+            </svg>
+            <div>
+              <strong>Venda registrada com sucesso!</strong>
+              <p>O produto foi marcado como vendido.</p>
+            </div>
+          </div>
+        ) : (
+          <form className="sale-form" onSubmit={handleSubmit}>
+
+            <div className="sale-field">
+              <label htmlFor="sf-buyer-name">Nome do comprador <span>*</span></label>
+              <input
+                id="sf-buyer-name"
+                type="text"
+                required
+                placeholder="Ex.: Maria Silva"
+                value={form.buyer_name}
+                onChange={e => setForm({ ...form, buyer_name: e.target.value })}
+              />
+            </div>
+
+            <div className="sale-field">
+              <label htmlFor="sf-buyer-phone">Telefone do comprador <span className="optional">(opcional)</span></label>
+              <input
+                id="sf-buyer-phone"
+                type="tel"
+                placeholder="Ex.: (11) 98765-4321"
+                value={form.buyer_phone}
+                onChange={e => setForm({ ...form, buyer_phone: e.target.value })}
+              />
+            </div>
+
+            <div className="sale-field">
+              <label htmlFor="sf-sale-value">Valor da venda (R$) <span>*</span></label>
+              <input
+                id="sf-sale-value"
+                type="number"
+                step="0.01"
+                min="0"
+                required
+                placeholder="0,00"
+                value={form.sale_value}
+                onChange={e => setForm({ ...form, sale_value: e.target.value })}
+              />
+            </div>
+
+            {error && (
+              <p className="sale-error">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
+                </svg>
+                {error}
+              </p>
+            )}
+
+            <div className="sale-actions">
+              <button type="button" className="sale-btn-cancel" onClick={onClose}>
+                Cancelar
+              </button>
+              <button type="submit" className="sale-btn-submit" disabled={loading}>
+                {loading ? (
+                  <>
+                    <svg className="spinner" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="60" strokeDashoffset="15"/>
+                    </svg>
+                    Registrando...
+                  </>
+                ) : (
+                  <>
+                    <svg viewBox="0 0 20 20" fill="none">
+                      <path d="M10 3v14M3 10h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    Confirmar venda
+                  </>
+                )}
+              </button>
+            </div>
+
+          </form>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
+// Lightbox
+// ─────────────────────────────────────────────
+function Lightbox({ images, startIndex, productName, onClose }) {
+  const [index, setIndex] = useState(startIndex);
+
+  const prev = useCallback(() => setIndex(i => (i - 1 + images.length) % images.length), [images.length]);
+  const next = useCallback(() => setIndex(i => (i + 1) % images.length), [images.length]);
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === 'Escape')     onClose();
+      if (e.key === 'ArrowLeft')  prev();
+      if (e.key === 'ArrowRight') next();
+    }
+    window.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [onClose, prev, next]);
+
+  const url = `${BASE_URL}${images[index].image_url}`;
+
+  return (
+    <div className="lb-overlay" onClick={onClose}>
+
+      {/* Barra superior */}
+      <div className="lb-topbar" onClick={e => e.stopPropagation()}>
+        <span className="lb-title">{productName}</span>
+        <div className="lb-topbar-right">
+          <span className="lb-counter">{index + 1} / {images.length}</span>
+          <button className="lb-close" onClick={onClose} aria-label="Fechar">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Imagem central */}
+      <div className="lb-stage" onClick={e => e.stopPropagation()}>
+        {images.length > 1 && (
+          <button className="lb-arrow lb-arrow--left" onClick={prev} aria-label="Anterior">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        )}
+
+        <div className="lb-img-wrapper">
+          <img
+            key={url}
+            src={url}
+            alt={`${productName} — foto ${index + 1}`}
+            className="lb-img"
+          />
+        </div>
+
+        {images.length > 1 && (
+          <button className="lb-arrow lb-arrow--right" onClick={next} aria-label="Próxima">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        )}
+      </div>
+
+      {/* Thumbnails */}
+      {images.length > 1 && (
+        <div className="lb-thumbs" onClick={e => e.stopPropagation()}>
+          {images.map((img, i) => (
+            <button
+              key={img.id}
+              className={`lb-thumb ${i === index ? 'active' : ''}`}
+              onClick={() => setIndex(i)}
+            >
+              <img src={`${BASE_URL}${img.image_url}`} alt={`miniatura ${i + 1}`} />
+            </button>
+          ))}
+        </div>
+      )}
+
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
+// Página principal
+// ─────────────────────────────────────────────
+export default function ProductDetailPage() {
+  const { id }     = useParams();
+  const navigate   = useNavigate();
+
+  const [product, setProduct]           = useState(null);
+  const [loading, setLoading]           = useState(true);
+  const [error, setError]               = useState('');
+  const [activeImage, setActiveImage]   = useState(0);
+  const [lightbox, setLightbox]         = useState(null); // null | index
+  const [reserving, setReserving]       = useState(false);
   const [reserveSuccess, setReserveSuccess] = useState(false);
   const [reserveError, setReserveError] = useState('');
-  const [pixCopied, setPixCopied] = useState(false);
+  const [pixCopied, setPixCopied]       = useState(false);
+  const [labelOpen, setLabelOpen]       = useState(false);
+  const [saleOpen, setSaleOpen]         = useState(false);
 
-  const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+  const user    = JSON.parse(sessionStorage.getItem('user') || '{}');
+  const isAdmin = user.role === 'admin';
 
   useEffect(() => {
     fetchProduct(id)
-      .then(data => { setProduct(data); })
+      .then(data => setProduct(data))
       .catch(() => setError('Produto não encontrado.'))
       .finally(() => setLoading(false));
   }, [id]);
@@ -52,7 +518,7 @@ export default function ProductDetailPage() {
     setReserving(true);
     setReserveError('');
     try {
-      const updated = await reserveProduct(id, user.id);
+      const updated = await reserveProduct(id);
       setProduct(updated);
       setReserveSuccess(true);
     } catch (err) {
@@ -62,33 +528,6 @@ export default function ProductDetailPage() {
     }
   }
 
-  if (loading) return (
-    <div className="detail-wrapper">
-      <Navbar />
-      <div className="detail-loading">
-        <div className="detail-skeleton" />
-      </div>
-    </div>
-  );
-
-  if (error || !product) return (
-    <div className="detail-wrapper">
-      <Navbar />
-      <div className="detail-error">
-        <p>{error || 'Produto não encontrado.'}</p>
-        <button onClick={() => navigate('/catalogo')}>← Voltar ao catálogo</button>
-      </div>
-    </div>
-  );
-
-  const images = product.images || [];
-  const activeImageUrl = images[activeImage]
-    ? `http://localhost:8000${images[activeImage].image_url}`
-    : null;
-
-  const isReservedByMe = product.reserved_by_user_id === user.id;
-  const seller = product.user;
-
   function handleCopyPix() {
     if (!seller?.pix_key) return;
     navigator.clipboard.writeText(seller.pix_key);
@@ -96,25 +535,106 @@ export default function ProductDetailPage() {
     setTimeout(() => setPixCopied(false), 2500);
   }
 
+  if (loading) return (
+    <div className="detail-wrapper">
+      <div className="detail-loading"><div className="detail-skeleton" /></div>
+    </div>
+  );
+
+  if (error || !product) return (
+    <div className="detail-wrapper">
+      <div className="detail-error">
+        <p>{error || 'Produto não encontrado.'}</p>
+        <button onClick={() => navigate('/catalogo')}>← Voltar ao catálogo</button>
+      </div>
+    </div>
+  );
+
+  const images          = product.images || [];
+  const activeImageUrl  = images[activeImage] ? `${BASE_URL}${images[activeImage].image_url}` : null;
+  const isReservedByMe  = product.reserved_by_user_id === user.id;
+  const seller          = product.user;
+
   return (
     <div className="detail-wrapper">
-      <Navbar />
+      {/* Lightbox */}
+      {lightbox !== null && images.length > 0 && (
+        <Lightbox
+          images={images}
+          startIndex={lightbox}
+          productName={product.name}
+          onClose={() => setLightbox(null)}
+        />
+      )}
+
+      {labelOpen && (
+        <LabelModal
+          productId={id}
+          productName={product.name}
+          onClose={() => setLabelOpen(false)}
+        />
+      )}
+
+      {saleOpen && (
+        <SaleModal
+          product={product}
+          onClose={() => setSaleOpen(false)}
+          onSuccess={() => fetchProduct(id).then(setProduct).catch(() => {})}
+        />
+      )}
 
       <main className="detail-main">
-        {/* Breadcrumb */}
-        <button className="back-btn" onClick={() => navigate('/catalogo')}>
-          <svg viewBox="0 0 20 20" fill="none">
-            <path d="M12 4l-6 6 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          Voltar ao catálogo
-        </button>
+        <div className="detail-topbar">
+          <button className="back-btn" onClick={() => navigate('/catalogo')}>
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="M12 4l-6 6 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Voltar ao catálogo
+          </button>
+
+          {isAdmin && (
+            <div className="detail-admin-actions">
+              <button className="label-trigger-btn" onClick={() => setLabelOpen(true)}>
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M4 4h5.172a2 2 0 011.414.586l5.828 5.828a2 2 0 010 2.828l-3.172 3.172a2 2 0 01-2.828 0L4.586 10.586A2 2 0 014 9.172V4z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                  <circle cx="7.5" cy="7.5" r="1" fill="currentColor"/>
+                </svg>
+                Gerar etiqueta
+              </button>
+
+              <button className="sale-trigger-btn" onClick={() => setSaleOpen(true)}>
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M3 3h14l-1.5 9H4.5L3 3z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                  <circle cx="7" cy="16" r="1.25" fill="currentColor"/>
+                  <circle cx="13" cy="16" r="1.25" fill="currentColor"/>
+                  <path d="M7 9h6M7 11.5h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+                Registrar venda
+              </button>
+            </div>
+          )}
+        </div>
 
         <div className="detail-content">
-          {/* Galeria */}
+          {/* ── Galeria ── */}
           <div className="detail-gallery">
-            <div className="gallery-main">
+            <div
+              className="gallery-main"
+              onClick={() => images.length > 0 && setLightbox(activeImage)}
+              style={{ cursor: images.length > 0 ? 'zoom-in' : 'default' }}
+            >
               {activeImageUrl ? (
-                <img src={activeImageUrl} alt={product.name} />
+                <>
+                  <img src={activeImageUrl} alt={product.name} />
+                  <div className="gallery-zoom-hint">
+                    <svg viewBox="0 0 20 20" fill="none">
+                      <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" strokeWidth="1.5"/>
+                      <path d="M13 13l3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      <path d="M8.5 6.5v4M6.5 8.5h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                    Ampliar
+                  </div>
+                </>
               ) : (
                 <div className="gallery-placeholder">
                   <div className="gallery-bars">
@@ -136,14 +656,14 @@ export default function ProductDetailPage() {
                     className={`thumb ${i === activeImage ? 'active' : ''}`}
                     onClick={() => setActiveImage(i)}
                   >
-                    <img src={`http://localhost:8000${img.image_url}`} alt={`Foto ${i + 1}`} />
+                    <img src={`${BASE_URL}${img.image_url}`} alt={`Foto ${i + 1}`} />
                   </button>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Informações */}
+          {/* ── Informações ── */}
           <div className="detail-info">
             <div className="detail-header">
               {product.code && <span className="detail-code">{product.code}</span>}
@@ -193,7 +713,6 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            {/* Ação de reserva */}
             <div className="detail-action">
               {reserveSuccess || (product.status === 'reservada' && isReservedByMe) ? (
                 <div className="reserve-success">
@@ -207,14 +726,8 @@ export default function ProductDetailPage() {
                 </div>
               ) : product.status === 'disponivel' ? (
                 <>
-                  {reserveError && (
-                    <p className="reserve-error">{reserveError}</p>
-                  )}
-                  <button
-                    className="btn-reserve"
-                    onClick={handleReserve}
-                    disabled={reserving}
-                  >
+                  {reserveError && <p className="reserve-error">{reserveError}</p>}
+                  <button className="btn-reserve" onClick={handleReserve} disabled={reserving}>
                     {reserving ? (
                       <span className="btn-loading">
                         <svg className="spinner" viewBox="0 0 24 24" fill="none">
@@ -222,9 +735,7 @@ export default function ProductDetailPage() {
                         </svg>
                         Reservando...
                       </span>
-                    ) : (
-                      'Reservar produto'
-                    )}
+                    ) : 'Reservar produto'}
                   </button>
                   <p className="reserve-notice">A reserva é válida por 48 horas</p>
                 </>
@@ -236,13 +747,10 @@ export default function ProductDetailPage() {
                   Este produto já está reservado
                 </div>
               ) : (
-                <div className="unavailable-badge sold">
-                  Este produto já foi vendido
-                </div>
+                <div className="unavailable-badge sold">Este produto já foi vendido</div>
               )}
             </div>
 
-            {/* ── Seção PIX ── */}
             {seller && (
               <div className="pix-section">
                 <div className="pix-header">
@@ -255,16 +763,10 @@ export default function ProductDetailPage() {
                   </svg>
                   <h3>Pagamento via PIX</h3>
                 </div>
-
                 <div className="pix-body">
                   <div className="pix-qrcode-wrapper">
-                    <img
-                      src={`${BASE_URL}/products/${product.id}/pix-qrcode`}
-                      alt="QR Code PIX"
-                      className="pix-qrcode-img"
-                    />
+                    <img src={`${BASE_URL}/products/${product.id}/pix-qrcode`} alt="QR Code PIX" className="pix-qrcode-img"/>
                   </div>
-
                   <div className="pix-info">
                     <div className="pix-seller-name">
                       <svg viewBox="0 0 20 20" fill="currentColor">
@@ -272,14 +774,10 @@ export default function ProductDetailPage() {
                       </svg>
                       <span>{seller.name}</span>
                     </div>
-
                     <div className="pix-key-row">
-                      <span className="pix-key-type-badge">
-                        {PIX_KEY_TYPE_LABEL[seller.pix_key_type] || seller.pix_key_type}
-                      </span>
+                      <span className="pix-key-type-badge">{PIX_KEY_TYPE_LABEL[seller.pix_key_type] || seller.pix_key_type}</span>
                       <span className="pix-key-value">{seller.pix_key}</span>
                     </div>
-
                     <button className="btn-copy-pix" onClick={handleCopyPix}>
                       {pixCopied ? (
                         <>
@@ -298,10 +796,7 @@ export default function ProductDetailPage() {
                         </>
                       )}
                     </button>
-
-                    <p className="pix-notice">
-                      Escaneie o QR Code ou copie a chave para pagar
-                    </p>
+                    <p className="pix-notice">Escaneie o QR Code ou copie a chave para pagar</p>
                   </div>
                 </div>
               </div>

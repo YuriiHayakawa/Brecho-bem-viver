@@ -1,97 +1,76 @@
-from datetime import datetime, timedelta
+from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import Response
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from app.database import get_db
-from app.models.product import Product
+from app.api.deps.auth_deps import get_current_user
+from app.api.deps.auth_deps import require_admin
 from app.models.user import User
-from app.schemas.product_schema import ProductCreate, ProductResponse, ReserveRequest
-from app.utils.pix import generate_pix_qrcode_png
+from app.database import get_db
+from app.schemas.product_schema import ProductCreate, ProductUpdate, ProductResponse, ReserveRequest
+from app.schemas.product_label_schema import ProductLabelDataResponse
+from app.services import product_service
 
 router = APIRouter()
 
 
 @router.get("/", response_model=list[ProductResponse], summary="Listar produtos")
-def list_products(db: Session = Depends(get_db)):
-    return db.query(Product).filter(Product.active == True).all()
+def list_products(
+    user_id: Optional[int] = Query(None, description="Filtrar por dono do produto"),
+    db: Session = Depends(get_db),
+):
+    return product_service.list_products(db, user_id)
 
 
 @router.get("/{product_id}", response_model=ProductResponse, summary="Detalhe do produto")
 def get_product(product_id: int, db: Session = Depends(get_db)):
-    product = db.query(Product).filter(Product.id == product_id).first()
-    if not product:
-        raise HTTPException(status_code=404, detail="Produto não encontrado")
-    return product
+    return product_service.get_product(db, product_id)
 
 
-@router.patch("/{product_id}/reserve", response_model=ProductResponse, summary="Reservar produto")
-def reserve_product(product_id: int, data: ReserveRequest, db: Session = Depends(get_db)):
-    product = db.query(Product).filter(Product.id == product_id).first()
-    if not product:
-        raise HTTPException(status_code=404, detail="Produto não encontrado")
-
-    if product.status != "disponivel":
-        raise HTTPException(status_code=400, detail="Produto não está disponível para reserva")
-
-    user = db.query(User).filter(User.id == data.user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="Usuário não encontrado")
-
-    product.status = "reservada"
-    product.reserved_until = datetime.now() + timedelta(hours=48)
-    product.reserved_by_user_id = data.user_id
-
-    db.commit()
-    db.refresh(product)
-    return product
+@router.patch("/{product_id}/reserve", response_model=ProductResponse)
+def reserve_product(
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return product_service.reserve_product(db, product_id, current_user)
 
 
 @router.get("/{product_id}/pix-qrcode", summary="QR Code PIX do vendedor")
 def get_pix_qrcode(product_id: int, db: Session = Depends(get_db)):
-    product = db.query(Product).filter(Product.id == product_id).first()
-    if not product:
-        raise HTTPException(status_code=404, detail="Produto não encontrado")
-
-    seller = db.query(User).filter(User.id == product.id_user).first()
-    if not seller:
-        raise HTTPException(status_code=404, detail="Vendedor não encontrado")
-
-    png_bytes = generate_pix_qrcode_png(
-        pix_key=seller.pix_key,
-        pix_key_type=seller.pix_key_type,
-        seller_name=seller.name,
-    )
-
-    return Response(content=png_bytes, media_type="image/png")
+    return product_service.get_pix_qrcode(db, product_id)
 
 
 @router.post("/", response_model=ProductResponse, summary="Criar Produto")
-def create_product(product: ProductCreate, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == product.id_user).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+def create_product(
+    product: ProductCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return product_service.create_product(db, product, current_user)
 
-    new_product = Product(
-        name=product.name,
-        description=product.description,
-        defect_description=product.defect_description,
-        has_defect=bool(product.defect_description and product.defect_description.strip()),
-        size=product.size,
-        category=product.category,
-        brand=product.brand,
-        gender=product.gender,
-        price=product.price,
-        id_user=product.id_user
-    )
 
-    db.add(new_product)
-    db.commit()
-    db.refresh(new_product)
+@router.put("/{product_id}", response_model=ProductResponse, summary="Atualizar produto")
+def update_product(
+    product_id: int,
+    data: ProductUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return product_service.update_product(db, product_id, data, current_user)
 
-    new_product.code = f"BZR-{new_product.id:04d}"
-    db.commit()
-    db.refresh(new_product)
+@router.delete("/{product_id}", summary="Deletar produto")
+def delete_product(
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return product_service.delete_product(db, product_id, current_user)
 
-    return new_product
+@router.get("/{product_id}/label-data",response_model=ProductLabelDataResponse,summary="Dados da etiqueta do produto")
+def get_product_label_data(
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    return product_service.get_product_label_data(db, product_id)

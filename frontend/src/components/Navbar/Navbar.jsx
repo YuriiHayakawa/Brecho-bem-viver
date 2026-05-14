@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './Navbar.css';
 
@@ -38,6 +39,18 @@ const NAV_ITEMS = [
     ),
   },
   {
+    key: 'meus-produtos',
+    label: 'Meus Produtos',
+    path: '/meus-produtos',
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M3 4h2l1.5 7h8l1.5-5H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="9" cy="15.5" r="1.25" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="14" cy="15.5" r="1.25" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+    ),
+  },
+  {
     key: 'orientacoes',
     label: 'Orientações',
     path: '/orientacoes',
@@ -61,77 +74,104 @@ const NAV_ITEMS = [
   },
 ];
 
-export default function Navbar() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+export default function Navbar({ collapsed, onToggle, mobileOpen, onCloseMobile }) {
+  const navigate  = useNavigate();
+  const location  = useLocation();
+  const user      = JSON.parse(sessionStorage.getItem('user') || '{}');
+
+  // fecha sidebar mobile ao mudar de rota
+  useEffect(() => { onCloseMobile?.(); }, [location.pathname]);
 
   function handleLogout() {
+    sessionStorage.removeItem('token');
     sessionStorage.removeItem('user');
     navigate('/login');
   }
 
-  function isActive(path) {
-    return location.pathname === path;
+  function go(path) {
+    navigate(path);
+    onCloseMobile?.();
   }
 
-  return (
-    <nav className="navbar">
-      <div className="navbar-inner">
+  const initials = user.name
+    ? user.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
+    : 'U';
 
-        {/* Logo */}
-        <button className="navbar-logo" onClick={() => navigate('/dashboard')}>
-          <div className="navbar-bars">
-            <span className="nb bar-1" />
-            <span className="nb bar-2" />
-            <span className="nb bar-3" />
-            <span className="nb bar-4" />
+  return (
+    <aside className={`sidebar ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : ''}`}>
+
+      {/* ── Cabeçalho ── */}
+      <div className="sb-head">
+        <button className="sb-logo" onClick={() => go('/dashboard')}>
+          <div className="sb-bars">
+            <span /><span /><span /><span />
           </div>
-          <div className="navbar-brand">
-            <span className="navbar-sebrae">SEBRAE</span>
-            <span className="navbar-bazar">Bazar</span>
+          <div className="sb-brand">
+            <span className="sb-name">SEBRAE</span>
+            <span className="sb-sub">Bazar</span>
           </div>
         </button>
 
-        {/* Nav central */}
-        <ul className="navbar-nav">
-          {NAV_ITEMS.map((item) => (
-            <li key={item.key} className="nav-item">
-              <button
-                className={`nav-link ${isActive(item.path) ? 'active' : ''}`}
-                onClick={() => navigate(item.path)}
-              >
-                <span className="nav-icon">{item.icon}</span>
-                <span className="nav-label">{item.label}</span>
-                <span className="nav-indicator" />
-              </button>
-            </li>
-          ))}
-        </ul>
-
-        {/* Usuário + logout */}
-        <div className="navbar-user">
-          <button
-            className="navbar-user-info"
-            onClick={() => navigate('/perfil')}
-            title="Ver perfil"
-          >
-            <div className="navbar-avatar">
-              {user.name?.charAt(0).toUpperCase() || 'U'}
-            </div>
-            <span className="navbar-user-name">{user.name?.split(' ')[0] || 'Usuário'}</span>
-          </button>
-
-          <button className="navbar-logout" onClick={handleLogout} title="Sair">
-            <svg viewBox="0 0 20 20" fill="none">
-              <path d="M7 3H4a1 1 0 00-1 1v12a1 1 0 001 1h3M13 14l3-4-3-4M16 10H7"
-                stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            <span>Sair</span>
-          </button>
-        </div>
-
+        <button className="sb-toggle" onClick={onToggle} title={collapsed ? 'Expandir' : 'Recolher'}>
+          <svg viewBox="0 0 20 20" fill="none">
+            {collapsed
+              ? <path d="M7 4l6 6-6 6" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
+              : <path d="M13 4l-6 6 6 6" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
+            }
+          </svg>
+        </button>
       </div>
-    </nav>
+
+      {/* ── Separador decorativo ── */}
+      <div className="sb-divider">
+        <span className="sb-divider-bar d1" />
+        <span className="sb-divider-bar d2" />
+        <span className="sb-divider-bar d3" />
+      </div>
+
+      {/* ── Navegação ── */}
+      <nav className="sb-nav">
+        <ul>
+          {NAV_ITEMS.map(item => {
+            const active = location.pathname === item.path;
+            return (
+              <li key={item.key}>
+                <button
+                  className={`sb-item ${active ? 'active' : ''}`}
+                  onClick={() => go(item.path)}
+                  data-tooltip={item.label}
+                >
+                  <span className="sb-item-icon">{item.icon}</span>
+                  <span className="sb-item-label">{item.label}</span>
+                  {active && <span className="sb-item-bar" />}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      {/* ── Usuário + Logout ── */}
+      <div className="sb-footer">
+        <button className="sb-user" onClick={() => go('/perfil')} title="Ver perfil">
+          <div className="sb-avatar">{initials}</div>
+          <div className="sb-user-info">
+            <span className="sb-user-name">{user.name?.split(' ')[0] || 'Usuário'}</span>
+            <span className="sb-user-role">
+              {user.role === 'admin' ? 'Administrador' : user.role === 'vendedor' ? 'Vendedor' : 'Usuário'}
+            </span>
+          </div>
+        </button>
+
+        <button className="sb-logout" onClick={handleLogout} title="Sair">
+          <svg viewBox="0 0 20 20" fill="none">
+            <path d="M7 3H4a1 1 0 00-1 1v12a1 1 0 001 1h3M13 14l3-4-3-4M16 10H7"
+              stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <span className="sb-item-label">Sair</span>
+        </button>
+      </div>
+
+    </aside>
   );
 }

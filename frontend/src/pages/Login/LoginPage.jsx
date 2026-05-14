@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginUser, registerUser } from '../../services/api';
+import { loginUser, registerUser, fetchCurrentUser } from '../../services/api';
 import './LoginPage.css';
 
 const PIX_TYPES = [
@@ -135,7 +135,9 @@ function LoginForm() {
     setError('');
     setLoading(true);
     try {
-      const user = await loginUser(email, password);
+      const { access_token } = await loginUser(email, password);
+      sessionStorage.setItem('token', access_token);
+      const user = await fetchCurrentUser();
       sessionStorage.setItem('user', JSON.stringify(user));
       navigate('/catalogo');
     } catch (err) {
@@ -234,9 +236,11 @@ function RegisterForm({ onSuccess }) {
         pix_key_type: form.pix_key_type,
       });
       // Loga automaticamente após o cadastro
-      const user = await loginUser(form.email, form.password);
+      const { access_token } = await loginUser(form.email, form.password);
+      sessionStorage.setItem('token', access_token);
+      const user = await fetchCurrentUser();
       sessionStorage.setItem('user', JSON.stringify(user));
-      navigate('/dashboard');
+      navigate('/catalogo');
     } catch (err) {
       setError(err.message);
     } finally {
