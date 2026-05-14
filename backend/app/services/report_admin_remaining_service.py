@@ -1,3 +1,4 @@
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from app.models.product import Product
@@ -7,16 +8,30 @@ from app.schemas.report_admin_remaining_schema import AdminRemainingProductItem
 
 def get_admin_remaining_products(
     db: Session,
-    name: str | None = None
+    search: str | None = None,
+    status: str | None = None,
 ) -> list[AdminRemainingProductItem]:
     query = (
         db.query(Product, User)
         .join(User, User.id == Product.id_user)
-        .filter(Product.active.is_(True))
+        .filter(
+            (Product.active.is_(True)) | (Product.status == "vendida")
+        )
     )
 
-    if name:
-        query = query.filter(User.name.ilike(f"%{name}%"))
+    if search:
+        term = f"%{search}%"
+        query = query.filter(
+            or_(
+                Product.name.ilike(term),
+                Product.code.ilike(term),
+                User.name.ilike(term),
+                Product.category.ilike(term),
+            )
+        )
+
+    if status:
+        query = query.filter(Product.status == status)
 
     rows = query.order_by(User.name.asc(), Product.created_at.desc()).all()
 

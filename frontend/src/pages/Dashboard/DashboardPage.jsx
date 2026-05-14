@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchMyReport } from '../../services/api';
+import { fetchMyReport, fetchAdminSummary, fetchAdminRemainingProducts } from '../../services/api';
 import './DashboardPage.css';
 
 /* ─────────────────────────────────────────────
@@ -119,11 +119,413 @@ function DonutRing({ total, sold, active }) {
 }
 
 /* ─────────────────────────────────────────────
+   Admin Dashboard
+   ───────────────────────────────────────────── */
+const STATUS_LABEL_ADM = { disponivel: 'Disponível', reservada: 'Reservado', vendida: 'Vendido' };
+
+function AdminDashboard({ user }) {
+  const navigate  = useNavigate();
+  const firstName = user.name?.split(' ')[0] || 'Admin';
+
+  // ── Resumo ──
+  const [summary, setSummary] = useState(null);
+  const [loadSum, setLoadSum] = useState(true);
+  const [errorSum, setErrorSum] = useState('');
+
+  // ── Produtos ──
+  const [allProducts, setAllProducts] = useState([]);
+  const [loadProd, setLoadProd] = useState(true);
+
+  // ── Filtros ──
+  const [search, setSearch]           = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+
+  // ── Paginação ──
+  const [page, setPage]       = useState(1);
+  const [perPage, setPerPage] = useState(10);
+
+  useEffect(() => {
+    fetchAdminSummary()
+      .then(setSummary)
+      .catch(() => setErrorSum('Não foi possível carregar o resumo.'))
+      .finally(() => setLoadSum(false));
+  }, []);
+
+  useEffect(() => {
+    fetchAdminRemainingProducts()
+      .then(setAllProducts)
+      .catch(() => setAllProducts([]))
+      .finally(() => setLoadProd(false));
+  }, []);
+
+  // Filtro client-side
+  const filtered = (() => {
+    let r = allProducts;
+    if (statusFilter) r = r.filter(p => p.status === statusFilter);
+    if (search.trim()) {
+      const t = search.trim().toLowerCase();
+      r = r.filter(p =>
+        p.product_name.toLowerCase().includes(t) ||
+        (p.product_code || '').toLowerCase().includes(t) ||
+        p.seller_name.toLowerCase().includes(t) ||
+        p.category.toLowerCase().includes(t)
+      );
+    }
+    return r;
+  })();
+
+  // Reset para pag 1 ao filtrar
+  useEffect(() => { setPage(1); }, [search, statusFilter]);
+
+  // Contagens por status
+  const counts = {
+    total:      allProducts.length,
+    disponivel: allProducts.filter(p => p.status === 'disponivel').length,
+    reservada:  allProducts.filter(p => p.status === 'reservada').length,
+    vendida:    allProducts.filter(p => p.status === 'vendida').length,
+  };
+
+  // Paginação
+  const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+  const startIdx   = (page - 1) * perPage;
+  const paginated  = filtered.slice(startIdx, startIdx + perPage);
+
+  const pageNums = [];
+  for (let i = Math.max(1, page - 2); i <= Math.min(totalPages, page + 2); i++) {
+    pageNums.push(i);
+  }
+
+  function fmtDate(iso) {
+    return new Date(iso).toLocaleDateString('pt-BR');
+  }
+
+  function sellerInitials(name) {
+    return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+  }
+
+  return (
+    <main className="db-page">
+
+      {/* ── Hero ── */}
+      <div className="db-hero">
+        <div className="db-hero-diagonal" />
+        <div className="db-hero-inner db-hero-inner--admin">
+          <div className="db-hero-left">
+            <div className="db-hero-bars"><span /><span /><span /><span /></div>
+            <div className="db-hero-text">
+              <p className="db-greeting">{greeting()},</p>
+              <h1 className="db-hero-title">{firstName}!</h1>
+              <p className="db-hero-date">{todayLabel()}</p>
+            </div>
+          </div>
+          <span className="db-admin-badge">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd"/>
+            </svg>
+            Administrador
+          </span>
+        </div>
+      </div>
+
+      <div className="db-body">
+
+        {/* ── Cards de resumo ── */}
+        {errorSum && (
+          <div className="db-error-state">
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" stroke="#DC2626" strokeWidth="1.5"/>
+              <path d="M12 8v4M12 16h.01" stroke="#DC2626" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            <p>{errorSum}</p>
+          </div>
+        )}
+
+        {loadSum && (
+          <div className="db-sk-row db-sk-row--5">
+            {[...Array(5)].map((_, i) => <div key={i} className="db-sk db-sk--card" />)}
+          </div>
+        )}
+
+        {!loadSum && summary && (
+          <div className="db-stat-grid db-stat-grid--5">
+            <div className="db-stat-card db-stat--blue">
+              <div className="db-stat-icon">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+                  <rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+                  <rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+                  <rect x="11" y="11" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+                </svg>
+              </div>
+              <div className="db-stat-body">
+                <span className="db-stat-value">{summary.total_products}</span>
+                <span className="db-stat-label">Total de produtos</span>
+              </div>
+            </div>
+            <div className="db-stat-card db-stat--green">
+              <div className="db-stat-icon">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M4 10.5l4 4 8-8" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div className="db-stat-body">
+                <span className="db-stat-value">{summary.remaining_products}</span>
+                <span className="db-stat-label">Ativos no bazar</span>
+              </div>
+            </div>
+            <div className="db-stat-card db-stat--indigo">
+              <div className="db-stat-icon">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M3 4h2l1.5 7h8l1.5-5H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="9" cy="15.5" r="1.25" stroke="currentColor" strokeWidth="1.5"/>
+                  <circle cx="14" cy="15.5" r="1.25" stroke="currentColor" strokeWidth="1.5"/>
+                </svg>
+              </div>
+              <div className="db-stat-body">
+                <span className="db-stat-value">{summary.sold_products}</span>
+                <span className="db-stat-label">Vendidos</span>
+              </div>
+            </div>
+            <div className="db-stat-card db-stat--blue2">
+              <div className="db-stat-icon">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M10 2v16M5 6l5-4 5 4M5 14l5 4 5-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div className="db-stat-body">
+                <span className="db-stat-value db-stat-value--sm">{fmtBRL(summary.total_sales_value)}</span>
+                <span className="db-stat-label">Total arrecadado</span>
+              </div>
+            </div>
+            <div className="db-stat-card db-stat--rose">
+              <div className="db-stat-icon">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
+                </svg>
+              </div>
+              <div className="db-stat-body">
+                <span className="db-stat-value db-stat-value--sm">{fmtBRL(summary.total_expected_donation)}</span>
+                <span className="db-stat-label">Contribuição social</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── Painel de gestão de produtos ── */}
+        <div className="adm-panel">
+
+          {/* Header do painel */}
+          <div className="adm-header">
+            <div className="adm-header-brand">
+              <div className="adm-header-bars">
+                <span /><span /><span /><span />
+              </div>
+              <div>
+                <h2 className="adm-panel-title">Gestão de Produtos</h2>
+                <p className="adm-panel-sub">
+                  {loadProd
+                    ? 'Carregando...'
+                    : `${filtered.length} produto${filtered.length !== 1 ? 's' : ''}${(search || statusFilter) ? ' encontrado(s)' : ' cadastrado(s)'}`
+                  }
+                </p>
+              </div>
+            </div>
+
+            {/* Busca universal */}
+            <div className="adm-search">
+              <svg viewBox="0 0 20 20" fill="none">
+                <circle cx="9" cy="9" r="5.5" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M13.5 13.5L17 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              <input
+                type="text"
+                placeholder="Buscar por nome, código, vendedor..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+              {search && (
+                <button className="adm-search-clear" onClick={() => setSearch('')} aria-label="Limpar">
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Filtros de status — chips */}
+          <div className="adm-filters">
+            {[
+              { key: '',           label: 'Todos',      count: counts.total,      color: '#0041D9' },
+              { key: 'disponivel', label: 'Disponível', count: counts.disponivel, color: '#059669' },
+              { key: 'reservada',  label: 'Reservado',  count: counts.reservada,  color: '#D97706' },
+              { key: 'vendida',    label: 'Vendido',    count: counts.vendida,    color: '#4338CA' },
+            ].map(f => (
+              <button
+                key={f.key}
+                className={`adm-chip adm-chip--${f.key || 'all'} ${statusFilter === f.key ? 'active' : ''}`}
+                onClick={() => setStatusFilter(f.key)}
+                style={{ '--chip-color': f.color }}
+              >
+                {f.key && <span className="adm-chip-dot" />}
+                {f.label}
+                <span className="adm-chip-badge">{f.count}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Tabela */}
+          <div className="adm-table-scroll">
+            <table className="adm-table">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Produto</th>
+                  <th>Vendedor</th>
+                  <th>Preço</th>
+                  <th>Status</th>
+                  <th>Cadastrado</th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {loadProd ? (
+                  [...Array(8)].map((_, i) => (
+                    <tr key={i} className="adm-sk-row">
+                      {[44, 200, 130, 70, 80, 70, 28].map((w, j) => (
+                        <td key={j}><div className="adm-cell-sk" style={{ width: w }} /></td>
+                      ))}
+                    </tr>
+                  ))
+                ) : paginated.length === 0 ? (
+                  <tr>
+                    <td colSpan={7}>
+                      <div className="adm-empty">
+                        <div className="adm-empty-icon">
+                          <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M21 21l-4.35-4.35M17 11A6 6 0 111 11a6 6 0 0116 0z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                          </svg>
+                        </div>
+                        <p className="adm-empty-title">Nenhum produto encontrado</p>
+                        <p className="adm-empty-sub">
+                          {search ? `Sem resultados para "${search}"` : 'Tente ajustar os filtros'}
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  paginated.map(p => (
+                    <tr
+                      key={p.product_id}
+                      className="adm-row"
+                      onClick={() => navigate(`/products/${p.product_id}`)}
+                    >
+                      <td>
+                        <span className="adm-cell-code">{p.product_code || '—'}</span>
+                      </td>
+                      <td>
+                        <div className="adm-product-cell">
+                          <span className="adm-product-name">{p.product_name}</span>
+                          <span className="adm-product-cat">{p.category}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="adm-cell-seller">
+                          <span className="adm-seller-avatar">{sellerInitials(p.seller_name)}</span>
+                          <span className="adm-seller-name">{p.seller_name}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span className="adm-cell-price">
+                          {Number(p.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                        </span>
+                      </td>
+                      <td>
+                        <span className={`adm-badge adm-badge--${p.status}`}>
+                          <span className="adm-badge-dot" />
+                          {STATUS_LABEL_ADM[p.status] || p.status}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="adm-cell-date">{fmtDate(p.created_at)}</span>
+                      </td>
+                      <td>
+                        <button
+                          className="adm-row-action"
+                          onClick={e => { e.stopPropagation(); navigate(`/products/${p.product_id}`); }}
+                          title="Ver produto"
+                        >
+                          <svg viewBox="0 0 20 20" fill="none">
+                            <path d="M2 10s2.5-5 8-5 8 5 8 5-2.5 5-8 5-8-5-8-5z" stroke="currentColor" strokeWidth="1.5"/>
+                            <circle cx="10" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.5"/>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Paginação */}
+          {!loadProd && filtered.length > 0 && (
+            <div className="adm-pagination">
+              <div className="adm-per-page">
+                <span>Linhas por página</span>
+                <select value={perPage} onChange={e => { setPerPage(Number(e.target.value)); setPage(1); }}>
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                </select>
+              </div>
+
+              <div className="adm-pagination-center">
+                <button className="adm-page-arrow" onClick={() => setPage(p => p - 1)} disabled={page === 1}>
+                  <svg viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </button>
+
+                {page > 3 && (
+                  <><button className="adm-page-num" onClick={() => setPage(1)}>1</button>
+                  <span className="adm-page-dots">···</span></>
+                )}
+                {pageNums.map(n => (
+                  <button
+                    key={n}
+                    className={`adm-page-num ${n === page ? 'active' : ''}`}
+                    onClick={() => setPage(n)}
+                  >{n}</button>
+                ))}
+                {page < totalPages - 2 && (
+                  <><span className="adm-page-dots">···</span>
+                  <button className="adm-page-num" onClick={() => setPage(totalPages)}>{totalPages}</button></>
+                )}
+
+                <button className="adm-page-arrow" onClick={() => setPage(p => p + 1)} disabled={page === totalPages}>
+                  <svg viewBox="0 0 20 20" fill="none"><path d="M8 4l6 6-6 6" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </button>
+              </div>
+
+              <span className="adm-page-info">
+                {startIdx + 1}–{Math.min(startIdx + perPage, filtered.length)} de {filtered.length}
+              </span>
+            </div>
+          )}
+
+        </div>
+      </div>
+    </main>
+  );
+}
+
+/* ─────────────────────────────────────────────
    Page
    ───────────────────────────────────────────── */
 export default function DashboardPage() {
   const navigate  = useNavigate();
   const user      = JSON.parse(sessionStorage.getItem('user') || '{}');
+
+  if (user.role === 'admin') return <AdminDashboard user={user} />;
   const firstName = user.name?.split(' ')[0] || 'Usuário';
 
   const [report, setReport]   = useState(null);

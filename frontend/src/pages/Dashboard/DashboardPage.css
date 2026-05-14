@@ -275,7 +275,7 @@
   color: #9CA3AF;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  white-space: nowrap;
+  line-height: 1.35;
 }
 
 /* ── Grid principal (donut + coluna direita) ── */
@@ -480,6 +480,615 @@
   white-space: nowrap;
 }
 
+/* ═══════════════════════════════════════════════
+   ADMIN DASHBOARD
+   ═══════════════════════════════════════════════ */
+
+/* Hero admin — hero já está definido, só adicionamos o inner flex */
+.db-hero-inner--admin {
+  justify-content: space-between;
+}
+
+.db-admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.9rem;
+  background: rgba(147, 51, 234, 0.25);
+  border: 1px solid rgba(167, 90, 250, 0.45);
+  border-radius: 999px;
+  color: #E9D5FF;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.db-admin-badge svg {
+  width: 13px;
+  height: 13px;
+  opacity: 0.9;
+}
+
+/* Grid de 5 cards */
+.db-stat-grid--5 {
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.875rem;
+}
+
+.db-stat-grid--5 .db-stat-card {
+  padding: 1rem 1rem 0.9rem;
+  gap: 0.75rem;
+}
+
+.db-stat-grid--5 .db-stat-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.db-stat-grid--5 .db-stat-icon svg { width: 19px; height: 19px; }
+
+.db-stat--blue2 {
+  border-top: 3px solid #6366F1;
+}
+.db-stat--blue2 .db-stat-icon {
+  background: #EEF2FF;
+  color: #6366F1;
+}
+
+.db-stat--rose {
+  border-top: 3px solid #F43F5E;
+}
+.db-stat--rose .db-stat-icon {
+  background: #FFF1F2;
+  color: #F43F5E;
+}
+
+.db-stat-value--sm {
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+}
+
+/* Skeleton de 5 colunas */
+.db-sk-row--5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* ═══════════════════════════════════════════════
+   PAINEL DE GESTÃO (adm-*)
+   ═══════════════════════════════════════════════ */
+.adm-panel {
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+/* ── Header do painel — identidade Sebrae ── */
+.adm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1.4rem 1.75rem;
+  background: linear-gradient(135deg, #0023A9 0%, #0041D9 60%, #005EB8 100%);
+  position: relative;
+  overflow: hidden;
+  flex-wrap: wrap;
+}
+
+.adm-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -8deg,
+    transparent,
+    transparent 24px,
+    rgba(255,255,255,0.04) 24px,
+    rgba(255,255,255,0.04) 27px
+  );
+  pointer-events: none;
+}
+
+.adm-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.adm-header-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.adm-header-bars span {
+  display: block;
+  height: 4px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 1px;
+  transform: skewX(-8deg);
+}
+.adm-header-bars span:nth-child(1) { width: 18px; }
+.adm-header-bars span:nth-child(2) { width: 30px; }
+.adm-header-bars span:nth-child(3) { width: 22px; }
+.adm-header-bars span:nth-child(4) { width: 38px; }
+
+.adm-panel-title {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.adm-panel-sub {
+  font-size: 0.775rem;
+  color: rgba(255,255,255,0.62);
+  font-weight: 500;
+  margin: 0.15rem 0 0;
+}
+
+/* Busca — pill branco sobre fundo azul */
+.adm-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.adm-search > svg {
+  position: absolute;
+  left: 0.9rem;
+  width: 14px;
+  height: 14px;
+  color: #6B7280;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.adm-search input {
+  padding: 0.6rem 2.25rem 0.6rem 2.35rem;
+  border: none;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+  width: 280px;
+  outline: none;
+  background: rgba(255,255,255,0.94);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+  transition: box-shadow 0.18s, background 0.18s;
+}
+.adm-search input::placeholder { color: #9CA3AF; }
+.adm-search input:focus {
+  background: #fff;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.22), 0 0 0 3px rgba(255,255,255,0.3);
+}
+
+.adm-search-clear {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9CA3AF;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  transition: color 0.15s;
+}
+.adm-search-clear:hover { color: #374151; }
+.adm-search-clear svg { width: 13px; height: 13px; }
+
+/* ── Chips de filtro de status ── */
+.adm-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.75rem;
+  border-bottom: 1px solid #F1F3F9;
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: #F8F9FD;
+}
+.adm-filters::-webkit-scrollbar { display: none; }
+
+.adm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1.5px solid #E5E7EB;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6B7280;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.adm-chip:hover {
+  border-color: var(--chip-color, #0041D9);
+  color: var(--chip-color, #0041D9);
+  background: #F5F7FF;
+}
+.adm-chip.active {
+  border-color: var(--chip-color, #0041D9);
+  background: var(--chip-color, #0041D9);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.14);
+}
+
+.adm-chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+.adm-chip.active .adm-chip-dot {
+  background: rgba(255,255,255,0.9);
+  opacity: 1;
+}
+
+.adm-chip-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: #EAECF0;
+  color: #6B7280;
+  transition: background 0.15s, color 0.15s;
+}
+.adm-chip.active .adm-chip-badge {
+  background: rgba(255,255,255,0.22);
+  color: #fff;
+}
+.adm-chip:hover:not(.active) .adm-chip-badge {
+  background: rgba(0,0,0,0.07);
+}
+
+/* ── Tabela ── */
+.adm-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+.adm-table thead tr {
+  background: #F9FAFB;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.adm-table th {
+  padding: 0.65rem 1.25rem;
+  text-align: left;
+  font-size: 0.685rem;
+  font-weight: 700;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.adm-table tbody tr { border-bottom: 1px solid #F3F4F6; }
+.adm-table tbody tr:last-child { border-bottom: none; }
+
+.adm-row { cursor: pointer; transition: background 0.12s; }
+.adm-row:hover { background: #F5F7FF; }
+
+.adm-table td {
+  padding: 0.875rem 1.25rem;
+  vertical-align: middle;
+}
+
+/* Código */
+.adm-cell-code {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #374151;
+  background: #F3F4F6;
+  padding: 0.2rem 0.55rem;
+  border-radius: 5px;
+  font-family: 'Courier New', monospace;
+  white-space: nowrap;
+  border: 1px solid #E5E7EB;
+}
+
+/* Produto — duas linhas */
+.adm-product-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+.adm-product-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.adm-product-cat {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #9CA3AF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* Vendedor */
+.adm-cell-seller {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.adm-seller-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0041D9, #005EB8);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+.adm-seller-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  white-space: nowrap;
+}
+
+/* Preço */
+.adm-cell-price {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #111827;
+  white-space: nowrap;
+}
+
+/* Data */
+.adm-cell-date {
+  font-size: 0.8rem;
+  color: #9CA3AF;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ── Badges de status ── */
+.adm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.adm-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.adm-badge--disponivel { background: #DCFCE7; color: #15803D; }
+.adm-badge--reservada  { background: #FEF9C3; color: #A16207; }
+.adm-badge--vendida    { background: #EEF2FF; color: #4338CA; }
+
+/* ── Ação por linha — ícone olho ── */
+.adm-row-action {
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: #D1D5DB;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.adm-row:hover .adm-row-action,
+.adm-row-action:hover {
+  border-color: #0041D9;
+  color: #0041D9;
+  background: #EEF2FF;
+}
+.adm-row-action svg { width: 15px; height: 15px; }
+
+/* ── Skeleton ── */
+.adm-sk-row td { padding: 0.875rem 1.25rem; }
+.adm-cell-sk {
+  height: 12px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #F3F4F6 25%, #EAECF0 50%, #F3F4F6 75%);
+  background-size: 200% 100%;
+  animation: db-shimmer 1.4s infinite;
+}
+
+/* ── Empty state ── */
+.adm-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 3.5rem 1rem;
+}
+
+.adm-empty-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #F3F4F6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9CA3AF;
+  margin-bottom: 0.25rem;
+}
+.adm-empty-icon svg { width: 26px; height: 26px; }
+
+.adm-empty-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0;
+}
+
+.adm-empty-sub {
+  font-size: 0.825rem;
+  font-weight: 500;
+  color: #9CA3AF;
+  margin: 0;
+}
+
+/* ── Paginação ── */
+.adm-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1.75rem;
+  border-top: 1px solid #F1F3F9;
+  background: #F8F9FD;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.adm-per-page {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+.adm-per-page select {
+  padding: 0.3rem 0.55rem;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  color: #374151;
+  outline: none;
+  cursor: pointer;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+.adm-per-page select:focus { border-color: #0041D9; }
+
+.adm-page-info {
+  font-size: 0.8rem;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+/* Centro — controles de página */
+.adm-pagination-center {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.adm-page-arrow {
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.adm-page-arrow:hover:not(:disabled) {
+  border-color: #0041D9;
+  color: #0041D9;
+  background: #EEF2FF;
+}
+.adm-page-arrow:disabled { opacity: 0.32; cursor: not-allowed; }
+.adm-page-arrow svg { width: 14px; height: 14px; }
+
+.adm-page-num {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 0.4rem;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.adm-page-num:hover:not(.active) {
+  border-color: #0041D9;
+  color: #0041D9;
+}
+.adm-page-num.active {
+  background: #0041D9;
+  border-color: #0041D9;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,65,217,0.28);
+}
+
+.adm-page-dots {
+  font-size: 0.875rem;
+  color: #9CA3AF;
+  padding: 0 0.15rem;
+  user-select: none;
+}
+
 /* ── Responsive ── */
 @media (max-width: 860px) {
   .db-main-grid {
@@ -501,10 +1110,31 @@
   .ring-legend { flex: 1; }
 }
 
+@media (max-width: 1024px) {
+  .db-stat-grid--5 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .db-sk-row--5 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .adm-search input { width: 220px; }
+}
+
 @media (max-width: 640px) {
   .db-hero { padding: 1.75rem 1rem 2rem; }
   .db-body { padding: 1.25rem 1rem 3rem; }
   .db-hero-title { font-size: 1.65rem; }
+  .db-hero-inner--admin { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .db-stat-grid--5 { grid-template-columns: repeat(2, 1fr); }
+  .db-sk-row--5 { grid-template-columns: repeat(2, 1fr); }
+
+  /* Admin panel header responsivo */
+  .adm-header { flex-direction: column; align-items: flex-start; gap: 0.875rem; }
+  .adm-search { width: 100%; }
+  .adm-search input { width: 100%; }
+  .adm-filters { padding: 0.75rem 1rem; gap: 0.4rem; }
+  .adm-pagination { padding: 0.875rem 1rem; }
+  .adm-pagination-center { order: -1; width: 100%; justify-content: center; }
 
   .db-stat-grid {
     grid-template-columns: repeat(3, 1fr);

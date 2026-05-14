@@ -16,7 +16,9 @@ from app.utils.pix import generate_pix_qrcode_png
 def list_products(db: Session, user_id: Optional[int] = None) -> list[ProductResponse]:
     release_expired_reservations(db)
 
-    query = db.query(Product).filter(Product.active == True)
+    query = db.query(Product).filter(
+        (Product.active == True) | (Product.status == "vendida")
+    )
 
     if user_id is not None:
         query = query.filter(Product.id_user == user_id)

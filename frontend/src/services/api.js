@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 // ── Helpers de token ───────────────────────────────────
 export function getToken() {
@@ -167,8 +167,41 @@ export async function fetchProductImages(productId) {
   return data;
 }
 
+// ── Admin ──────────────────────────────────────────────
+export async function fetchAdminSummary() {
+  const response = await fetch(`${BASE_URL}/reports/admin/summary`, {
+    headers: { ...authHeader() },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar resumo admin');
+  return data;
+}
+
+export async function fetchAdminRemainingProducts(name = '') {
+  const qs = name ? `?name=${encodeURIComponent(name)}` : '';
+  const response = await fetch(`${BASE_URL}/reports/admin/remaining-products${qs}`, {
+    headers: { ...authHeader() },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar produtos admin');
+  return data;
+}
+
+export async function createSale(payload) {
+  const response = await fetch(`${BASE_URL}/sales/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao registrar venda');
+  return data;
+}
+
 export async function fetchProductLabelData(productId) {
-  const response = await fetch(`${BASE_URL}/products/${productId}/label-data`);
+  const response = await fetch(`${BASE_URL}/products/${productId}/label-data`, {
+    headers: { ...authHeader() },
+  });
   const data = await response.json();
   if (!response.ok) throw new Error(data.detail || 'Erro ao buscar dados da etiqueta');
   return data;

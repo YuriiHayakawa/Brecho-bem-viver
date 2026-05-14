@@ -139,7 +139,7 @@ function LoginForm() {
       sessionStorage.setItem('token', access_token);
       const user = await fetchCurrentUser();
       sessionStorage.setItem('user', JSON.stringify(user));
-      navigate('/dashboard');
+      navigate('/catalogo');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -240,7 +240,7 @@ function RegisterForm({ onSuccess }) {
       sessionStorage.setItem('token', access_token);
       const user = await fetchCurrentUser();
       sessionStorage.setItem('user', JSON.stringify(user));
-      navigate('/dashboard');
+      navigate('/catalogo');
     } catch (err) {
       setError(err.message);
     } finally {
