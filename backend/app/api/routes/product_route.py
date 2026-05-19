@@ -35,12 +35,6 @@ def reserve_product(
 ):
     return product_service.reserve_product(db, product_id, current_user)
 
-
-@router.get("/{product_id}/pix-qrcode", summary="QR Code PIX do vendedor")
-def get_pix_qrcode(product_id: int, db: Session = Depends(get_db)):
-    return product_service.get_pix_qrcode(db, product_id)
-
-
 @router.post("/", response_model=ProductResponse, summary="Criar Produto")
 def create_product(
     product: ProductCreate,

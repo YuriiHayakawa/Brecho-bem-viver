@@ -51,6 +51,7 @@ class ProductResponse(BaseModel):
     reserved_by_user_id: int | None
     created_at: datetime
     id_user: int
+    qr_code_base64: str | None = None
     images: list[ProductImageEmbed] = []
     user: SellerEmbed | None = None
 

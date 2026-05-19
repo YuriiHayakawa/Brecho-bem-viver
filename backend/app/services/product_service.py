@@ -2,15 +2,66 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from fastapi import HTTPException
-from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
-from app.models.user import User
 from app.models.product import Product
 from app.models.user import User
-from app.schemas.product_schema import ProductCreate, ProductUpdate, ProductResponse, ReserveRequest
+from app.schemas.product_schema import ProductCreate, ProductUpdate, ProductResponse
 from app.schemas.product_label_schema import ProductLabelDataResponse
-from app.utils.pix import generate_pix_qrcode_png
+from app.utils.pix import generate_pix_qrcode_base64
+
+
+def release_expired_reservations(db: Session):
+    expired_products = (
+        db.query(Product)
+        .filter(
+            Product.status == "reservada",
+            Product.reserved_until < datetime.now()
+        )
+        .all()
+    )
+
+    for product in expired_products:
+        product.status = "disponivel"
+        product.reserved_until = None
+        product.reserved_by_user_id = None
+
+    if expired_products:
+        db.commit()
+
+
+def build_product_response(product: Product) -> ProductResponse:
+    qr_code_base64 = None
+
+    if product.user and product.user.pix_key and product.user.pix_key_type:
+        qr_code_base64 = generate_pix_qrcode_base64(
+            pix_key=product.user.pix_key,
+            pix_key_type=product.user.pix_key_type,
+            seller_name=product.user.name,
+        )
+
+    return ProductResponse(
+        id=product.id,
+        name=product.name,
+        description=product.description,
+        has_defect=product.has_defect,
+        defect_description=product.defect_description,
+        size=product.size,
+        category=product.category,
+        brand=product.brand,
+        gender=product.gender,
+        price=product.price,
+        status=product.status,
+        active=product.active,
+        code=product.code,
+        reserved_until=product.reserved_until,
+        reserved_by_user_id=product.reserved_by_user_id,
+        created_at=product.created_at,
+        id_user=product.id_user,
+        qr_code_base64=qr_code_base64,
+        images=product.images,
+        user=product.user,
+    )
 
 
 def list_products(db: Session, user_id: Optional[int] = None) -> list[ProductResponse]:
@@ -27,12 +78,15 @@ def list_products(db: Session, user_id: Optional[int] = None) -> list[ProductRes
 
 
 def get_product(db: Session, product_id: int) -> ProductResponse:
+    release_expired_reservations(db)
+
     product = db.query(Product).filter(Product.id == product_id).first()
 
     if not product:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
 
-    return product
+    return build_product_response(product)
+
 
 def reserve_product(db: Session, product_id: int, current_user: User) -> ProductResponse:
     release_expired_reservations(db)
@@ -54,47 +108,12 @@ def reserve_product(db: Session, product_id: int, current_user: User) -> Product
 
     return product
 
-def release_expired_reservations(db: Session):
-    expired_products = (
-        db.query(Product)
-        .filter(
-            Product.status == "reservada",
-            Product.reserved_until < datetime.now()
-        )
-        .all()
-    )
 
-    for product in expired_products:
-        product.status = "disponivel"
-        product.reserved_until = None
-        product.reserved_by_user_id = None
-
-    if expired_products:
-        db.commit()
-
-
-def get_pix_qrcode(db: Session, product_id: int) -> Response:
-    product = db.query(Product).filter(Product.id == product_id).first()
-
-    if not product:
-        raise HTTPException(status_code=404, detail="Produto não encontrado")
-
-    seller = db.query(User).filter(User.id == product.id_user).first()
-
-    if not seller:
-        raise HTTPException(status_code=404, detail="Vendedor não encontrado")
-
-    png_bytes = generate_pix_qrcode_png(
-        pix_key=seller.pix_key,
-        pix_key_type=seller.pix_key_type,
-        seller_name=seller.name,
-    )
-
-    return Response(content=png_bytes, media_type="image/png")
-
-
-def create_product(db: Session,product_data: ProductCreate,current_user: User) -> ProductResponse:
-
+def create_product(
+    db: Session,
+    product_data: ProductCreate,
+    current_user: User
+) -> ProductResponse:
     new_product = Product(
         name=product_data.name,
         description=product_data.description,
@@ -119,8 +138,12 @@ def create_product(db: Session,product_data: ProductCreate,current_user: User) -
     return new_product
 
 
-def update_product(db: Session,product_id: int,data: ProductUpdate,current_user: User) -> ProductResponse:
-
+def update_product(
+    db: Session,
+    product_id: int,
+    data: ProductUpdate,
+    current_user: User
+) -> ProductResponse:
     product = db.query(Product).filter(Product.id == product_id).first()
 
     if not product:
@@ -137,6 +160,7 @@ def update_product(db: Session,product_id: int,data: ProductUpdate,current_user:
 
     return product
 
+
 def delete_product(db: Session, product_id: int, current_user: User):
     product = db.query(Product).filter(Product.id == product_id).first()
 
@@ -147,10 +171,12 @@ def delete_product(db: Session, product_id: int, current_user: User):
         raise HTTPException(status_code=403, detail="Você não tem permissão para deletar este produto")
 
     product.active = False
+
     db.commit()
     db.refresh(product)
 
     return {"message": "Produto removido com sucesso"}
+
 
 def get_product_label_data(db: Session, product_id: int) -> ProductLabelDataResponse:
     product = db.query(Product).filter(Product.id == product_id).first()
@@ -158,10 +184,16 @@ def get_product_label_data(db: Session, product_id: int) -> ProductLabelDataResp
     if not product:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
 
-    seller = db.query(User).filter(User.id == product.id_user).first()
+    seller = product.user
 
     if not seller:
         raise HTTPException(status_code=404, detail="Vendedor não encontrado")
+
+    qr_code_base64 = generate_pix_qrcode_base64(
+        pix_key=seller.pix_key,
+        pix_key_type=seller.pix_key_type,
+        seller_name=seller.name,
+    )
 
     return ProductLabelDataResponse(
         product_id=product.id,
@@ -171,5 +203,5 @@ def get_product_label_data(db: Session, product_id: int) -> ProductLabelDataResp
         seller_name=seller.name,
         pix_key=seller.pix_key,
         pix_key_type=seller.pix_key_type,
-        qr_code_url=f"/products/{product.id}/pix-qrcode"
+        qr_code_base64=qr_code_base64,
     )
