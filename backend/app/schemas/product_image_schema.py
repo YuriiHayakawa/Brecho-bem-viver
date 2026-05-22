@@ -6,6 +6,7 @@ class ProductImageResponse(BaseModel):
     id: int
     product_id: int
     image_url: str
+    cloudinary_public_id: str
     is_cover: bool
     position: int
     created_at: datetime

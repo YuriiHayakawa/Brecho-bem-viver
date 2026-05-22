@@ -1,14 +1,14 @@
-import os
-import shutil
-import uuid
+import cloudinary.uploader
 
 from fastapi import HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
-from app.models.user import User
 from app.models.product import Product
 from app.models.product_image import ProductImage
+from app.models.user import User
 from app.schemas.product_image_schema import ProductImageResponse
+
+import app.utils.cloudinary
 
 
 def list_product_images(db: Session, product_id: int) -> list[ProductImageResponse]:
@@ -41,6 +41,9 @@ def create_product_image(
     if product.id_user != current_user.id and current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Sem permissão para adicionar imagem")
 
+    if not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="O arquivo enviado não é uma imagem")
+
     last_image = (
         db.query(ProductImage)
         .filter(ProductImage.product_id == product_id)
@@ -51,21 +54,25 @@ def create_product_image(
     next_position = 1 if not last_image else last_image.position + 1
     is_cover = next_position == 1
 
-    product_folder = os.path.join("uploads", "products", str(product_id))
-    os.makedirs(product_folder, exist_ok=True)
+    try:
+        upload_result = cloudinary.uploader.upload(
+            file.file,
+            folder=f"bazar-sebrae/products/{product_id}",
+            resource_type="image",
+        )
+    except Exception:
+        raise HTTPException(status_code=500, detail="Erro ao enviar imagem para a nuvem")
 
-    original_extension = os.path.splitext(file.filename)[1] if file.filename else ""
-    unique_filename = f"{uuid.uuid4()}{original_extension}"
-    file_path = os.path.join(product_folder, unique_filename)
+    image_url = upload_result.get("secure_url")
+    cloudinary_public_id = upload_result.get("public_id")
 
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-
-    image_url = f"/uploads/products/{product_id}/{unique_filename}"
+    if not image_url or not cloudinary_public_id:
+        raise HTTPException(status_code=500, detail="Erro ao obter dados da imagem enviada")
 
     new_image = ProductImage(
         product_id=product_id,
         image_url=image_url,
+        cloudinary_public_id=cloudinary_public_id,
         is_cover=is_cover,
         position=next_position
     )
