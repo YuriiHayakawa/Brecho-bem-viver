@@ -10,6 +10,7 @@ class ProductImage(Base):
     id = Column(Integer, primary_key=True)
     product_id = Column(Integer, ForeignKey("products.id", ondelete="CASCADE"), nullable=False)
     image_url = Column(String(255), nullable=False)
+    cloudinary_public_id = Column(String(255), nullable=False)
     is_cover = Column(Boolean, nullable=False, server_default=text("FALSE"))
     position = Column(Integer, nullable=False)
     created_at = Column(TIMESTAMP, nullable=False, server_default=text("NOW()"))

@@ -8,6 +8,10 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     SECRET_KEY: str
 
+    CLOUDINARY_CLOUD_NAME: str
+    CLOUDINARY_API_KEY: str
+    CLOUDINARY_API_SECRET: str
+
     # Origens permitidas pelo CORS (separadas por vírgula)
     # Ex.: https://bazar-sebrae.vercel.app,https://meu-dominio.com
     ALLOWED_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
