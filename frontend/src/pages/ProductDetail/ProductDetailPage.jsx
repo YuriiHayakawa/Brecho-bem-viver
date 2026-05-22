@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { fetchProduct, reserveProduct, fetchProductLabelData, createSale } from '../../services/api';
 import './ProductDetailPage.css';
 
-const BASE_URL = 'http://localhost:8000';
 
 const STATUS_LABEL = {
   disponivel: 'Disponível',
@@ -128,7 +127,7 @@ function LabelModal({ productId, productName, onClose }) {
                   </div>
                   <div className="label-qr">
                     <img
-                      src={`${BASE_URL}${data.qr_code_url}`}
+                      src={data.qr_code_base64}
                       alt="QR Code PIX"
                     />
                   </div>
@@ -203,7 +202,7 @@ function LabelModal({ productId, productName, onClose }) {
                         </p>
                       </div>
                       <div className="lp-qr">
-                        <img src={`${BASE_URL}${data.qr_code_url}`} alt="QR Code PIX" />
+                        <img src={data.qr_code_base64} alt="QR Code PIX" />
                         <span className="lp-qr-badge">PIX</span>
                       </div>
                     </div>
@@ -420,7 +419,7 @@ function Lightbox({ images, startIndex, productName, onClose }) {
     };
   }, [onClose, prev, next]);
 
-  const url = `${BASE_URL}${images[index].image_url}`;
+  const url = images[index].image_url;
 
   return (
     <div className="lb-overlay" onClick={onClose}>
@@ -475,7 +474,7 @@ function Lightbox({ images, startIndex, productName, onClose }) {
               className={`lb-thumb ${i === index ? 'active' : ''}`}
               onClick={() => setIndex(i)}
             >
-              <img src={`${BASE_URL}${img.image_url}`} alt={`miniatura ${i + 1}`} />
+              <img src={img.image_url} alt={`miniatura ${i + 1}`} />
             </button>
           ))}
         </div>
@@ -551,7 +550,7 @@ export default function ProductDetailPage() {
   );
 
   const images          = product.images || [];
-  const activeImageUrl  = images[activeImage] ? `${BASE_URL}${images[activeImage].image_url}` : null;
+  const activeImageUrl  = images[activeImage] ? images[activeImage].image_url : null;
   const isReservedByMe  = product.reserved_by_user_id === user.id;
   const seller          = product.user;
 
@@ -656,7 +655,7 @@ export default function ProductDetailPage() {
                     className={`thumb ${i === activeImage ? 'active' : ''}`}
                     onClick={() => setActiveImage(i)}
                   >
-                    <img src={`${BASE_URL}${img.image_url}`} alt={`Foto ${i + 1}`} />
+                    <img src={img.image_url} alt={`Foto ${i + 1}`} />
                   </button>
                 ))}
               </div>
@@ -765,7 +764,7 @@ export default function ProductDetailPage() {
                 </div>
                 <div className="pix-body">
                   <div className="pix-qrcode-wrapper">
-                    <img src={`${BASE_URL}/products/${product.id}/pix-qrcode`} alt="QR Code PIX" className="pix-qrcode-img"/>
+                    <img src={product.qr_code_base64} alt="QR Code PIX" className="pix-qrcode-img"/>
                   </div>
                   <div className="pix-info">
                     <div className="pix-seller-name">

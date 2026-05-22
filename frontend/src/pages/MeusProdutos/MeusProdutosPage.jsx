@@ -128,7 +128,7 @@ export default function MeusProdutosPage() {
 
 function ProductRow({ product, onView, onEdit }) {
   const cover = product.images?.find(i => i.is_cover) || product.images?.[0];
-  const imgUrl = cover ? `http://localhost:8000${cover.image_url}` : null;
+  const imgUrl = cover ? cover.image_url : null;
 
   return (
     <div className="mp-row">

@@ -375,7 +375,7 @@ export default function EditarProdutoPage() {
                     .map((img, index) => (
                       <div key={img.id} className={`np-image-item ${img.is_cover ? 'is-cover' : ''}`}>
                         <img
-                          src={`http://localhost:8000${img.image_url}`}
+                          src={img.image_url}
                           alt={`foto ${index + 1}`}
                         />
                         {img.is_cover && <span className="np-cover-badge">Capa</span>}

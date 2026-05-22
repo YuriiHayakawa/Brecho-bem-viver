@@ -159,7 +159,7 @@ export default function CatalogoPage() {
 
 function ProductCard({ product, onClick }) {
   const coverImage = product.images?.find(img => img.is_cover) || product.images?.[0];
-  const imageUrl   = coverImage ? `http://localhost:8000${coverImage.image_url}` : null;
+  const imageUrl   = coverImage ? coverImage.image_url : null;
 
   return (
     <article className="catalogo-product-card" onClick={onClick}>
