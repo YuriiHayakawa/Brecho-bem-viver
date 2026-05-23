@@ -189,6 +189,9 @@ def get_product_label_data(db: Session, product_id: int) -> ProductLabelDataResp
     if not seller:
         raise HTTPException(status_code=404, detail="Vendedor não encontrado")
 
+    if not seller.pix_key or not seller.pix_key_type:
+        raise HTTPException(status_code=422, detail="Vendedor sem chave PIX cadastrada")
+
     qr_code_base64 = generate_pix_qrcode_base64(
         pix_key=seller.pix_key,
         pix_key_type=seller.pix_key_type,
