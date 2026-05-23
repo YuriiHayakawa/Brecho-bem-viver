@@ -196,9 +196,11 @@
   gap: 2px;
 }
 
-/* Bloco admin na nav */
+/* Bloco admin no footer */
 .sb-admin-section {
-  padding: 0.5rem 0 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .sb-admin-list {
@@ -228,7 +230,9 @@
 }
 
 .collapsed .sb-admin-section {
-  padding-top: 0;
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 /* Item de navegação */
