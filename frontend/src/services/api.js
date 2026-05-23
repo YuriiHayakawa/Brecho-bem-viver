@@ -208,6 +208,17 @@ export async function fetchAllUsers() {
   return data;
 }
 
+export async function updateUserByAdmin(userId, payload) {
+  const response = await fetch(`${BASE_URL}/users/${userId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao atualizar usuário');
+  return data;
+}
+
 export async function updateUserRole(userId, role) {
   const response = await fetch(`${BASE_URL}/users/${userId}/role`, {
     method: 'PATCH',

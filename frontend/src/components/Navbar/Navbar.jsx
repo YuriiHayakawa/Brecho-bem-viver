@@ -165,10 +165,15 @@ export default function Navbar({ collapsed, onToggle, mobileOpen, onCloseMobile 
           })}
         </ul>
 
+      </nav>
+
+      {/* ── Usuário + Logout ── */}
+      <div className="sb-footer">
+
         {user.role === 'admin' && (
-          <>
+          <div className="sb-admin-section">
             <div className="sb-section-label">Admin</div>
-            <ul>
+            <ul className="sb-admin-list">
               {ADMIN_ITEMS.map(item => {
                 const active = location.pathname === item.path;
                 return (
@@ -186,12 +191,8 @@ export default function Navbar({ collapsed, onToggle, mobileOpen, onCloseMobile 
                 );
               })}
             </ul>
-          </>
+          </div>
         )}
-      </nav>
-
-      {/* ── Usuário + Logout ── */}
-      <div className="sb-footer">
         <button className="sb-user" onClick={() => go('/perfil')} title="Ver perfil">
           <div className="sb-avatar">{initials}</div>
           <div className="sb-user-info">

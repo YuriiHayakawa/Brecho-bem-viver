@@ -90,6 +90,11 @@ def update_user_by_admin(
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
+    if data.email and data.email != user.email:
+        conflict = db.query(User).filter(User.email == data.email, User.id != user_id).first()
+        if conflict:
+            raise HTTPException(status_code=400, detail="Email já está em uso por outro usuário")
+
     return update_current_user(db, user, data)
 
 def delete_user_by_admin(db: Session, user_id: int):
