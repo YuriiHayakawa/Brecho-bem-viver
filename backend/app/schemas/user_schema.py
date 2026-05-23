@@ -31,3 +31,7 @@ class UserUpdate(BaseModel):
     phone: str | None = None
     pix_key: str | None = None
     pix_key_type: str | None = None
+
+
+class UserRoleUpdate(BaseModel):
+    role: str

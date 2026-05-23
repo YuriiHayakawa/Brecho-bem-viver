@@ -8,8 +8,9 @@ import NovoProdutoPage   from './pages/NovoProduto/NovoProdutoPage';
 import EditarProdutoPage from './pages/EditarProduto/EditarProdutoPage';
 import MeusProdutosPage  from './pages/MeusProdutos/MeusProdutosPage';
 import PerfilPage        from './pages/Perfil/PerfilPage';
-import OrientacoesPage   from './pages/Orientacoes/OrientacoesPage';
-import SobrePage         from './pages/Sobre/SobrePage';
+import OrientacoesPage      from './pages/Orientacoes/OrientacoesPage';
+import SobrePage            from './pages/Sobre/SobrePage';
+import GestaoUsuariosPage   from './pages/GestaoUsuarios/GestaoUsuariosPage';
 
 function ProtectedRoute({ children }) {
   const token = sessionStorage.getItem('token');
@@ -50,6 +51,9 @@ function App() {
         } />
         <Route path="/sobre" element={
           <ProtectedRoute><SobrePage /></ProtectedRoute>
+        } />
+        <Route path="/gestao-usuarios" element={
+          <ProtectedRoute><GestaoUsuariosPage /></ProtectedRoute>
         } />
       </Routes>
     </BrowserRouter>

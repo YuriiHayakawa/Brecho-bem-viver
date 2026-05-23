@@ -74,6 +74,21 @@ const NAV_ITEMS = [
   },
 ];
 
+const ADMIN_ITEMS = [
+  {
+    key: 'gestao-usuarios',
+    label: 'Usuários',
+    path: '/gestao-usuarios',
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none">
+        <circle cx="7" cy="6" r="3" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M1 17c0-3 2.686-5 6-5s6 2 6 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M14 9l2 2 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+];
+
 export default function Navbar({ collapsed, onToggle, mobileOpen, onCloseMobile }) {
   const navigate  = useNavigate();
   const location  = useLocation();
@@ -149,6 +164,30 @@ export default function Navbar({ collapsed, onToggle, mobileOpen, onCloseMobile 
             );
           })}
         </ul>
+
+        {user.role === 'admin' && (
+          <>
+            <div className="sb-section-label">Admin</div>
+            <ul>
+              {ADMIN_ITEMS.map(item => {
+                const active = location.pathname === item.path;
+                return (
+                  <li key={item.key}>
+                    <button
+                      className={`sb-item ${active ? 'active' : ''}`}
+                      onClick={() => go(item.path)}
+                      data-tooltip={item.label}
+                    >
+                      <span className="sb-item-icon">{item.icon}</span>
+                      <span className="sb-item-label">{item.label}</span>
+                      {active && <span className="sb-item-bar" />}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </>
+        )}
       </nav>
 
       {/* ── Usuário + Logout ── */}

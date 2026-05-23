@@ -198,6 +198,27 @@ export async function createSale(payload) {
   return data;
 }
 
+// ── Admin: Gestão de Usuários ──────────────────────────
+export async function fetchAllUsers() {
+  const response = await fetch(`${BASE_URL}/users/`, {
+    headers: { ...authHeader() },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar usuários');
+  return data;
+}
+
+export async function updateUserRole(userId, role) {
+  const response = await fetch(`${BASE_URL}/users/${userId}/role`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+    body: JSON.stringify({ role }),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao atualizar role');
+  return data;
+}
+
 export async function fetchProductLabelData(productId) {
   const response = await fetch(`${BASE_URL}/products/${productId}/label-data`, {
     headers: { ...authHeader() },
