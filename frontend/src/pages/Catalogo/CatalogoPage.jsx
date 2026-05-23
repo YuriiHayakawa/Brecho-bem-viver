@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchProducts } from '../../services/api';
+import PageHero from '../../components/PageHero/PageHero';
 import './CatalogoPage.css';
 
 
@@ -43,16 +44,7 @@ export default function CatalogoPage() {
 
   return (
     <div className="catalogo-wrapper">
-      <div className="catalogo-hero">
-        <div className="catalogo-hero-bars">
-          <span className="chb b1" /><span className="chb b2" />
-          <span className="chb b3" /><span className="chb b4" />
-        </div>
-        <div className="catalogo-hero-text">
-          <h1>Catálogo do Bazar</h1>
-          <p>Encontre peças únicas e ajude quem mais precisa</p>
-        </div>
-      </div>
+      <PageHero title="Catálogo do Bazar" subtitle="Encontre peças únicas e ajude quem mais precisa" />
 
       <main className="catalogo-main">
         {/* Barra de ações */}

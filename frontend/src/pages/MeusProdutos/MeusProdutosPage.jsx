@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchMyProducts } from '../../services/api';
+import PageHero from '../../components/PageHero/PageHero';
 import './MeusProdutosPage.css';
 
 const STATUS_LABEL = { disponivel: 'Disponível', reservada: 'Reservado', vendida: 'Vendido' };
@@ -30,17 +31,7 @@ export default function MeusProdutosPage() {
   return (
     <div className="mp-page">
 
-      {/* Hero */}
-      <div className="mp-hero">
-        <div className="mp-hero-diagonal" />
-        <div className="mp-hero-inner">
-          <div className="mp-hero-bars"><span/><span/><span/><span/></div>
-          <div>
-            <h1 className="mp-hero-title">Meus Produtos</h1>
-            <p className="mp-hero-sub">Gerencie os produtos que você cadastrou</p>
-          </div>
-        </div>
-      </div>
+      <PageHero title="Meus Produtos" subtitle="Gerencie os produtos que você cadastrou" />
 
       <div className="mp-content">
 

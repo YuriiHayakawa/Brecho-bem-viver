@@ -1,3 +1,4 @@
+import PageHero from '../../components/PageHero/PageHero';
 import './OrientacoesPage.css';
 
 const ORIENTACOES = [
@@ -77,21 +78,7 @@ export default function OrientacoesPage() {
   return (
     <main className="orientacoes-page">
 
-        {/* Hero */}
-        <div className="orientacoes-hero">
-          <div className="orientacoes-hero-diagonal" />
-          <div className="orientacoes-hero-inner">
-            <div className="orientacoes-hero-bars">
-              <span /><span /><span /><span />
-            </div>
-            <div>
-              <h1 className="orientacoes-title">Orientações</h1>
-              <p className="orientacoes-subtitle">
-                Como participar do Bazar Sebrae como vendedor
-              </p>
-            </div>
-          </div>
-        </div>
+        <PageHero title="Orientações" subtitle="Como participar do Bazar Sebrae como vendedor" />
 
         {/* Cards */}
         <div className="orientacoes-content">

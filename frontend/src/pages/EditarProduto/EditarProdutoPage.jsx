@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchProduct, updateProduct, uploadProductImage } from '../../services/api';
+import PageHero from '../../components/PageHero/PageHero';
 import '../NovoProduto/NovoProdutoPage.css';
 import './EditarProdutoPage.css';
 
@@ -134,16 +135,7 @@ export default function EditarProdutoPage() {
   if (loading) {
     return (
       <div className="np-page">
-        <div className="np-hero ep-hero">
-          <div className="np-hero-diagonal" />
-          <div className="np-hero-inner">
-            <div className="np-hero-bars"><span/><span/><span/><span/></div>
-            <div>
-              <h1 className="np-hero-title">Editar Produto</h1>
-              <p className="np-hero-subtitle">Carregando...</p>
-            </div>
-          </div>
-        </div>
+        <PageHero title="Editar Produto" subtitle="Carregando..." />
         <div className="np-content">
           <div className="ep-skeleton-list">
             {[...Array(4)].map((_, i) => <div key={i} className="ep-skeleton" />)}
@@ -156,15 +148,7 @@ export default function EditarProdutoPage() {
   if (fetchError) {
     return (
       <div className="np-page">
-        <div className="np-hero ep-hero">
-          <div className="np-hero-diagonal" />
-          <div className="np-hero-inner">
-            <div className="np-hero-bars"><span/><span/><span/><span/></div>
-            <div>
-              <h1 className="np-hero-title">Editar Produto</h1>
-            </div>
-          </div>
-        </div>
+        <PageHero title="Editar Produto" />
         <div className="np-content">
           <div className="np-error">{fetchError}</div>
         </div>
@@ -176,17 +160,7 @@ export default function EditarProdutoPage() {
   return (
     <div className="np-page">
 
-      {/* Hero */}
-      <div className="np-hero ep-hero">
-        <div className="np-hero-diagonal" />
-        <div className="np-hero-inner">
-          <div className="np-hero-bars"><span/><span/><span/><span/></div>
-          <div>
-            <h1 className="np-hero-title">Editar Produto</h1>
-            <p className="np-hero-subtitle">Atualize as informações do item</p>
-          </div>
-        </div>
-      </div>
+      <PageHero title="Editar Produto" subtitle="Atualize as informações do item" />
 
       <div className="np-content">
         <form className="np-form" onSubmit={handleSubmit} noValidate>
@@ -450,7 +424,7 @@ export default function EditarProdutoPage() {
             <button
               type="button"
               className="np-btn-cancel"
-              onClick={() => navigate(`/products/${id}`)}
+              onClick={() => navigate('/meus-produtos')}
               disabled={saving}
             >
               Cancelar

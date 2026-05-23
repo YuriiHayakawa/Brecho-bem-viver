@@ -544,7 +544,7 @@ export default function ProductDetailPage() {
     <div className="detail-wrapper">
       <div className="detail-error">
         <p>{error || 'Produto não encontrado.'}</p>
-        <button onClick={() => navigate('/catalogo')}>← Voltar ao catálogo</button>
+        <button onClick={() => navigate(-1)}>← Voltar</button>
       </div>
     </div>
   );
@@ -584,11 +584,11 @@ export default function ProductDetailPage() {
 
       <main className="detail-main">
         <div className="detail-topbar">
-          <button className="back-btn" onClick={() => navigate('/catalogo')}>
+          <button className="back-btn" onClick={() => navigate(-1)}>
             <svg viewBox="0 0 20 20" fill="none">
               <path d="M12 4l-6 6 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            Voltar ao catálogo
+            Voltar
           </button>
 
           {isAdmin && (
