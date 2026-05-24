@@ -22,8 +22,20 @@
   position: relative;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 1.25rem;
   max-width: 960px;
+}
+
+/* Layout left/right */
+.page-hero-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.page-hero-right {
+  flex-shrink: 0;
 }
 
 .page-hero-bars {
@@ -46,6 +58,14 @@
 .page-hero-bars span:nth-child(3) { width: 28px; }
 .page-hero-bars span:nth-child(4) { width: 44px; }
 
+/* Eyebrow */
+.page-hero-eyebrow {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0 0 0.1rem;
+}
+
 .page-hero-title {
   font-size: 1.75rem;
   font-weight: 800;
@@ -59,4 +79,24 @@
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.72);
   margin: 0.35rem 0 0;
+}
+
+/* Avatar (usado no Perfil) */
+.page-hero-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.page-hero-avatar span {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.03em;
 }

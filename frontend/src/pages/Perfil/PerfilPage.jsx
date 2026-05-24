@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchMyProfile, updateMyProfile } from '../../services/api';
+import PageHero from '../../components/PageHero/PageHero';
 import './PerfilPage.css';
 
 const PIX_LABELS = {
@@ -76,21 +77,15 @@ export default function PerfilPage() {
   return (
     <main className="perfil-page">
 
-      {/* Hero */}
-      <div className="perfil-hero">
-        <div className="perfil-hero-diagonal" />
-        <div className="perfil-hero-inner">
-          <div className="perfil-avatar-big">
-            <span>{initials}</span>
-          </div>
-          <div className="perfil-hero-info">
-            <h1 className="perfil-name">{user.name || '—'}</h1>
-            <span className={`perfil-role-badge role-${user.role}`}>
-              {user.role === 'admin' ? 'Administrador' : user.role === 'vendedor' ? 'Vendedor' : 'Usuário'}
-            </span>
-          </div>
+      <PageHero>
+        <div className="page-hero-avatar"><span>{initials}</span></div>
+        <div>
+          <h1 className="page-hero-title">{user.name || '—'}</h1>
+          <span className={`perfil-role-badge role-${user.role}`}>
+            {user.role === 'admin' ? 'Administrador' : user.role === 'vendedor' ? 'Vendedor' : 'Usuário'}
+          </span>
         </div>
-      </div>
+      </PageHero>
 
       {/* Cards de dados */}
       <div className="perfil-content">
