@@ -122,7 +122,7 @@ export default function EditarProdutoPage() {
         }
       }
 
-      navigate(`/products/${id}`);
+      navigate(`/products/${id}`, { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {
