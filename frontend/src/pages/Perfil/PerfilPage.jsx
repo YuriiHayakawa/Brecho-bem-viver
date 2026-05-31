@@ -89,15 +89,6 @@ export default function PerfilPage() {
 
       {/* Cards de dados */}
       <div className="perfil-content">
-        {saveOk && (
-          <div className="perfil-alert perfil-alert--ok">
-            <svg viewBox="0 0 20 20" fill="none">
-              <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5"/>
-              <path d="M6.5 10l2.5 2.5 4-5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            Perfil atualizado com sucesso!
-          </div>
-        )}
 
         {!editing ? (
           /* ── Modo visualização ── */
