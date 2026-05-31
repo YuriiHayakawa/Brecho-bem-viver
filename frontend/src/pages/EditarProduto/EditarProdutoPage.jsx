@@ -122,7 +122,7 @@ export default function EditarProdutoPage() {
         }
       }
 
-      navigate(`/products/${id}`, { replace: true });
+      navigate(`/products/${id}`, { replace: true, state: { toast: 'Produto alterado com sucesso!' } });
     } catch (err) {
       setError(err.message);
     } finally {

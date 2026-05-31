@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { fetchProduct, reserveProduct, fetchProductLabelData, createSale } from '../../services/api';
 import './ProductDetailPage.css';
 
@@ -490,6 +490,7 @@ function Lightbox({ images, startIndex, productName, onClose }) {
 export default function ProductDetailPage() {
   const { id }     = useParams();
   const navigate   = useNavigate();
+  const location   = useLocation();
 
   const [product, setProduct]           = useState(null);
   const [loading, setLoading]           = useState(true);
@@ -502,9 +503,21 @@ export default function ProductDetailPage() {
   const [pixCopied, setPixCopied]       = useState(false);
   const [labelOpen, setLabelOpen]       = useState(false);
   const [saleOpen, setSaleOpen]         = useState(false);
+  const [toast, setToast]               = useState('');
 
   const user    = JSON.parse(sessionStorage.getItem('user') || '{}');
   const isAdmin = user.role === 'admin';
+
+  // Exibe toast vindo do state de navegação (ex: após edição)
+  useEffect(() => {
+    if (location.state?.toast) {
+      setToast(location.state.toast);
+      // Limpa o state para não reaparecer ao recarregar
+      navigate(location.pathname, { replace: true, state: {} });
+      const t = setTimeout(() => setToast(''), 3500);
+      return () => clearTimeout(t);
+    }
+  }, []);
 
   useEffect(() => {
     fetchProduct(id)
@@ -580,6 +593,15 @@ export default function ProductDetailPage() {
           onClose={() => setSaleOpen(false)}
           onSuccess={() => fetchProduct(id).then(setProduct).catch(() => {})}
         />
+      )}
+
+      {toast && (
+        <div className="detail-toast">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd"/>
+          </svg>
+          {toast}
+        </div>
       )}
 
       <main className="detail-main">
