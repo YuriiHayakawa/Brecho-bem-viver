@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchMyProfile, updateMyProfile } from '../../services/api';
 import PageHero from '../../components/PageHero/PageHero';
+import { useToast } from '../../contexts/ToastContext';
 import './PerfilPage.css';
 
 const PIX_LABELS = {
@@ -13,11 +14,11 @@ const PIX_LABELS = {
 const PIX_TYPES = ['telefone', 'email', 'cpf', 'aleatoria'];
 
 export default function PerfilPage() {
+  const showToast = useToast();
   const [user, setUser]       = useState(JSON.parse(sessionStorage.getItem('user') || '{}'));
   const [editing, setEditing] = useState(false);
   const [saving, setSaving]   = useState(false);
   const [saveError, setSaveError] = useState('');
-  const [saveOk, setSaveOk]   = useState(false);
   const [form, setForm]       = useState({});
 
   // Busca dados frescos da API
@@ -55,7 +56,6 @@ export default function PerfilPage() {
     e.preventDefault();
     setSaving(true);
     setSaveError('');
-    setSaveOk(false);
     try {
       const updated = await updateMyProfile({
         name:         form.name.trim(),
@@ -65,7 +65,7 @@ export default function PerfilPage() {
       });
       setUser(updated);
       sessionStorage.setItem('user', JSON.stringify(updated));
-      setSaveOk(true);
+      showToast('Perfil atualizado com sucesso!');
       setEditing(false);
     } catch (err) {
       setSaveError(err.message);

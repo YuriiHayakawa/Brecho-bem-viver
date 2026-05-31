@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import PageHero from '../../components/PageHero/PageHero';
 import { useNavigate } from 'react-router-dom';
 import { createProduct, uploadProductImage } from '../../services/api';
+import { useToast } from '../../contexts/ToastContext';
 import './NovoProdutoPage.css';
 
 const CATEGORIES = [
@@ -21,7 +22,8 @@ const SIZES = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'XXG', 'Único',
                '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44'];
 
 export default function NovoProdutoPage() {
-  const navigate = useNavigate();
+  const navigate   = useNavigate();
+  const showToast  = useToast();
   const user = JSON.parse(sessionStorage.getItem('user') || '{}');
   const fileInputRef = useRef(null);
 
@@ -120,6 +122,7 @@ export default function NovoProdutoPage() {
         }
       }
 
+      showToast('Produto criado com sucesso!');
       navigate(`/products/${product.id}`);
     } catch (err) {
       setError(err.message);

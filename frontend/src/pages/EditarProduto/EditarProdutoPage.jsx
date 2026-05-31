@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchProduct, updateProduct, uploadProductImage } from '../../services/api';
 import PageHero from '../../components/PageHero/PageHero';
+import { useToast } from '../../contexts/ToastContext';
 import '../NovoProduto/NovoProdutoPage.css';
 import './EditarProdutoPage.css';
 
@@ -24,6 +25,7 @@ const SIZES = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'XXG', 'Único',
 export default function EditarProdutoPage() {
   const { id }     = useParams();
   const navigate   = useNavigate();
+  const showToast  = useToast();
   const fileInputRef = useRef(null);
 
   const [form, setForm] = useState(null);
@@ -122,7 +124,8 @@ export default function EditarProdutoPage() {
         }
       }
 
-      navigate(`/products/${id}`, { replace: true, state: { toast: 'Produto alterado com sucesso!' } });
+      showToast('Produto alterado com sucesso!');
+      navigate(`/products/${id}`, { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchAllUsers, updateUserRole, updateUserByAdmin } from '../../services/api';
 import PageHero from '../../components/PageHero/PageHero';
+import { useToast } from '../../contexts/ToastContext';
 import './GestaoUsuariosPage.css';
 
 const ROLE_LABEL = { admin: 'Admin', vendedor: 'Vendedor', user: 'Usuário' };
@@ -11,6 +12,7 @@ const PIX_TYPES   = ['telefone', 'email', 'cpf', 'aleatoria'];
 
 export default function GestaoUsuariosPage() {
   const navigate    = useNavigate();
+  const showToast   = useToast();
   const currentUser = JSON.parse(sessionStorage.getItem('user') || '{}');
 
   const [users, setUsers]         = useState([]);
@@ -45,8 +47,10 @@ export default function GestaoUsuariosPage() {
       const updated = await updateUserRole(userId, newRole);
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: updated.role } : u));
       setRoleFeedback({ id: userId, ok: true });
+      showToast('Permissão atualizada com sucesso!');
     } catch {
       setRoleFeedback({ id: userId, ok: false });
+      showToast('Erro ao atualizar permissão.', 'error');
     } finally {
       setUpdatingRole(null);
       setTimeout(() => setRoleFeedback(null), 2500);
@@ -92,6 +96,7 @@ export default function GestaoUsuariosPage() {
         pix_key_type: editForm.pix_key_type,
       });
       setUsers(prev => prev.map(u => u.id === editUser.id ? { ...u, ...updated } : u));
+      showToast('Dados do usuário atualizados!');
       closeEdit();
     } catch (err) {
       setEditError(err.message);
