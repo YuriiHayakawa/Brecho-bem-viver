@@ -123,7 +123,7 @@ export default function NovoProdutoPage() {
       }
 
       showToast('Produto criado com sucesso!');
-      navigate(`/products/${product.id}`);
+      navigate(`/products/${product.id}`, { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {
