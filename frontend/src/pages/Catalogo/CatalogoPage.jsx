@@ -33,14 +33,18 @@ export default function CatalogoPage() {
 
   const categories = ['Todas', ...new Set(products.map(p => p.category))];
 
-  const filtered = products.filter(p => {
-    const matchSearch  = p.name.toLowerCase().includes(search.toLowerCase()) ||
-                         p.brand.toLowerCase().includes(search.toLowerCase());
-    const matchCat     = filterCategory === 'Todas'    || p.category === filterCategory;
-    const matchGender  = filterGender  === 'Todos'    || p.gender   === filterGender;
-    const matchStatus  = filterStatus  === 'Todos'    || p.status   === filterStatus;
-    return matchSearch && matchCat && matchGender && matchStatus;
-  });
+  const STATUS_ORDER = { disponivel: 0, reservada: 1, vendida: 2 };
+
+  const filtered = products
+    .filter(p => {
+      const matchSearch  = p.name.toLowerCase().includes(search.toLowerCase()) ||
+                           p.brand.toLowerCase().includes(search.toLowerCase());
+      const matchCat     = filterCategory === 'Todas' || p.category === filterCategory;
+      const matchGender  = filterGender  === 'Todos'  || p.gender   === filterGender;
+      const matchStatus  = filterStatus  === 'Todos'  || p.status   === filterStatus;
+      return matchSearch && matchCat && matchGender && matchStatus;
+    })
+    .sort((a, b) => (STATUS_ORDER[a.status] ?? 99) - (STATUS_ORDER[b.status] ?? 99));
 
   return (
     <div className="catalogo-wrapper">
