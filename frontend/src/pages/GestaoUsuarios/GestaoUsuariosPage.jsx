@@ -6,7 +6,7 @@ import './GestaoUsuariosPage.css';
 
 const ROLE_LABEL = { admin: 'Admin', vendedor: 'Vendedor', user: 'Usuário' };
 const ROLE_CLASS  = { admin: 'gu-role--admin', vendedor: 'gu-role--vendedor', user: 'gu-role--user' };
-const ROLES       = ['user', 'vendedor', 'admin'];
+const ROLES       = ['user', 'admin'];
 const PIX_TYPES   = ['telefone', 'email', 'cpf', 'aleatoria'];
 
 export default function GestaoUsuariosPage() {
@@ -159,7 +159,6 @@ export default function GestaoUsuariosPage() {
             <option value="vendedor">Vendedor</option>
             <option value="user">Usuário</option>
           </select>
-          <span className="gu-count">{filtered.length} usuário{filtered.length !== 1 ? 's' : ''}</span>
         </div>
 
         {loading && (
