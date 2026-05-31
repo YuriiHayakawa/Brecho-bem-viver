@@ -161,7 +161,6 @@ export default function GestaoUsuariosPage() {
           <select className="gu-filter-select" value={filterRole} onChange={e => setFilterRole(e.target.value)}>
             <option>Todos</option>
             <option value="admin">Admin</option>
-            <option value="vendedor">Vendedor</option>
             <option value="user">Usuário</option>
           </select>
         </div>
