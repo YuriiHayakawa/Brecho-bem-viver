@@ -76,6 +76,21 @@ def list_products(db: Session, user_id: Optional[int] = None) -> list[ProductRes
 
     return query.all()
 
+def list_my_reservations(db: Session, current_user: User) -> list[ProductResponse]:
+    release_expired_reservations(db)
+
+    products = (
+        db.query(Product)
+        .filter(
+            Product.reserved_by_user_id == current_user.id,
+            Product.status == "reservada",
+            Product.active == True
+        )
+        .all()
+    )
+
+    return products
+
 
 def get_product(db: Session, product_id: int) -> ProductResponse:
     release_expired_reservations(db)

@@ -21,6 +21,13 @@ def list_products(
 ):
     return product_service.list_products(db, user_id)
 
+@router.get("/my-reservations", response_model=list[ProductResponse], summary="Minhas reservas")
+def list_my_reservations(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return product_service.list_my_reservations(db, current_user)
+
 
 @router.get("/{product_id}", response_model=ProductResponse, summary="Detalhe do produto")
 def get_product(product_id: int, db: Session = Depends(get_db)):
