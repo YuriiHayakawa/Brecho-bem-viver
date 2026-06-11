@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchMyReport, fetchAdminSummary, fetchAdminRemainingProducts } from '../../services/api';
+import PageHero from '../../components/PageHero/PageHero';
 import './DashboardPage.css';
 
 /* ─────────────────────────────────────────────
@@ -206,26 +207,19 @@ function AdminDashboard({ user }) {
   return (
     <main className="db-page">
 
-      {/* ── Hero ── */}
-      <div className="db-hero">
-        <div className="db-hero-diagonal" />
-        <div className="db-hero-inner db-hero-inner--admin">
-          <div className="db-hero-left">
-            <div className="db-hero-bars"><span /><span /><span /><span /></div>
-            <div className="db-hero-text">
-              <p className="db-greeting">{greeting()},</p>
-              <h1 className="db-hero-title">{firstName}!</h1>
-              <p className="db-hero-date">{todayLabel()}</p>
-            </div>
-          </div>
+      <PageHero
+        eyebrow={`${greeting()},`}
+        title={`${firstName}!`}
+        subtitle={todayLabel()}
+        right={
           <span className="db-admin-badge">
             <svg viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd"/>
             </svg>
             Administrador
           </span>
-        </div>
-      </div>
+        }
+      />
 
       <div className="db-body">
 
@@ -542,22 +536,7 @@ export default function DashboardPage() {
   return (
     <main className="db-page">
 
-      {/* ── Hero ── */}
-      <div className="db-hero">
-        <div className="db-hero-diagonal" />
-        <div className="db-hero-inner">
-          <div className="db-hero-left">
-            <div className="db-hero-bars">
-              <span /><span /><span /><span />
-            </div>
-            <div className="db-hero-text">
-              <p className="db-greeting">{greeting()},</p>
-              <h1 className="db-hero-title">{firstName}!</h1>
-              <p className="db-hero-date">{todayLabel()}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHero eyebrow={`${greeting()},`} title={`${firstName}!`} subtitle={todayLabel()} />
 
       {/* ── Corpo ── */}
       <div className="db-body">

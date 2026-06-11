@@ -1,3 +1,4 @@
+import PageHero from '../../components/PageHero/PageHero';
 import './SobrePage.css';
 
 const PILARES = [
@@ -45,21 +46,7 @@ export default function SobrePage() {
   return (
     <main className="sobre-page">
 
-        {/* Hero */}
-        <div className="sobre-hero">
-          <div className="sobre-hero-diagonal" />
-          <div className="sobre-hero-inner">
-            <div className="sobre-hero-bars">
-              <span /><span /><span /><span />
-            </div>
-            <div className="sobre-hero-text">
-              <h1 className="sobre-title">Sobre o Bazar Sebrae</h1>
-              <p className="sobre-subtitle">
-                Uma iniciativa que une empreendedorismo, sustentabilidade e comunidade.
-              </p>
-            </div>
-          </div>
-        </div>
+        <PageHero title="Sobre o Bazar Sebrae" subtitle="Uma iniciativa que une empreendedorismo, sustentabilidade e comunidade." />
 
         <div className="sobre-content">
 

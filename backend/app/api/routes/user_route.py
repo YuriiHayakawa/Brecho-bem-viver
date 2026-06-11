@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.api.deps.auth_deps import get_current_user, require_admin
 from app.database import get_db
 from app.models.user import User
-from app.schemas.user_schema import UserCreate, UserResponse, UserUpdate
+from app.schemas.user_schema import UserCreate, UserResponse, UserUpdate, UserRoleUpdate
 from app.services import user_service
 
 router = APIRouter()
@@ -45,6 +45,16 @@ def update_user_by_admin(
     current_user: User = Depends(require_admin)
 ):
     return user_service.update_user_by_admin(db, user_id, data)
+
+@router.patch("/{user_id}/role", response_model=UserResponse, summary="Admin alterar role de usuário")
+def update_user_role(
+    user_id: int,
+    data: UserRoleUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    return user_service.update_user_role(db, user_id, data)
+
 
 @router.delete("/{user_id}", summary="Admin deletar usuário")
 def delete_user_by_admin(

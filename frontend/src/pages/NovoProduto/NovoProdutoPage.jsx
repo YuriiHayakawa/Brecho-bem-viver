@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
+import PageHero from '../../components/PageHero/PageHero';
 import { useNavigate } from 'react-router-dom';
 import { createProduct, uploadProductImage } from '../../services/api';
+import { useToast } from '../../contexts/ToastContext';
 import './NovoProdutoPage.css';
 
 const CATEGORIES = [
@@ -20,7 +22,8 @@ const SIZES = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'XXG', 'Único',
                '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44'];
 
 export default function NovoProdutoPage() {
-  const navigate = useNavigate();
+  const navigate   = useNavigate();
+  const showToast  = useToast();
   const user = JSON.parse(sessionStorage.getItem('user') || '{}');
   const fileInputRef = useRef(null);
 
@@ -119,7 +122,8 @@ export default function NovoProdutoPage() {
         }
       }
 
-      navigate(`/products/${product.id}`);
+      showToast('Produto criado com sucesso!');
+      navigate(`/products/${product.id}`, { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -132,19 +136,7 @@ export default function NovoProdutoPage() {
   return (
     <main className="np-page">
 
-        {/* Hero */}
-        <div className="np-hero">
-          <div className="np-hero-diagonal" />
-          <div className="np-hero-inner">
-            <div className="np-hero-bars">
-              <span /><span /><span /><span />
-            </div>
-            <div>
-              <h1 className="np-hero-title">Novo Produto</h1>
-              <p className="np-hero-subtitle">Cadastre um item para vender no bazar</p>
-            </div>
-          </div>
-        </div>
+        <PageHero title="Novo Produto" subtitle="Cadastre um item para vender no bazar" />
 
         {/* Formulário */}
         <div className="np-content">

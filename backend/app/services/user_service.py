@@ -2,10 +2,12 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.models.user import User
-from app.schemas.user_schema import UserUpdate, UserResponse
+from app.schemas.user_schema import UserUpdate, UserResponse, UserRoleUpdate
 from app.core.security import hash_password
 from app.models.user import User
 from app.schemas.user_schema import UserCreate, UserResponse
+
+VALID_ROLES = {"admin", "vendedor", "user"}
 
 
 def list_users(db: Session) -> list[UserResponse]:
@@ -36,6 +38,7 @@ def create_user(db: Session, user_data: UserCreate) -> UserResponse:
         email=user_data.email,
         password_hash=hashed_password,
         phone=user_data.phone,
+        unit=user_data.unit,
         pix_key=clean_pix_key,
         pix_key_type=user_data.pix_key_type,
         role="user"
@@ -88,6 +91,11 @@ def update_user_by_admin(
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
+    if data.email and data.email != user.email:
+        conflict = db.query(User).filter(User.email == data.email, User.id != user_id).first()
+        if conflict:
+            raise HTTPException(status_code=400, detail="Email já está em uso por outro usuário")
+
     return update_current_user(db, user, data)
 
 def delete_user_by_admin(db: Session, user_id: int):
@@ -100,3 +108,17 @@ def delete_user_by_admin(db: Session, user_id: int):
     db.commit()
 
     return {"message": "Usuário deletado com sucesso"}
+
+
+def update_user_role(db: Session, user_id: int, data: UserRoleUpdate) -> UserResponse:
+    if data.role not in VALID_ROLES:
+        raise HTTPException(status_code=400, detail=f"Role inválida. Use: {', '.join(VALID_ROLES)}")
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+
+    user.role = data.role
+    db.commit()
+    db.refresh(user)
+    return user

@@ -10,4 +10,4 @@ class ProductLabelDataResponse(BaseModel):
     seller_name: str
     pix_key: str
     pix_key_type: str
-    qr_code_url: str
+    qr_code_base64: str

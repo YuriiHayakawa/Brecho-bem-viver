@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useToast } from '../../contexts/ToastContext';
 import { fetchProduct, reserveProduct, fetchProductLabelData, createSale } from '../../services/api';
 import './ProductDetailPage.css';
 
@@ -490,12 +491,14 @@ function Lightbox({ images, startIndex, productName, onClose }) {
 export default function ProductDetailPage() {
   const { id }     = useParams();
   const navigate   = useNavigate();
+  const location   = useLocation();
+  const showToast  = useToast();
 
   const [product, setProduct]           = useState(null);
   const [loading, setLoading]           = useState(true);
   const [error, setError]               = useState('');
   const [activeImage, setActiveImage]   = useState(0);
-  const [lightbox, setLightbox]         = useState(null); // null | index
+  const [lightbox, setLightbox]         = useState(null);
   const [reserving, setReserving]       = useState(false);
   const [reserveSuccess, setReserveSuccess] = useState(false);
   const [reserveError, setReserveError] = useState('');
@@ -520,6 +523,7 @@ export default function ProductDetailPage() {
       const updated = await reserveProduct(id);
       setProduct(updated);
       setReserveSuccess(true);
+      showToast('Produto reservado com sucesso!');
     } catch (err) {
       setReserveError(err.message);
     } finally {
@@ -544,7 +548,7 @@ export default function ProductDetailPage() {
     <div className="detail-wrapper">
       <div className="detail-error">
         <p>{error || 'Produto não encontrado.'}</p>
-        <button onClick={() => navigate('/catalogo')}>← Voltar ao catálogo</button>
+        <button onClick={() => navigate(-1)}>← Voltar</button>
       </div>
     </div>
   );
@@ -578,17 +582,17 @@ export default function ProductDetailPage() {
         <SaleModal
           product={product}
           onClose={() => setSaleOpen(false)}
-          onSuccess={() => fetchProduct(id).then(setProduct).catch(() => {})}
+          onSuccess={() => { fetchProduct(id).then(setProduct).catch(() => {}); showToast('Venda registrada com sucesso!'); }}
         />
       )}
 
       <main className="detail-main">
         <div className="detail-topbar">
-          <button className="back-btn" onClick={() => navigate('/catalogo')}>
+          <button className="back-btn" onClick={() => navigate(-1)}>
             <svg viewBox="0 0 20 20" fill="none">
               <path d="M12 4l-6 6 6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            Voltar ao catálogo
+            Voltar
           </button>
 
           {isAdmin && (

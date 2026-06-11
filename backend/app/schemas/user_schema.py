@@ -8,6 +8,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
     phone: str
+    unit: str | None = None
     pix_key: str
     pix_key_type: str
 
@@ -17,6 +18,7 @@ class UserResponse(BaseModel):
     name: str
     email: EmailStr
     phone: str
+    unit: str | None = None
     pix_key: str
     pix_key_type: str
     role: str
@@ -28,6 +30,12 @@ class UserResponse(BaseModel):
 
 class UserUpdate(BaseModel):
     name: str | None = None
+    email: EmailStr | None = None
     phone: str | None = None
+    unit: str | None = None
     pix_key: str | None = None
     pix_key_type: str | None = None
+
+
+class UserRoleUpdate(BaseModel):
+    role: str
