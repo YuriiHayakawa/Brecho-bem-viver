@@ -38,6 +38,7 @@ def create_user(db: Session, user_data: UserCreate) -> UserResponse:
         email=user_data.email,
         password_hash=hashed_password,
         phone=user_data.phone,
+        unit=user_data.unit,
         pix_key=clean_pix_key,
         pix_key_type=user_data.pix_key_type,
         role="user"
