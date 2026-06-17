@@ -15,12 +15,13 @@ from app.api.routes.report_user_route import router as reports_user_router
 from app.api.routes.report_admin_route import router as reports_admin_router
 from app.api.routes.report_admin_user_route import router as reports_admin_user_router
 from app.api.routes.report_admin_remaining_route import router as reports_admin_remaining_router
+from app.api.routes.product_offer_route import router as product_offer_router
 
 from app.core.config import settings
 from app.database import engine, Base
 
 # Importa todos os models para que o Base.metadata os conheça
-from app.models import User, Product, ProductImage, Sale
+from app.models import User, Product, ProductImage, Sale, ProductOffer
 
 
 @asynccontextmanager
@@ -56,6 +57,7 @@ app.include_router(reports_user_router, prefix="/reports", tags=["Reports User"]
 app.include_router(reports_admin_router, prefix="/reports/admin", tags=["Reports Admin"])
 app.include_router(reports_admin_user_router, prefix="/reports/admin", tags=["Reports Admin"])
 app.include_router(reports_admin_remaining_router, prefix="/reports/admin", tags=["Reports Admin"])
+app.include_router(product_offer_router, tags=["Product Offers"])
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 
