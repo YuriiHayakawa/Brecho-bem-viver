@@ -97,6 +97,23 @@ def list_all_offers(db: Session) -> list[ProductOfferResponse]:
     )
 
 
+def get_accepted_offer_for_product(db: Session, product_id: int) -> ProductOfferResponse:
+    offer = (
+        db.query(ProductOffer)
+        .filter(
+            ProductOffer.product_id == product_id,
+            ProductOffer.status == "accepted",
+        )
+        .order_by(ProductOffer.responded_at.desc())
+        .first()
+    )
+
+    if not offer:
+        raise HTTPException(status_code=404, detail="Nenhuma oferta aceita para este produto")
+
+    return offer
+
+
 def accept_offer(db: Session, offer_id: int, current_user: User) -> ProductOfferResponse:
     release_expired_reservations(db)
 

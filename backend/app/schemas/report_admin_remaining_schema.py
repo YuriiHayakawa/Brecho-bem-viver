@@ -15,6 +15,12 @@ class AdminRemainingProductItem(BaseModel):
     status: str
     created_at: datetime
 
+    # Informações de ofertas / negociação
+    offers_count: int = 0
+    has_offers: bool = False
+    negotiated_value: Decimal | None = None  # valor da oferta aceita
+    final_value: Decimal | None = None       # venda registrada, senão valor negociado
+
     model_config = {
         "from_attributes": True
     }

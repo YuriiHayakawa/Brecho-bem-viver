@@ -18,7 +18,7 @@ const ORIENTACOES = [
     numero: '02',
     titulo: 'Aguarde a reserva',
     descricao:
-      'Compradores podem reservar seu produto por até 48 horas. Durante esse período, o item fica indisponível para outros compradores.',
+      'Compradores podem reservar seu produto por até 24 horas. Durante esse período, o item fica indisponível para outros compradores.',
     icon: (
       <svg viewBox="0 0 24 24" fill="none">
         <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />

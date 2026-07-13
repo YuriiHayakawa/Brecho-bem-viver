@@ -238,3 +238,78 @@ export async function fetchProductLabelData(productId) {
   if (!response.ok) throw new Error(data.detail || 'Erro ao buscar dados da etiqueta');
   return data;
 }
+
+// ── Ofertas / Propostas ────────────────────────────────
+// payload: { offered_price, message? }
+export async function createOffer(productId, payload) {
+  const response = await fetch(`${BASE_URL}/products/${productId}/offers`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao enviar oferta');
+  return data;
+}
+
+// Propostas que EU enviei (sou comprador)
+export async function fetchSentOffers() {
+  const response = await fetch(`${BASE_URL}/offers/sent`, {
+    headers: { ...authHeader() },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar suas propostas');
+  return data;
+}
+
+// Propostas que EU recebi (sou dono do produto)
+export async function fetchReceivedOffers() {
+  const response = await fetch(`${BASE_URL}/offers/received`, {
+    headers: { ...authHeader() },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar propostas recebidas');
+  return data;
+}
+
+export async function acceptOffer(offerId) {
+  const response = await fetch(`${BASE_URL}/offers/${offerId}/accept`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao aceitar proposta');
+  return data;
+}
+
+export async function rejectOffer(offerId) {
+  const response = await fetch(`${BASE_URL}/offers/${offerId}/reject`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao recusar proposta');
+  return data;
+}
+
+// Oferta aceita de um produto (admin — usado no registro da venda)
+export async function fetchAcceptedOffer(productId) {
+  const response = await fetch(`${BASE_URL}/products/${productId}/offers/accepted`, {
+    headers: { ...authHeader() },
+  });
+  if (response.status === 404) return null; // nenhuma oferta aceita
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar oferta aceita');
+  return data;
+}
+
+// ── Reservas ───────────────────────────────────────────
+// Produtos reservados para o usuário logado
+export async function fetchMyReservations() {
+  const response = await fetch(`${BASE_URL}/products/my-reservations`, {
+    headers: { ...authHeader() },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar suas reservas');
+  return data;
+}
