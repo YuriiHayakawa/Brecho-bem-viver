@@ -10,6 +10,35 @@ const PIX_TYPES = [
   { value: 'aleatoria', label: 'Chave Aleatória' },
 ];
 
+const UNITS = [
+  'GABINETE DA DIRETORIA DE ADMINISTRAÇÃO E FINANÇAS',
+  'GABINETE DA DIRETORIA TÉCNICA',
+  'GABINETE DA PRESIDÊNCIA',
+  'GABINETE DO CDN',
+  'OUVIDORIA',
+  'UNIDADE DE ACESSO A MERCADOS',
+  'UNIDADE DE ADMINISTRAÇÃO E SUPRIMENTOS',
+  'UNIDADE DE ASSESSORIA INSTITUCIONAL',
+  'UNIDADE DE ASSESSORIA JURÍDICA',
+  'UNIDADE DE CAPITALIZAÇÃO E SERVIÇOS FINANCEIROS',
+  'UNIDADE DE COMPETITIVIDADE',
+  'UNIDADE DE COMUNICAÇÃO',
+  'UNIDADE DE DESENVOLVIMENTO TERRITORIAL',
+  'UNIDADE DE EDUCAÇÃO EMPREENDEDORA',
+  'UNIDADE DE EMPREENDEDORISMO FEMININO, DIVERSIDADE E INCLUSÃO',
+  'UNIDADE DE ESTRATEGIA E TRANSFORMAÇÃO',
+  'UNIDADE DE GESTAO DE PESSOAS',
+  'UNIDADE DE GESTÃO DE SOLUÇÕES',
+  'UNIDADE DE GESTAO FINANCEIRA',
+  'UNIDADE DE INOVAÇÃO',
+  'UNIDADE DE INTEGRIDADE CORPORATIVA',
+  'UNIDADE DE ORÇAMENTO CONTABILIDADE E CONVÊNIOS',
+  'UNIDADE DE POLÍTICAS PÚBLICAS',
+  'UNIDADE DE RELACIONAMENTO COM O CLIENTE',
+  'UNIDADE DE TECNOLOGIA DA INFORMAÇÃO E COMUNICAÇÃO',
+  'UNIVERSIDADE CORPORATIVA SEBRAE',
+];
+
 const PIX_PLACEHOLDER = {
   telefone:  '(61) 99999-9999',
   email:     'seupix@email.com',
@@ -193,7 +222,7 @@ function RegisterForm({ onSuccess }) {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: '', email: '', password: '', confirmPassword: '',
-    phone: '', pix_key_type: 'telefone', pix_key: '',
+    phone: '', unit: '', pix_key_type: 'telefone', pix_key: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -232,6 +261,7 @@ function RegisterForm({ onSuccess }) {
         email: form.email,
         password: form.password,
         phone: form.phone,
+        unit: form.unit,
         pix_key: form.pix_key,
         pix_key_type: form.pix_key_type,
       });
@@ -298,6 +328,19 @@ function RegisterForm({ onSuccess }) {
             <IconPhone />
             <input id="phone" type="tel" className="field-input" placeholder="(61) 99999-9999"
               value={form.phone} onChange={set('phone')} required />
+          </div>
+        </Field>
+
+        <Field label="Área" id="unit">
+          <div className="field-input-wrapper select-wrapper">
+            <IconBuilding />
+            <select id="unit" className="field-input field-select"
+              value={form.unit} onChange={set('unit')} required>
+              <option value="" disabled>Selecione sua área</option>
+              {UNITS.map(u => (
+                <option key={u} value={u}>{u}</option>
+              ))}
+            </select>
           </div>
         </Field>
 
@@ -412,6 +455,13 @@ const IconUser = () => (
 const IconPhone = () => (
   <svg className="field-icon" viewBox="0 0 20 20" fill="none">
     <path d="M4 2h4l1.5 4-2 1.5c1 2 2.5 3.5 4.5 4.5L13.5 10 18 11.5V16a2 2 0 01-2 2C6 18 2 10 2 4a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const IconBuilding = () => (
+  <svg className="field-icon" viewBox="0 0 20 20" fill="none">
+    <rect x="4" y="2.5" width="12" height="15" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M7 6h2M7 9h2M7 12h2M11 6h2M11 9h2M11 12h2M8.5 17.5v-3h3v3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
   </svg>
 );
 

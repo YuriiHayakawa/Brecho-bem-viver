@@ -11,11 +11,11 @@ function authHeader() {
 }
 
 // ── Auth ──────────────────────────────────────────────
-export async function registerUser({ name, email, password, phone, pix_key, pix_key_type }) {
+export async function registerUser({ name, email, password, phone, unit, pix_key, pix_key_type }) {
   const response = await fetch(`${BASE_URL}/users/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, password, phone, pix_key, pix_key_type }),
+    body: JSON.stringify({ name, email, password, phone, unit, pix_key, pix_key_type }),
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.detail || 'Erro ao criar conta');
