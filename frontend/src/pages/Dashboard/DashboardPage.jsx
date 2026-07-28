@@ -7,23 +7,10 @@ import './DashboardPage.css';
 /* ─────────────────────────────────────────────
    Helpers
    ───────────────────────────────────────────── */
-function greeting() {
-  const h = new Date().getHours();
-  if (h < 12) return 'Bom dia';
-  if (h < 18) return 'Boa tarde';
-  return 'Boa noite';
-}
-
 function fmtBRL(value) {
   return Number(value).toLocaleString('pt-BR', {
     style: 'currency',
     currency: 'BRL',
-  });
-}
-
-function todayLabel() {
-  return new Date().toLocaleDateString('pt-BR', {
-    weekday: 'long', day: 'numeric', month: 'long',
   });
 }
 
@@ -124,9 +111,8 @@ function DonutRing({ total, sold, active }) {
    ───────────────────────────────────────────── */
 const STATUS_LABEL_ADM = { disponivel: 'Disponível', reservada: 'Reservado', vendida: 'Vendido' };
 
-function AdminDashboard({ user }) {
+function AdminDashboard() {
   const navigate  = useNavigate();
-  const firstName = user.name?.split(' ')[0] || 'Admin';
 
   // ── Resumo ──
   const [summary, setSummary] = useState(null);
@@ -207,19 +193,7 @@ function AdminDashboard({ user }) {
   return (
     <main className="db-page">
 
-      <PageHero
-        eyebrow={`${greeting()},`}
-        title={`${firstName}!`}
-        subtitle={todayLabel()}
-        right={
-          <span className="db-admin-badge">
-            <svg viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd"/>
-            </svg>
-            Administrador
-          </span>
-        }
-      />
+      <PageHero title="Dashboard" subtitle="Visão geral do bazar e gestão de produtos" />
 
       <div className="db-body">
 
@@ -543,8 +517,7 @@ export default function DashboardPage() {
   const navigate  = useNavigate();
   const user      = JSON.parse(sessionStorage.getItem('user') || '{}');
 
-  if (user.role === 'admin') return <AdminDashboard user={user} />;
-  const firstName = user.name?.split(' ')[0] || 'Usuário';
+  if (user.role === 'admin') return <AdminDashboard />;
 
   const [report, setReport]   = useState(null);
   const [loading, setLoading] = useState(true);
@@ -560,7 +533,7 @@ export default function DashboardPage() {
   return (
     <main className="db-page">
 
-      <PageHero eyebrow={`${greeting()},`} title={`${firstName}!`} subtitle={todayLabel()} />
+      <PageHero title="Dashboard" subtitle="Acompanhe seus produtos e resultados no bazar" />
 
       {/* ── Corpo ── */}
       <div className="db-body">

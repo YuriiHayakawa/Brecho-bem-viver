@@ -959,7 +959,7 @@ export default function ProductDetailPage() {
               ) : product.status === 'disponivel' ? (
                 <>
                   {reserveError && <p className="reserve-error">{reserveError}</p>}
-                  <button className="btn-reserve" onClick={handleReserve} disabled={reserving}>
+                  <button className="btn-reserve" onClick={handleReserve} disabled={reserving || isOwner}>
                     {reserving ? (
                       <span className="btn-loading">
                         <svg className="spinner" viewBox="0 0 24 24" fill="none">
@@ -969,7 +969,7 @@ export default function ProductDetailPage() {
                       </span>
                     ) : 'Reservar produto'}
                   </button>
-                  {!isOwner && !isAdmin && (
+                  {!isOwner && (
                     <button className="btn-offer" onClick={() => setOfferOpen(true)}>
                       <svg viewBox="0 0 20 20" fill="none">
                         <path d="M3 5l7 4 7-4" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
@@ -978,7 +978,11 @@ export default function ProductDetailPage() {
                       Fazer uma oferta
                     </button>
                   )}
-                  <p className="reserve-notice">A reserva é válida por 24 horas · ou negocie um valor fazendo uma oferta</p>
+                  <p className="reserve-notice">
+                    {isOwner
+                      ? 'Você é o vendedor deste produto — não é possível reservar ou ofertar nele.'
+                      : 'A reserva é válida por 24 horas · ou negocie um valor fazendo uma oferta'}
+                  </p>
                 </>
               ) : product.status === 'reservada' ? (
                 <div className="unavailable-badge">
