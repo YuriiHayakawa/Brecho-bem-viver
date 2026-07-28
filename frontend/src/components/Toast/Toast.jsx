@@ -21,7 +21,6 @@ const ICONS = {
 export default function Toast({ message, type = 'success', onDismiss }) {
   return (
     <div className={`toast toast--${type}`} role="alert">
-      <div className="toast-bar" />
       <span className="toast-icon">{ICONS[type] ?? ICONS.info}</span>
       <p className="toast-message">{message}</p>
       <button className="toast-close" onClick={onDismiss} aria-label="Fechar">

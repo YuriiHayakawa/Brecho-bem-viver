@@ -111,6 +111,9 @@ def reserve_product(db: Session, product_id: int, current_user: User) -> Product
     if not product:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
 
+    if product.id_user == current_user.id:
+        raise HTTPException(status_code=400, detail="Você não pode reservar seu próprio produto")
+
     if product.status != "disponivel":
         raise HTTPException(status_code=400, detail="Produto não disponível")
 
