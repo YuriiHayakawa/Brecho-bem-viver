@@ -7,23 +7,10 @@ import './DashboardPage.css';
 /* ─────────────────────────────────────────────
    Helpers
    ───────────────────────────────────────────── */
-function greeting() {
-  const h = new Date().getHours();
-  if (h < 12) return 'Bom dia';
-  if (h < 18) return 'Boa tarde';
-  return 'Boa noite';
-}
-
 function fmtBRL(value) {
   return Number(value).toLocaleString('pt-BR', {
     style: 'currency',
     currency: 'BRL',
-  });
-}
-
-function todayLabel() {
-  return new Date().toLocaleDateString('pt-BR', {
-    weekday: 'long', day: 'numeric', month: 'long',
   });
 }
 
@@ -124,9 +111,8 @@ function DonutRing({ total, sold, active }) {
    ───────────────────────────────────────────── */
 const STATUS_LABEL_ADM = { disponivel: 'Disponível', reservada: 'Reservado', vendida: 'Vendido' };
 
-function AdminDashboard({ user }) {
+function AdminDashboard() {
   const navigate  = useNavigate();
-  const firstName = user.name?.split(' ')[0] || 'Admin';
 
   // ── Resumo ──
   const [summary, setSummary] = useState(null);
@@ -207,19 +193,7 @@ function AdminDashboard({ user }) {
   return (
     <main className="db-page">
 
-      <PageHero
-        eyebrow={`${greeting()},`}
-        title={`${firstName}!`}
-        subtitle={todayLabel()}
-        right={
-          <span className="db-admin-badge">
-            <svg viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd"/>
-            </svg>
-            Administrador
-          </span>
-        }
-      />
+      <PageHero title="Dashboard" subtitle="Visão geral do bazar e gestão de produtos" />
 
       <div className="db-body">
 
@@ -377,6 +351,7 @@ function AdminDashboard({ user }) {
                   <th>Produto</th>
                   <th>Vendedor</th>
                   <th>Preço</th>
+                  <th>Valor final</th>
                   <th>Status</th>
                   <th>Cadastrado</th>
                   <th />
@@ -386,14 +361,14 @@ function AdminDashboard({ user }) {
                 {loadProd ? (
                   [...Array(8)].map((_, i) => (
                     <tr key={i} className="adm-sk-row">
-                      {[44, 200, 130, 70, 80, 70, 28].map((w, j) => (
+                      {[44, 200, 130, 70, 70, 80, 70, 28].map((w, j) => (
                         <td key={j}><div className="adm-cell-sk" style={{ width: w }} /></td>
                       ))}
                     </tr>
                   ))
                 ) : paginated.length === 0 ? (
                   <tr>
-                    <td colSpan={7}>
+                    <td colSpan={8}>
                       <div className="adm-empty">
                         <div className="adm-empty-icon">
                           <svg viewBox="0 0 24 24" fill="none">
@@ -420,7 +395,21 @@ function AdminDashboard({ user }) {
                       <td>
                         <div className="adm-product-cell">
                           <span className="adm-product-name">{p.product_name}</span>
-                          <span className="adm-product-cat">{p.category}</span>
+                          <div className="adm-product-sub">
+                            <span className="adm-product-cat">{p.category}</span>
+                            {p.has_offers && (
+                              <span
+                                className="adm-offer-badge"
+                                title={`${p.offers_count} oferta(s) recebida(s)`}
+                              >
+                                <svg viewBox="0 0 20 20" fill="none">
+                                  <path d="M3 5l7 4 7-4" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                                  <rect x="3" y="4" width="14" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+                                </svg>
+                                {p.offers_count} oferta{p.offers_count !== 1 ? 's' : ''}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </td>
                       <td>
@@ -433,6 +422,15 @@ function AdminDashboard({ user }) {
                         <span className="adm-cell-price">
                           {Number(p.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                         </span>
+                      </td>
+                      <td>
+                        {p.final_value != null ? (
+                          <span className="adm-cell-final" title={p.status === 'vendida' ? 'Valor da venda' : 'Valor negociado'}>
+                            {Number(p.final_value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                          </span>
+                        ) : (
+                          <span className="adm-cell-final adm-cell-final--empty">—</span>
+                        )}
                       </td>
                       <td>
                         <span className={`adm-badge adm-badge--${p.status}`}>
@@ -519,8 +517,7 @@ export default function DashboardPage() {
   const navigate  = useNavigate();
   const user      = JSON.parse(sessionStorage.getItem('user') || '{}');
 
-  if (user.role === 'admin') return <AdminDashboard user={user} />;
-  const firstName = user.name?.split(' ')[0] || 'Usuário';
+  if (user.role === 'admin') return <AdminDashboard />;
 
   const [report, setReport]   = useState(null);
   const [loading, setLoading] = useState(true);
@@ -536,7 +533,7 @@ export default function DashboardPage() {
   return (
     <main className="db-page">
 
-      <PageHero eyebrow={`${greeting()},`} title={`${firstName}!`} subtitle={todayLabel()} />
+      <PageHero title="Dashboard" subtitle="Acompanhe seus produtos e resultados no bazar" />
 
       {/* ── Corpo ── */}
       <div className="db-body">

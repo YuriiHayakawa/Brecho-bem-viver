@@ -60,6 +60,19 @@ def list_all_offers(
     return product_offer_service.list_all_offers(db)
 
 
+@router.get(
+    "/products/{product_id}/offers/accepted",
+    response_model=ProductOfferResponse,
+    summary="Oferta aceita de um produto"
+)
+def get_accepted_offer(
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    return product_offer_service.get_accepted_offer_for_product(db, product_id)
+
+
 @router.patch(
     "/offers/{offer_id}/accept",
     response_model=ProductOfferResponse,

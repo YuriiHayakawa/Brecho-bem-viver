@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { fetchMyProfile, updateMyProfile } from '../../services/api';
 import PageHero from '../../components/PageHero/PageHero';
 import { useToast } from '../../contexts/ToastContext';
+import { UNITS } from '../../constants/units';
 import './PerfilPage.css';
 
 const PIX_LABELS = {
@@ -31,19 +32,15 @@ export default function PerfilPage() {
       .catch(() => {}); // silencia: usa o sessionStorage como fallback
   }, []);
 
-  const initials = user.name
-    ? user.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
-    : 'U';
-
   function openEdit() {
     setForm({
       name:         user.name        || '',
       phone:        user.phone       || '',
+      unit:         user.unit        || '',
       pix_key:      user.pix_key     || '',
       pix_key_type: user.pix_key_type || 'telefone',
     });
     setSaveError('');
-    setSaveOk(false);
     setEditing(true);
   }
 
@@ -60,6 +57,7 @@ export default function PerfilPage() {
       const updated = await updateMyProfile({
         name:         form.name.trim(),
         phone:        form.phone.trim(),
+        unit:         form.unit,
         pix_key:      form.pix_key.trim(),
         pix_key_type: form.pix_key_type,
       });
@@ -77,15 +75,7 @@ export default function PerfilPage() {
   return (
     <main className="perfil-page">
 
-      <PageHero>
-        <div className="page-hero-avatar"><span>{initials}</span></div>
-        <div>
-          <h1 className="page-hero-title">{user.name || '—'}</h1>
-          <span className={`perfil-role-badge role-${user.role}`}>
-            {user.role === 'admin' ? 'Administrador' : user.role === 'vendedor' ? 'Vendedor' : 'Usuário'}
-          </span>
-        </div>
-      </PageHero>
+      <PageHero title="Meu Perfil" subtitle="Visualize e edite suas informações pessoais" />
 
       {/* Cards de dados */}
       <div className="perfil-content">
@@ -96,29 +86,34 @@ export default function PerfilPage() {
 
             <section className="perfil-card">
               <div className="perfil-card-header">
-                <svg viewBox="0 0 20 20" fill="none">
-                  <circle cx="10" cy="7" r="3.5" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
+                <span className="perfil-card-icon">
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="7" r="3.5" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
+                </span>
                 <h2>Dados pessoais</h2>
               </div>
               <div className="perfil-fields">
                 <DataRow label="Nome completo" value={user.name} />
                 <DataRow label="E-mail"        value={user.email} />
                 <DataRow label="Telefone"      value={user.phone} />
+                <DataRow label="Unidade"       value={user.unit} />
               </div>
             </section>
 
-            <section className="perfil-card">
+            <section className="perfil-card perfil-card--pix">
               <div className="perfil-card-header">
-                <svg viewBox="0 0 20 20" fill="none">
-                  <path d="M10 2L14 6H11V14H14L10 18L6 14H9V6H6L10 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                </svg>
+                <span className="perfil-card-icon">
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <path d="M10 2L14 6H11V14H14L10 18L6 14H9V6H6L10 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                  </svg>
+                </span>
                 <h2>Dados PIX</h2>
               </div>
               <div className="perfil-fields">
                 <DataRow label="Tipo de chave" value={PIX_LABELS[user.pix_key_type] || user.pix_key_type} />
-                <DataRow label="Chave PIX"     value={user.pix_key} mono />
+                <DataRow label="Chave PIX"     value={user.pix_key} />
               </div>
             </section>
 
@@ -140,10 +135,12 @@ export default function PerfilPage() {
 
               <section className="perfil-card">
                 <div className="perfil-card-header">
-                  <svg viewBox="0 0 20 20" fill="none">
-                    <circle cx="10" cy="7" r="3.5" stroke="currentColor" strokeWidth="1.5" />
-                    <path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
+                  <span className="perfil-card-icon">
+                    <svg viewBox="0 0 20 20" fill="none">
+                      <circle cx="10" cy="7" r="3.5" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  </span>
                   <h2>Dados pessoais</h2>
                 </div>
                 <div className="perfil-fields perfil-fields--edit">
@@ -165,28 +162,38 @@ export default function PerfilPage() {
                       onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
                     />
                   </label>
+                  <div className="perfil-field-edit">
+                    <span id="unit-field-label">Unidade</span>
+                    <Dropdown
+                      labelId="unit-field-label"
+                      value={form.unit}
+                      onChange={u => setForm(f => ({ ...f, unit: u }))}
+                      options={UNITS.map(u => ({ value: u, label: u }))}
+                      placeholder="Selecione sua unidade"
+                    />
+                  </div>
                 </div>
               </section>
 
-              <section className="perfil-card">
+              <section className="perfil-card perfil-card--pix">
                 <div className="perfil-card-header">
-                  <svg viewBox="0 0 20 20" fill="none">
-                    <path d="M10 2L14 6H11V14H14L10 18L6 14H9V6H6L10 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                  </svg>
+                  <span className="perfil-card-icon">
+                    <svg viewBox="0 0 20 20" fill="none">
+                      <path d="M10 2L14 6H11V14H14L10 18L6 14H9V6H6L10 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                    </svg>
+                  </span>
                   <h2>Dados PIX</h2>
                 </div>
                 <div className="perfil-fields perfil-fields--edit">
-                  <label className="perfil-field-edit">
-                    <span>Tipo de chave</span>
-                    <select
+                  <div className="perfil-field-edit">
+                    <span id="pix-type-field-label">Tipo de chave</span>
+                    <Dropdown
+                      labelId="pix-type-field-label"
                       value={form.pix_key_type}
-                      onChange={e => setForm(f => ({ ...f, pix_key_type: e.target.value }))}
-                    >
-                      {PIX_TYPES.map(t => (
-                        <option key={t} value={t}>{PIX_LABELS[t]}</option>
-                      ))}
-                    </select>
-                  </label>
+                      onChange={t => setForm(f => ({ ...f, pix_key_type: t }))}
+                      options={PIX_TYPES.map(t => ({ value: t, label: PIX_LABELS[t] }))}
+                    />
+                  </div>
                   <label className="perfil-field-edit">
                     <span>Chave PIX</span>
                     <input
@@ -217,11 +224,77 @@ export default function PerfilPage() {
   );
 }
 
-function DataRow({ label, value, mono }) {
+function DataRow({ label, value }) {
   return (
     <div className="data-row">
       <span className="data-label">{label}</span>
-      <span className={`data-value ${mono ? 'mono' : ''}`}>{value || '—'}</span>
+      <span className="data-value">{value || '—'}</span>
+    </div>
+  );
+}
+
+// Dropdown próprio (não usa <select> nativo) para garantir que a lista
+// sempre abra para baixo, independente do espaço disponível na tela.
+// options: [{ value, label }]
+function Dropdown({ value, onChange, options, placeholder, labelId }) {
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function handleClickOutside(e) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    }
+    function handleEscape(e) {
+      if (e.key === 'Escape') setOpen(false);
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [open]);
+
+  const selected = options.find(o => o.value === value);
+
+  return (
+    <div className="app-dropdown" ref={wrapperRef}>
+      <button
+        type="button"
+        className={`app-dropdown-trigger ${open ? 'open' : ''}`}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-labelledby={labelId}
+        onClick={() => setOpen(o => !o)}
+      >
+        <span className={selected ? '' : 'app-dropdown-placeholder'}>
+          {selected ? selected.label : (placeholder || '')}
+        </span>
+        <svg className="app-dropdown-chevron" viewBox="0 0 20 20" fill="none">
+          <path d="M5 7.5l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      {open && (
+        <ul className="app-dropdown-list" role="listbox" aria-labelledby={labelId}>
+          {options.map(o => (
+            <li
+              key={o.value}
+              role="option"
+              aria-selected={o.value === value}
+              className={`app-dropdown-option ${o.value === value ? 'selected' : ''}`}
+              onClick={() => { onChange(o.value); setOpen(false); }}
+            >
+              {o.label}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

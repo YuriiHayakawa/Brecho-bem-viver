@@ -51,6 +51,39 @@ const NAV_ITEMS = [
     ),
   },
   {
+    key: 'minhas-reservas',
+    label: 'Minhas Reservas',
+    path: '/minhas-reservas',
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M4 7h12l-1 9H5L4 7z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+        <path d="M7.5 7V5.5a2.5 2.5 0 015 0V7" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+    ),
+  },
+  {
+    key: 'minhas-propostas',
+    label: 'Minhas Propostas',
+    path: '/minhas-propostas',
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M3 5l7 4 7-4" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+        <rect x="3" y="4" width="14" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+    ),
+  },
+  {
+    key: 'propostas-recebidas',
+    label: 'Propostas Recebidas',
+    path: '/propostas-recebidas',
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M10 3v8m0 0l-3-3m3 3l3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M3 13v3a1 1 0 001 1h12a1 1 0 001-1v-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
     key: 'orientacoes',
     label: 'Orientações',
     path: '/orientacoes',

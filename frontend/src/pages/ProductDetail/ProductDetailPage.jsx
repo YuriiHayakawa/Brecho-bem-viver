@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useToast } from '../../contexts/ToastContext';
-import { fetchProduct, reserveProduct, fetchProductLabelData, createSale } from '../../services/api';
+import { fetchProduct, reserveProduct, fetchProductLabelData, createSale, createOffer, fetchAcceptedOffer } from '../../services/api';
 import './ProductDetailPage.css';
 
 
@@ -255,11 +255,33 @@ function SaleModal({ product, onClose, onSuccess }) {
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState('');
   const [success, setSuccess]   = useState(false);
+  // Oferta aceita vinculada ao produto (negociação)
+  const [offer, setOffer]       = useState(null);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
   }, []);
+
+  // Se o produto está reservado, verifica se veio de uma proposta aceita
+  // e pré-preenche o valor NEGOCIADO + dados do comprador.
+  useEffect(() => {
+    if (product.status !== 'reservada') return;
+    let cancelled = false;
+    fetchAcceptedOffer(product.id)
+      .then(data => {
+        if (cancelled || !data) return;
+        setOffer(data);
+        setForm(f => ({
+          ...f,
+          sale_value: data.offered_price ?? f.sale_value,
+          buyer_name: data.buyer?.name || f.buyer_name,
+          buyer_phone: data.buyer?.phone || f.buyer_phone,
+        }));
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [product.id, product.status]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -306,6 +328,37 @@ function SaleModal({ product, onClose, onSuccess }) {
           {product.code && <span className="sale-product-code">{product.code}</span>}
           <span className="sale-product-name">{product.name}</span>
         </div>
+
+        {/* Banner de negociação — quando a venda vem de uma proposta aceita */}
+        {offer && (
+          <div className="sale-nego-banner">
+            <div className="sale-nego-head">
+              <svg viewBox="0 0 20 20" fill="none">
+                <path d="M3 5l7 4 7-4" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                <rect x="3" y="4" width="14" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+              </svg>
+              <span>Venda negociada via proposta</span>
+            </div>
+            <div className="sale-nego-prices">
+              <div className="sale-nego-item">
+                <span className="sale-nego-lbl">Anunciado</span>
+                <span className="sale-nego-old">
+                  {Number(offer.original_price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                </span>
+              </div>
+              <svg className="sale-nego-arrow" viewBox="0 0 20 20" fill="none">
+                <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <div className="sale-nego-item">
+                <span className="sale-nego-lbl">Negociado</span>
+                <span className="sale-nego-new">
+                  {Number(offer.offered_price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                </span>
+              </div>
+            </div>
+            <p className="sale-nego-hint">O valor da venda foi preenchido com o valor negociado. Você pode ajustá-lo se necessário.</p>
+          </div>
+        )}
 
         {success ? (
           <div className="sale-success-msg">
@@ -389,6 +442,172 @@ function SaleModal({ product, onClose, onSuccess }) {
               </button>
             </div>
 
+          </form>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
+// Modal de Fazer Oferta (comprador)
+// ─────────────────────────────────────────────
+function OfferModal({ product, onClose, onSuccess }) {
+  const [form, setForm] = useState({ offered_price: '', message: '' });
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState('');
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  const price = Number(product.price);
+  const offered = parseFloat(form.offered_price);
+  const discountPct = offered > 0 && offered < price
+    ? Math.round((1 - offered / price) * 100)
+    : null;
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError('');
+
+    if (!(offered > 0)) {
+      setError('Informe um valor válido para a oferta.');
+      return;
+    }
+    if (offered >= price) {
+      setError('A oferta deve ser menor que o valor anunciado.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await createOffer(product.id, {
+        offered_price: offered,
+        message: form.message.trim() || undefined,
+      });
+      setSuccess(true);
+      setTimeout(() => { onSuccess?.(); onClose(); }, 1800);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="sale-overlay" onClick={onClose}>
+      <div className="sale-modal" onClick={e => e.stopPropagation()}>
+
+        <div className="sale-modal-header">
+          <div className="sale-modal-title-group">
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="M3 5l7 4 7-4" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+              <rect x="3" y="4" width="14" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+            </svg>
+            <span>Fazer uma oferta</span>
+          </div>
+          <button className="label-modal-close" onClick={onClose} aria-label="Fechar">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div className="sale-product-info">
+          {product.code && <span className="sale-product-code">{product.code}</span>}
+          <span className="sale-product-name">{product.name}</span>
+        </div>
+
+        {success ? (
+          <div className="sale-success-msg">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd"/>
+            </svg>
+            <div>
+              <strong>Oferta enviada!</strong>
+              <p>O vendedor poderá aceitar ou recusar sua proposta.</p>
+            </div>
+          </div>
+        ) : (
+          <form className="sale-form" onSubmit={handleSubmit}>
+
+            <div className="sale-field">
+              <label>Valor anunciado</label>
+              <input
+                type="text"
+                value={price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                disabled
+                style={{ background: '#F3F4F6', color: '#6B7280' }}
+              />
+            </div>
+
+            <div className="sale-field">
+              <label htmlFor="of-price">Sua oferta (R$) <span>*</span></label>
+              <input
+                id="of-price"
+                type="number"
+                step="0.01"
+                min="0"
+                required
+                placeholder="0,00"
+                value={form.offered_price}
+                onChange={e => setForm({ ...form, offered_price: e.target.value })}
+              />
+              {discountPct !== null && (
+                <span style={{ fontSize: '0.78rem', color: '#059669', fontWeight: 600, marginTop: '0.3rem' }}>
+                  {discountPct}% abaixo do valor anunciado
+                </span>
+              )}
+            </div>
+
+            <div className="sale-field">
+              <label htmlFor="of-msg">Mensagem <span className="optional">(opcional)</span></label>
+              <textarea
+                id="of-msg"
+                rows={3}
+                placeholder="Ex.: Tenho muito interesse, posso retirar hoje."
+                value={form.message}
+                onChange={e => setForm({ ...form, message: e.target.value })}
+                style={{ resize: 'vertical', width: '100%', padding: '0.65rem 0.75rem', border: '1px solid #D1D5DB', borderRadius: '8px', fontSize: '0.9rem' }}
+              />
+            </div>
+
+            {error && (
+              <p className="sale-error">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
+                </svg>
+                {error}
+              </p>
+            )}
+
+            <div className="sale-actions">
+              <button type="button" className="sale-btn-cancel" onClick={onClose}>
+                Cancelar
+              </button>
+              <button type="submit" className="sale-btn-submit" disabled={loading}>
+                {loading ? (
+                  <>
+                    <svg className="spinner" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="60" strokeDashoffset="15"/>
+                    </svg>
+                    Enviando...
+                  </>
+                ) : (
+                  <>
+                    <svg viewBox="0 0 20 20" fill="none">
+                      <path d="M3 5l7 4 7-4" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                      <rect x="3" y="4" width="14" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+                    </svg>
+                    Enviar oferta
+                  </>
+                )}
+              </button>
+            </div>
           </form>
         )}
 
@@ -505,6 +724,7 @@ export default function ProductDetailPage() {
   const [pixCopied, setPixCopied]       = useState(false);
   const [labelOpen, setLabelOpen]       = useState(false);
   const [saleOpen, setSaleOpen]         = useState(false);
+  const [offerOpen, setOfferOpen]       = useState(false);
 
   const user    = JSON.parse(sessionStorage.getItem('user') || '{}');
   const isAdmin = user.role === 'admin';
@@ -556,6 +776,7 @@ export default function ProductDetailPage() {
   const images          = product.images || [];
   const activeImageUrl  = images[activeImage] ? images[activeImage].image_url : null;
   const isReservedByMe  = product.reserved_by_user_id === user.id;
+  const isOwner         = product.id_user === user.id;
   const seller          = product.user;
 
   return (
@@ -583,6 +804,14 @@ export default function ProductDetailPage() {
           product={product}
           onClose={() => setSaleOpen(false)}
           onSuccess={() => { fetchProduct(id).then(setProduct).catch(() => {}); showToast('Venda registrada com sucesso!'); }}
+        />
+      )}
+
+      {offerOpen && (
+        <OfferModal
+          product={product}
+          onClose={() => setOfferOpen(false)}
+          onSuccess={() => showToast('Oferta enviada ao vendedor!')}
         />
       )}
 
@@ -724,13 +953,13 @@ export default function ProductDetailPage() {
                   </svg>
                   <div>
                     <strong>Produto reservado para você!</strong>
-                    <p>A reserva é válida por 48 horas.</p>
+                    <p>A reserva é válida por 24 horas.</p>
                   </div>
                 </div>
               ) : product.status === 'disponivel' ? (
                 <>
                   {reserveError && <p className="reserve-error">{reserveError}</p>}
-                  <button className="btn-reserve" onClick={handleReserve} disabled={reserving}>
+                  <button className="btn-reserve" onClick={handleReserve} disabled={reserving || isOwner}>
                     {reserving ? (
                       <span className="btn-loading">
                         <svg className="spinner" viewBox="0 0 24 24" fill="none">
@@ -740,7 +969,20 @@ export default function ProductDetailPage() {
                       </span>
                     ) : 'Reservar produto'}
                   </button>
-                  <p className="reserve-notice">A reserva é válida por 48 horas</p>
+                  {!isOwner && (
+                    <button className="btn-offer" onClick={() => setOfferOpen(true)}>
+                      <svg viewBox="0 0 20 20" fill="none">
+                        <path d="M3 5l7 4 7-4" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                        <rect x="3" y="4" width="14" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+                      </svg>
+                      Fazer uma oferta
+                    </button>
+                  )}
+                  <p className="reserve-notice">
+                    {isOwner
+                      ? 'Você é o vendedor deste produto — não é possível reservar ou ofertar nele.'
+                      : 'A reserva é válida por 24 horas · ou negocie um valor fazendo uma oferta'}
+                  </p>
                 </>
               ) : product.status === 'reservada' ? (
                 <div className="unavailable-badge">

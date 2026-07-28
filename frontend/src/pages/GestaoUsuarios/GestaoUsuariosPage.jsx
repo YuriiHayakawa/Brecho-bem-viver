@@ -34,7 +34,15 @@ export default function GestaoUsuariosPage() {
   useEffect(() => {
     if (currentUser.role !== 'admin') { navigate('/dashboard'); return; }
     fetchAllUsers()
-      .then(setUsers)
+      .then(data => {
+        // Você sempre primeiro, depois os demais por ordem de criação
+        const sorted = [...data].sort((a, b) => {
+          if (a.id === currentUser.id) return -1;
+          if (b.id === currentUser.id) return 1;
+          return new Date(a.created_at) - new Date(b.created_at);
+        });
+        setUsers(sorted);
+      })
       .catch(() => setError('Não foi possível carregar os usuários.'))
       .finally(() => setLoading(false));
   }, []);
@@ -113,9 +121,8 @@ export default function GestaoUsuariosPage() {
     return matchSearch && matchRole;
   });
 
-  const totalAdmins     = users.filter(u => u.role === 'admin').length;
-  const totalVendedores = users.filter(u => u.role === 'vendedor').length;
-  const totalUsers      = users.filter(u => u.role === 'user').length;
+  const totalAdmins = users.filter(u => u.role === 'admin').length;
+  const totalUsers  = users.filter(u => u.role === 'user').length;
 
   return (
     <div className="gu-page">
@@ -132,10 +139,6 @@ export default function GestaoUsuariosPage() {
             <div className="gu-stat gu-stat--admin">
               <span className="gu-stat-val">{totalAdmins}</span>
               <span className="gu-stat-lbl">Admins</span>
-            </div>
-            <div className="gu-stat gu-stat--vendedor">
-              <span className="gu-stat-val">{totalVendedores}</span>
-              <span className="gu-stat-lbl">Vendedores</span>
             </div>
             <div className="gu-stat gu-stat--user">
               <span className="gu-stat-val">{totalUsers}</span>
@@ -285,67 +288,98 @@ function UserRow({ user, isSelf, isUpdatingRole, roleFeedback, onRoleChange, onE
     ? user.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
     : 'U';
 
+  const since = new Date(user.created_at).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
+
   return (
-    <div className={`gu-row ${isSelf ? 'gu-row--self' : ''}`}>
-      <div className="gu-row-avatar"><span>{initials}</span></div>
+    <div className={`gu-card gu-card--${user.role} ${isSelf ? 'gu-card--self' : ''}`}>
 
-      <div className="gu-row-info">
-        <div className="gu-row-name">
-          {user.name}
-          {isSelf && <span className="gu-self-badge">Você</span>}
+      <div className="gu-card-top">
+        <div className="gu-card-identity">
+          <div className="gu-card-avatar"><span>{initials}</span></div>
+          <div className="gu-card-namewrap">
+            <div className="gu-card-name">
+              {user.name}
+              {isSelf && <span className="gu-self-badge">Você</span>}
+            </div>
+            <div className="gu-card-email">
+              <svg viewBox="0 0 20 20" fill="none">
+                <path d="M2.5 6.5L10 11.5L17.5 6.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
+              </svg>
+              {user.email}
+            </div>
+          </div>
         </div>
-        <div className="gu-row-email">{user.email}</div>
-        <div className="gu-row-meta">
-          <span className="gu-row-phone">{user.phone}</span>
-          <span className="gu-row-since">
-            desde {new Date(user.created_at).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })}
-          </span>
-        </div>
-      </div>
 
-      <div className="gu-row-role-wrap">
         <span className={`gu-role-badge ${ROLE_CLASS[user.role]}`}>
           {ROLE_LABEL[user.role]}
         </span>
+      </div>
 
-        <div className="gu-row-actions">
-          <button className="gu-btn-edit" onClick={onEdit} title="Editar dados">
+      <div className="gu-card-chips">
+        <span className="gu-chip">
+          <svg viewBox="0 0 20 20" fill="none">
+            <path d="M4 2h4l1.5 4-2 1.5c1 2 2.5 3.5 4.5 4.5L13.5 10 18 11.5V16a2 2 0 01-2 2C6 18 2 10 2 4a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          {user.phone}
+        </span>
+
+        <span className="gu-chip gu-chip--muted">
+          <svg viewBox="0 0 20 20" fill="none">
+            <rect x="3" y="4" width="14" height="13" rx="2" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M3 8h14M7 2v4M13 2v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+          desde {since}
+        </span>
+      </div>
+
+      <div className="gu-card-footer">
+        {user.unit && (
+          <span className="gu-chip gu-chip--unit gu-card-footer-unit" title={user.unit}>
             <svg viewBox="0 0 20 20" fill="none">
-              <path d="M14.5 2.5l3 3L6 17H3v-3L14.5 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+              <rect x="4" y="2.5" width="12" height="15" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M7 6h2M7 9h2M7 12h2M11 6h2M11 9h2M11 12h2M8.5 17.5v-3h3v3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
             </svg>
-            Editar
-          </button>
+            <span className="gu-chip-text">{user.unit}</span>
+          </span>
+        )}
 
-          {!isSelf && (
-            <div className="gu-role-select-wrap">
-              <select
-                className="gu-role-select"
-                value={user.role}
-                disabled={isUpdatingRole}
-                onChange={e => onRoleChange(user.id, e.target.value)}
-              >
-                {ROLES.map(r => (
-                  <option key={r} value={r}>{ROLE_LABEL[r]}</option>
-                ))}
-              </select>
-              {isUpdatingRole && (
-                <svg className="gu-spinner" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="60" strokeDashoffset="15"/>
-                </svg>
-              )}
-              {roleFeedback === true && (
-                <svg className="gu-feedback gu-feedback--ok" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd"/>
-                </svg>
-              )}
-              {roleFeedback === false && (
-                <svg className="gu-feedback gu-feedback--err" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd"/>
-                </svg>
-              )}
-            </div>
-          )}
-        </div>
+        <button className="gu-btn-edit" onClick={onEdit} title="Editar dados">
+          <svg viewBox="0 0 20 20" fill="none">
+            <path d="M14.5 2.5l3 3L6 17H3v-3L14.5 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+          </svg>
+          Editar
+        </button>
+
+        {!isSelf && (
+          <div className="gu-role-select-wrap">
+            <select
+              className="gu-role-select"
+              value={user.role}
+              disabled={isUpdatingRole}
+              onChange={e => onRoleChange(user.id, e.target.value)}
+            >
+              {ROLES.map(r => (
+                <option key={r} value={r}>{ROLE_LABEL[r]}</option>
+              ))}
+            </select>
+            {isUpdatingRole && (
+              <svg className="gu-spinner" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="60" strokeDashoffset="15"/>
+              </svg>
+            )}
+            {roleFeedback === true && (
+              <svg className="gu-feedback gu-feedback--ok" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd"/>
+              </svg>
+            )}
+            {roleFeedback === false && (
+              <svg className="gu-feedback gu-feedback--err" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd"/>
+              </svg>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

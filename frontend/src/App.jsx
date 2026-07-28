@@ -12,6 +12,9 @@ import PerfilPage        from './pages/Perfil/PerfilPage';
 import OrientacoesPage      from './pages/Orientacoes/OrientacoesPage';
 import SobrePage            from './pages/Sobre/SobrePage';
 import GestaoUsuariosPage   from './pages/GestaoUsuarios/GestaoUsuariosPage';
+import MinhasPropostasPage    from './pages/MinhasPropostas/MinhasPropostasPage';
+import PropostasRecebidasPage from './pages/PropostasRecebidas/PropostasRecebidasPage';
+import MinhasReservasPage     from './pages/MinhasReservas/MinhasReservasPage';
 
 function ProtectedRoute({ children }) {
   const token = sessionStorage.getItem('token');
@@ -44,6 +47,15 @@ function App() {
         } />
         <Route path="/meus-produtos" element={
           <ProtectedRoute><MeusProdutosPage /></ProtectedRoute>
+        } />
+        <Route path="/minhas-propostas" element={
+          <ProtectedRoute><MinhasPropostasPage /></ProtectedRoute>
+        } />
+        <Route path="/propostas-recebidas" element={
+          <ProtectedRoute><PropostasRecebidasPage /></ProtectedRoute>
+        } />
+        <Route path="/minhas-reservas" element={
+          <ProtectedRoute><MinhasReservasPage /></ProtectedRoute>
         } />
         <Route path="/perfil" element={
           <ProtectedRoute><PerfilPage /></ProtectedRoute>

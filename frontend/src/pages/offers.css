@@ -1,0 +1,392 @@
+/* ─────────────────────────────────────────────
+   ESTILOS COMPARTILHADOS — Propostas / Reservas
+   (prefixo .off-)
+   ───────────────────────────────────────────── */
+.off-page {
+  min-height: 100vh;
+  background: #F3F4F6;
+  font-family: 'Barlow', system-ui, -apple-system, sans-serif;
+}
+
+.off-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.75rem 1.5rem 3rem;
+}
+
+/* ── Stats resumo ── */
+.off-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.off-stat {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.off-stat-val {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1;
+}
+
+.off-stat-lbl {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #6B7280;
+}
+
+.off-stat--yellow .off-stat-val { color: #D97706; }
+.off-stat--green  .off-stat-val { color: #059669; }
+.off-stat--red    .off-stat-val { color: #DC2626; }
+.off-stat--blue   .off-stat-val { color: #0041D9; }
+
+/* ── Filtros / chips ── */
+.off-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.off-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid #E5E7EB;
+  background: #FFFFFF;
+  color: #4B5563;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.off-chip:hover { border-color: #C7CDD6; }
+
+.off-chip.active {
+  background: #0041D9;
+  border-color: #0041D9;
+  color: #FFFFFF;
+}
+
+.off-chip-badge {
+  background: rgba(0,0,0,0.06);
+  border-radius: 999px;
+  padding: 0.05rem 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.off-chip.active .off-chip-badge { background: rgba(255,255,255,0.25); }
+
+/* ── Lista de cards ── */
+.off-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.off-card {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 14px;
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.off-card:hover {
+  border-color: #D1D5DB;
+  box-shadow: 0 4px 16px rgba(17,24,39,0.06);
+}
+
+.off-card-img {
+  width: 84px;
+  height: 84px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #F3F4F6;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.off-card-img-ph {
+  width: 84px;
+  height: 84px;
+  border-radius: 10px;
+  background: #EEF1F5;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+}
+
+.off-card-img-ph span {
+  width: 5px;
+  height: 26px;
+  background: #CBD5E1;
+  border-radius: 2px;
+  transform: skewX(-8deg);
+}
+
+.off-card-body { flex: 1; min-width: 0; }
+
+.off-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.off-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+
+.off-card-code {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #0041D9;
+  background: #EAF0FF;
+  padding: 0.1rem 0.45rem;
+  border-radius: 5px;
+  letter-spacing: 0.3px;
+}
+
+.off-card-name {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #111827;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.off-card-name:hover { color: #0041D9; }
+
+.off-card-person {
+  font-size: 0.82rem;
+  color: #6B7280;
+  margin-top: 0.1rem;
+}
+
+.off-card-person strong { color: #374151; font-weight: 600; }
+
+/* ── Bloco de preços (anunciado → negociado) ── */
+.off-prices {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.6rem 0 0.4rem;
+  flex-wrap: wrap;
+}
+
+.off-price-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.off-price-lbl {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.off-price-old {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #9CA3AF;
+  text-decoration: line-through;
+}
+
+.off-price-new {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #059669;
+}
+
+.off-price-arrow {
+  color: #9CA3AF;
+  display: flex;
+  align-items: center;
+}
+
+.off-price-arrow svg { width: 18px; height: 18px; }
+
+.off-card-msg {
+  font-size: 0.85rem;
+  color: #4B5563;
+  background: #F9FAFB;
+  border-left: 3px solid #E5E7EB;
+  padding: 0.5rem 0.7rem;
+  border-radius: 6px;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+.off-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.off-card-date {
+  font-size: 0.76rem;
+  color: #9CA3AF;
+  font-weight: 500;
+}
+
+/* ── Status badges ── */
+.off-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+}
+
+.off-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.off-badge--pending   { background: #FEF3C7; color: #B45309; }
+.off-badge--accepted  { background: #D1FAE5; color: #047857; }
+.off-badge--rejected  { background: #FEE2E2; color: #B91C1C; }
+.off-badge--cancelled { background: #F3F4F6; color: #6B7280; }
+.off-badge--reservada { background: #FEF3C7; color: #B45309; }
+
+/* ── Ações ── */
+.off-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.off-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+
+.off-btn svg { width: 15px; height: 15px; }
+
+.off-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.off-btn--accept {
+  background: #059669;
+  color: #FFFFFF;
+}
+.off-btn--accept:hover:not(:disabled) { background: #047857; }
+
+.off-btn--reject {
+  background: #FFFFFF;
+  color: #DC2626;
+  border-color: #FCA5A5;
+}
+.off-btn--reject:hover:not(:disabled) { background: #FEF2F2; }
+
+.off-btn--ghost {
+  background: #FFFFFF;
+  color: #0041D9;
+  border-color: #C7D2FE;
+}
+.off-btn--ghost:hover:not(:disabled) { background: #EEF2FF; }
+
+/* ── Reservas: contador ── */
+.off-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #B45309;
+  background: #FEF3C7;
+  padding: 0.25rem 0.6rem;
+  border-radius: 8px;
+}
+
+.off-timer svg { width: 14px; height: 14px; }
+
+.off-timer--soon { color: #B91C1C; background: #FEE2E2; }
+
+/* ── Loading / vazio / erro ── */
+.off-skeleton {
+  height: 116px;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #EEF0F3 25%, #E3E6EA 37%, #EEF0F3 63%);
+  background-size: 400% 100%;
+  animation: off-shimmer 1.4s ease infinite;
+}
+
+@keyframes off-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+.off-empty {
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  background: #FFFFFF;
+  border: 1px dashed #D1D5DB;
+  border-radius: 14px;
+  color: #6B7280;
+}
+
+.off-empty svg { width: 44px; height: 44px; margin-bottom: 0.75rem; color: #9CA3AF; }
+
+.off-empty-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.off-empty-sub { font-size: 0.88rem; }
+
+.off-section-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.9rem;
+}
+
+@media (max-width: 560px) {
+  .off-card { flex-direction: column; }
+  .off-card-img, .off-card-img-ph { width: 100%; height: 150px; }
+}

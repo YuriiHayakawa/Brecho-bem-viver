@@ -489,27 +489,6 @@
   justify-content: space-between;
 }
 
-.db-admin-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.9rem;
-  background: rgba(147, 51, 234, 0.25);
-  border: 1px solid rgba(167, 90, 250, 0.45);
-  border-radius: 999px;
-  color: #E9D5FF;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  flex-shrink: 0;
-}
-
-.db-admin-badge svg {
-  width: 13px;
-  height: 13px;
-  opacity: 0.9;
-}
-
 /* Grid de 5 cards */
 .db-stat-grid--5 {
   grid-template-columns: repeat(5, 1fr);
@@ -883,6 +862,44 @@
   font-weight: 700;
   color: #111827;
   white-space: nowrap;
+}
+
+/* Subtítulo do produto (categoria + badge de oferta) */
+.adm-product-sub {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+/* Badge de ofertas recebidas */
+.adm-offer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #7C3AED;
+  background: #F3EEFF;
+  border: 1px solid #E4D8FF;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.adm-offer-badge svg { width: 12px; height: 12px; }
+
+/* Valor final (venda ou negociado) */
+.adm-cell-final {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #059669;
+  white-space: nowrap;
+}
+
+.adm-cell-final--empty {
+  color: #D1D5DB;
+  font-weight: 500;
 }
 
 /* Data */
