@@ -78,7 +78,7 @@ export default function OrientacoesPage() {
   return (
     <main className="orientacoes-page">
 
-        <PageHero title="Orientações" subtitle="Como participar do Bazar Sebrae como vendedor" />
+        <PageHero title="Orientações" subtitle="Como participar do Bazar Interno como vendedor" />
 
         {/* Cards */}
         <div className="orientacoes-content">
@@ -102,7 +102,7 @@ export default function OrientacoesPage() {
             </svg>
             <p>
               Em caso de dúvidas, entre em contato com a organização do evento.
-              O Bazar Sebrae promove o empreendedorismo com responsabilidade e transparência.
+              O Bazar Interno promove o empreendedorismo com responsabilidade e transparência.
             </p>
           </div>
         </div>

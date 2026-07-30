@@ -10,7 +10,7 @@
 /* ── Hero ── */
 .db-hero {
   position: relative;
-  background: linear-gradient(135deg, #0023A9 0%, #0041D9 55%, #005EB8 100%);
+  background: linear-gradient(135deg, #115E59 0%, #0F766E 55%, #14B8A6 100%);
   overflow: hidden;
   padding: 2.5rem 2rem 2.75rem;
 }
@@ -55,7 +55,7 @@
   height: 6px;
   background: rgba(255,255,255,0.8);
   border-radius: 1px;
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
 }
 .db-hero-bars span:nth-child(1) { width: 32px; }
 .db-hero-bars span:nth-child(2) { width: 52px; }
@@ -183,7 +183,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: #0041D9;
+  background: #0F766E;
   color: #fff;
   border: none;
   border-radius: 12px;
@@ -194,12 +194,12 @@
   cursor: pointer;
   margin-top: 0.25rem;
   transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
-  box-shadow: 0 4px 14px rgba(0,65,217,0.25);
+  box-shadow: 0 4px 14px rgba(15,118,110,0.25);
 }
 .db-cta:hover {
-  background: #0023A9;
+  background: #115E59;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,65,217,0.35);
+  box-shadow: 0 6px 20px rgba(15,118,110,0.35);
 }
 .db-cta svg { width: 18px; height: 18px; }
 
@@ -239,12 +239,12 @@
 .db-stat-icon svg { width: 22px; height: 22px; }
 
 /* Variantes de cor */
-.db-stat--blue  { border-top: 3px solid #0041D9; }
+.db-stat--blue  { border-top: 3px solid #0F766E; }
 .db-stat--green { border-top: 3px solid #10B981; }
 .db-stat--indigo{ border-top: 3px solid #6366F1; }
 .db-stat--rose  { border-top: 3px solid #F43F5E; }
 
-.db-stat--blue   .db-stat-icon { background: rgba(0,65,217,0.08);   color: #0041D9; }
+.db-stat--blue   .db-stat-icon { background: rgba(15,118,110,0.08);   color: #0F766E; }
 .db-stat--green  .db-stat-icon { background: rgba(16,185,129,0.10); color: #10B981; }
 .db-stat--indigo .db-stat-icon { background: rgba(99,102,241,0.10); color: #6366F1; }
 .db-stat--rose   .db-stat-icon { background: rgba(244,63,94,0.10);  color: #F43F5E; }
@@ -358,7 +358,7 @@
 
 /* ── Painel — Receita ── */
 .db-panel--revenue {
-  border-top: 3px solid #0041D9;
+  border-top: 3px solid #0F766E;
 }
 
 .db-big-num {
@@ -389,7 +389,7 @@
 .db-revenue-fill {
   height: 100%;
   width: 100%;
-  background: linear-gradient(90deg, #0041D9, #6366F1);
+  background: linear-gradient(90deg, #0F766E, #6366F1);
   border-radius: 999px;
   transform-origin: left;
   animation: revFill 1.1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
@@ -412,7 +412,7 @@
   width: 180px;
   height: 180px;
   overflow: visible;
-  filter: drop-shadow(0 4px 12px rgba(0,65,217,0.10));
+  filter: drop-shadow(0 4px 12px rgba(15,118,110,0.10));
 }
 
 /* ── Legenda ── */
@@ -443,7 +443,7 @@
   border-radius: 50%;
   flex-shrink: 0;
 }
-.ring-dot--blue  { background: #0041D9; }
+.ring-dot--blue  { background: #0F766E; }
 .ring-dot--green { background: #10B981; }
 
 .ring-legend-body {
@@ -548,14 +548,14 @@
   overflow: hidden;
 }
 
-/* ── Header do painel — identidade Sebrae ── */
+/* ── Header do painel ── */
 .adm-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1.25rem;
   padding: 1.4rem 1.75rem;
-  background: linear-gradient(135deg, #0023A9 0%, #0041D9 60%, #005EB8 100%);
+  background: linear-gradient(135deg, #115E59 0%, #0F766E 60%, #14B8A6 100%);
   position: relative;
   overflow: hidden;
   flex-wrap: wrap;
@@ -594,7 +594,7 @@
   height: 4px;
   background: rgba(255,255,255,0.7);
   border-radius: 1px;
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
 }
 .adm-header-bars span:nth-child(1) { width: 18px; }
 .adm-header-bars span:nth-child(2) { width: 30px; }
@@ -700,13 +700,13 @@
   transition: border-color 0.15s, color 0.15s, background 0.15s, box-shadow 0.15s;
 }
 .adm-chip:hover {
-  border-color: var(--chip-color, #0041D9);
-  color: var(--chip-color, #0041D9);
+  border-color: var(--chip-color, #0F766E);
+  color: var(--chip-color, #0F766E);
   background: #F5F7FF;
 }
 .adm-chip.active {
-  border-color: var(--chip-color, #0041D9);
-  background: var(--chip-color, #0041D9);
+  border-color: var(--chip-color, #0F766E);
+  background: var(--chip-color, #0F766E);
   color: #fff;
   box-shadow: 0 2px 10px rgba(0,0,0,0.14);
 }
@@ -838,7 +838,7 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0041D9, #005EB8);
+  background: linear-gradient(135deg, #0F766E, #14B8A6);
   color: #fff;
   display: flex;
   align-items: center;
@@ -950,8 +950,8 @@
 }
 .adm-row:hover .adm-row-action,
 .adm-row-action:hover {
-  border-color: #0041D9;
-  color: #0041D9;
+  border-color: #0F766E;
+  color: #0F766E;
   background: #EEF2FF;
 }
 .adm-row-action svg { width: 15px; height: 15px; }
@@ -1035,7 +1035,7 @@
   background: #fff;
   transition: border-color 0.15s;
 }
-.adm-per-page select:focus { border-color: #0041D9; }
+.adm-per-page select:focus { border-color: #0F766E; }
 
 .adm-page-info {
   font-size: 0.8rem;
@@ -1064,8 +1064,8 @@
   transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
 .adm-page-arrow:hover:not(:disabled) {
-  border-color: #0041D9;
-  color: #0041D9;
+  border-color: #0F766E;
+  color: #0F766E;
   background: #EEF2FF;
 }
 .adm-page-arrow:disabled { opacity: 0.32; cursor: not-allowed; }
@@ -1089,14 +1089,14 @@
   transition: border-color 0.15s, background 0.15s, color 0.15s;
 }
 .adm-page-num:hover:not(.active) {
-  border-color: #0041D9;
-  color: #0041D9;
+  border-color: #0F766E;
+  color: #0F766E;
 }
 .adm-page-num.active {
-  background: #0041D9;
-  border-color: #0041D9;
+  background: #0F766E;
+  border-color: #0F766E;
   color: #fff;
-  box-shadow: 0 2px 8px rgba(0,65,217,0.28);
+  box-shadow: 0 2px 8px rgba(15,118,110,0.28);
 }
 
 .adm-page-dots {

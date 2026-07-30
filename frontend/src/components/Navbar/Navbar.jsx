@@ -155,8 +155,8 @@ export default function Navbar({ collapsed, onToggle, mobileOpen, onCloseMobile 
             <span /><span /><span /><span />
           </div>
           <div className="sb-brand">
-            <span className="sb-name">SEBRAE</span>
-            <span className="sb-sub">Bazar</span>
+            <span className="sb-name">BAZAR</span>
+            <span className="sb-sub">Interno</span>
           </div>
         </button>
 

@@ -1,4 +1,4 @@
-# Frontend - Bazar Sebrae
+# Frontend - Bazar Interno
 
 Este diretório contém o frontend da aplicação, criado com **React** e **Vite**.
 

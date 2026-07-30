@@ -52,10 +52,10 @@ export default function LoginPage() {
 
   return (
     <div className="login-wrapper">
-      {/* Painel esquerdo — identidade Sebrae */}
+      {/* Painel esquerdo — identidade visual */}
       <div className="login-brand">
         <div className="brand-content">
-          <div className="sebrae-bars top-bars">
+          <div className="brand-bars top-bars">
             <span className="bar bar-1" /><span className="bar bar-2" />
             <span className="bar bar-3" /><span className="bar bar-4" />
           </div>
@@ -66,18 +66,18 @@ export default function LoginPage() {
               <span className="logo-bar s3" /><span className="logo-bar s4" />
             </div>
             <div className="logo-text">
-              <span className="logo-name">SEBRAE</span>
-              <span className="logo-subtitle">Bazar</span>
+              <span className="logo-name">BAZAR</span>
+              <span className="logo-subtitle">Interno</span>
             </div>
           </div>
 
           <div className="brand-divider" />
 
           <p className="brand-slogan">
-            A força do<br />empreendedor<br />brasileiro.
+            Trocar, vender<br />e apoiar quem<br />está do seu lado.
           </p>
 
-          <div className="sebrae-bars bottom-bars">
+          <div className="brand-bars bottom-bars">
             <span className="bar bar-4" /><span className="bar bar-3" />
             <span className="bar bar-2" /><span className="bar bar-1" />
           </div>
@@ -93,7 +93,7 @@ export default function LoginPage() {
             <div className="mobile-logo-bars">
               <span className="bar bar-1" /><span className="bar bar-2" /><span className="bar bar-3" />
             </div>
-            <span className="mobile-logo-name">SEBRAE Bazar</span>
+            <span className="mobile-logo-name">Bazar Interno</span>
           </div>
 
           {/* Abas login / cadastro */}
@@ -183,7 +183,7 @@ function LoginForm() {
       </form>
 
       <p className="form-footer">
-        Serviço Brasileiro de Apoio às<br />Micro e Pequenas Empresas
+        Um espaço interno de compra,<br />venda e trocas entre colegas
       </p>
     </>
   );

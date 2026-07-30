@@ -57,7 +57,7 @@ def create_product_image(
     try:
         upload_result = cloudinary.uploader.upload(
             file.file,
-            folder=f"bazar-sebrae/products/{product_id}",
+            folder=f"bazar-interno/products/{product_id}",
             resource_type="image",
         )
     except Exception:

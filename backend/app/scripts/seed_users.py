@@ -18,12 +18,12 @@ Base.metadata.create_all(bind=engine)
 
 USUARIOS_FAKE = [
     {
-        "name": "Admin Sebrae",
-        "email": "admin@sebrae.com.br",
+        "name": "Admin Bazar Interno",
+        "email": "admin@bazarinterno.com.br",
         "password": "admin123",
         "phone": "11999990001",
         "role": "admin",
-        "pix_key": "admin@sebrae.com.br",
+        "pix_key": "admin@bazarinterno.com.br",
         "pix_key_type": "email",
     },
     {

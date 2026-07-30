@@ -1,6 +1,6 @@
 .page-hero {
   position: relative;
-  background: linear-gradient(135deg, #0041D9 0%, #0023A9 100%);
+  background: linear-gradient(135deg, #0F766E 0%, #115E59 100%);
   padding: 2.5rem 2rem 2rem;
   overflow: hidden;
 }
@@ -50,7 +50,7 @@
   height: 5px;
   background: rgba(255, 255, 255, 0.85);
   border-radius: 1px;
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
 }
 
 .page-hero-bars span:nth-child(1) { width: 20px; }

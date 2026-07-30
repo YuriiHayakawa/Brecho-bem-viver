@@ -48,7 +48,7 @@
 .off-stat--yellow .off-stat-val { color: #D97706; }
 .off-stat--green  .off-stat-val { color: #059669; }
 .off-stat--red    .off-stat-val { color: #DC2626; }
-.off-stat--blue   .off-stat-val { color: #0041D9; }
+.off-stat--blue   .off-stat-val { color: #0F766E; }
 
 /* ── Filtros / chips ── */
 .off-filters {
@@ -76,8 +76,8 @@
 .off-chip:hover { border-color: #C7CDD6; }
 
 .off-chip.active {
-  background: #0041D9;
-  border-color: #0041D9;
+  background: #0F766E;
+  border-color: #0F766E;
   color: #FFFFFF;
 }
 
@@ -141,7 +141,7 @@
   height: 26px;
   background: #CBD5E1;
   border-radius: 2px;
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
 }
 
 .off-card-body { flex: 1; min-width: 0; }
@@ -164,7 +164,7 @@
 .off-card-code {
   font-size: 0.72rem;
   font-weight: 700;
-  color: #0041D9;
+  color: #0F766E;
   background: #EAF0FF;
   padding: 0.1rem 0.45rem;
   border-radius: 5px;
@@ -181,7 +181,7 @@
   text-overflow: ellipsis;
 }
 
-.off-card-name:hover { color: #0041D9; }
+.off-card-name:hover { color: #0F766E; }
 
 .off-card-person {
   font-size: 0.82rem;
@@ -323,7 +323,7 @@
 
 .off-btn--ghost {
   background: #FFFFFF;
-  color: #0041D9;
+  color: #0F766E;
   border-color: #C7D2FE;
 }
 .off-btn--ghost:hover:not(:disabled) { background: #EEF2FF; }

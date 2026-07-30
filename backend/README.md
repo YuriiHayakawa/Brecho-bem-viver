@@ -1,4 +1,4 @@
-# Backend - Bazar Sebrae
+# Backend - Bazar Interno
 
 Este diretório contém o backend da aplicação, construído com **Python** e **FastAPI**.
 

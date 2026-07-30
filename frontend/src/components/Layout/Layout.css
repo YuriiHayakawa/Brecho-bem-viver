@@ -57,8 +57,8 @@
     right: 0;
     height: var(--sb-topbar, 56px);
     background: #fff;
-    border-bottom: 2px solid #0041D9;
-    box-shadow: 0 2px 12px rgba(0,65,217,0.08);
+    border-bottom: 2px solid #0F766E;
+    box-shadow: 0 2px 12px rgba(15,118,110,0.08);
     padding: 0 1rem;
     z-index: 198;
   }
@@ -85,9 +85,9 @@
   }
 
   .topbar-hamburger:hover {
-    background: rgba(0,65,217,0.06);
-    border-color: #0041D9;
-    color: #0041D9;
+    background: rgba(15,118,110,0.06);
+    border-color: #0F766E;
+    color: #0F766E;
   }
 
   .topbar-hamburger svg {
@@ -110,9 +110,9 @@
   .topbar-bars span {
     display: block;
     height: 3px;
-    background: #0041D9;
+    background: #0F766E;
     border-radius: 1px;
-    transform: skewX(-8deg);
+    transform: skewX(-6deg);
   }
 
   .topbar-bars span:nth-child(1) { width: 18px; }
@@ -122,7 +122,7 @@
   .topbar-name {
     font-size: 1rem;
     font-weight: 800;
-    color: #0041D9;
+    color: #0F766E;
     letter-spacing: -0.01em;
     text-transform: uppercase;
   }

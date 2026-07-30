@@ -2,7 +2,7 @@
 
 /* Hero com gradiente invertido para diferenciar */
 .ep-hero {
-  background: linear-gradient(135deg, #0023A9 0%, #0041D9 60%, #1D6FBF 100%) !important;
+  background: linear-gradient(135deg, #115E59 0%, #0F766E 60%, #1D6FBF 100%) !important;
 }
 
 /* Skeletons de carregamento */
@@ -48,7 +48,7 @@
   position: absolute;
   top: 6px;
   left: 6px;
-  background: #0041D9;
+  background: #0F766E;
   color: #fff;
   font-size: 0.65rem;
   font-weight: 800;

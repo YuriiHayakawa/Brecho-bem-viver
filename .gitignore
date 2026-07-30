@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────────
-#  BAZAR SEBRAE — .gitignore
+#  BAZAR INTERNO — .gitignore
 #  Stack: FastAPI · SQLAlchemy · PostgreSQL (Docker)
 #         React · Vite · Node
 # ─────────────────────────────────────────────

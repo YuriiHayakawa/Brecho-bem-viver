@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
-    APP_NAME: str = "Bazar Sebrae API"
+    APP_NAME: str = "Bazar Interno API"
     APP_ENV: str = "development"
     APP_PORT: int = 8000
 
@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     CLOUDINARY_API_SECRET: str
 
     # Origens permitidas pelo CORS (separadas por vírgula)
-    # Ex.: https://bazar-sebrae.vercel.app,https://meu-dominio.com
+    # Ex.: https://bazar-interno.vercel.app,https://meu-dominio.com
     ALLOWED_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
 
     @property

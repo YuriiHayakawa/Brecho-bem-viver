@@ -24,7 +24,7 @@ const PILARES = [
   },
   {
     titulo: 'Comunidade',
-    descricao: 'Fortalecer os laços entre as pessoas do Sebrae, criando um ambiente de troca e solidariedade.',
+    descricao: 'Fortalecer os laços entre as pessoas da empresa, criando um ambiente de troca e solidariedade.',
     icon: (
       <svg viewBox="0 0 24 24" fill="none">
         <circle cx="9" cy="7" r="3" stroke="currentColor" strokeWidth="1.5"/>
@@ -46,7 +46,7 @@ export default function SobrePage() {
   return (
     <main className="sobre-page">
 
-        <PageHero title="Sobre o Bazar Sebrae" subtitle="Uma iniciativa que une empreendedorismo, sustentabilidade e comunidade." />
+        <PageHero title="Sobre o Bazar Interno" subtitle="Uma iniciativa que une empreendedorismo, sustentabilidade e comunidade." />
 
         <div className="sobre-content">
 
@@ -54,9 +54,9 @@ export default function SobrePage() {
           <section className="sobre-section sobre-descricao-section">
             <div className="sobre-descricao-card">
               <p>
-                O <strong>Bazar Sebrae</strong> é uma plataforma interna de compra e venda de
+                O <strong>Bazar Interno</strong> é uma plataforma interna de compra e venda de
                 roupas, acessórios e outros itens entre colaboradores e empreendedores conectados
-                ao Sebrae. Surgiu da necessidade de criar um espaço seguro, transparente e
+                à empresa. Surgiu da necessidade de criar um espaço seguro, transparente e
                 organizado para essas trocas.
               </p>
               <p>
@@ -97,9 +97,9 @@ export default function SobrePage() {
               <span /><span /><span />
             </div>
             <div>
-              <p className="sobre-inst-nome">SEBRAE</p>
+              <p className="sobre-inst-nome">BAZAR INTERNO</p>
               <p className="sobre-inst-slogan">
-                Serviço Brasileiro de Apoio às Micro e Pequenas Empresas
+                Economia colaborativa e sustentabilidade entre colegas
               </p>
             </div>
           </section>

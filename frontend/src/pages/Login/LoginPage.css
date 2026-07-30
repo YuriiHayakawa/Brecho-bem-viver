@@ -1,18 +1,17 @@
 /* ─────────────────────────────────────────────
-   TOKENS — Identidade Visual Sebrae
+   TOKENS — Identidade Visual
    ───────────────────────────────────────────── */
 :root {
-  --azul-sebrae:    #0041D9;
-  --azul-escuro:    #0023A9;
-  --azul-medio:     #005EB8;
-  --magenta-sebrae: #CD5BE8;
+  --cor-primaria:   #0F766E;
+  --cor-escura:     #115E59;
+  --cor-media:      #14B8A6;
   --branco:         #FFFFFF;
   --cinza-texto:    #4B5563;
   --cinza-borda:    #E5E7EB;
   --cinza-fundo:    #F9FAFB;
   --erro:           #DC2626;
   --erro-fundo:     #FEF2F2;
-  --sombra-azul:    rgba(0, 65, 217, 0.25);
+  --sombra-primaria: rgba(15, 118, 110, 0.25);
 }
 
 /* ─────────────────────────────────────────────
@@ -31,7 +30,7 @@
 .login-brand {
   position: relative;
   width: 45%;
-  background: var(--azul-sebrae);
+  background: var(--cor-primaria);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -39,7 +38,7 @@
   padding: 3rem 3rem 3rem 4rem;
 }
 
-/* Elemento decorativo diagonal (característica Sebrae) */
+/* Elemento decorativo diagonal (estilo diagonal) */
 .brand-diagonal {
   position: absolute;
   top: 0;
@@ -47,7 +46,7 @@
   width: 120px;
   height: 100%;
   background: rgba(255, 255, 255, 0.06);
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
   pointer-events: none;
 }
 
@@ -59,7 +58,7 @@
   width: 80px;
   height: 100%;
   background: rgba(255, 255, 255, 0.04);
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
 }
 
 /* Fundo com gradiente diagonal sutil */
@@ -69,9 +68,9 @@
   inset: 0;
   background: linear-gradient(
     135deg,
-    var(--azul-escuro) 0%,
-    var(--azul-sebrae) 50%,
-    var(--azul-medio) 100%
+    var(--cor-escura) 0%,
+    var(--cor-primaria) 50%,
+    var(--cor-media) 100%
   );
   opacity: 0.6;
   pointer-events: none;
@@ -87,20 +86,20 @@
 }
 
 /* ─────────────────────────────────────────────
-   BARRAS GRÁFICAS SEBRAE
+   BARRAS GRÁFICAS DA MARCA
    ───────────────────────────────────────────── */
-.sebrae-bars {
+.brand-bars {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.sebrae-bars .bar {
+.brand-bars .bar {
   display: block;
   height: 7px;
   background: rgba(255, 255, 255, 0.85);
   border-radius: 1px;
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
   transform-origin: left center;
 }
 
@@ -135,7 +134,7 @@
   height: 6px;
   background: var(--branco);
   border-radius: 1px;
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
 }
 
 .logo-bar.s1 { width: 36px; }
@@ -152,7 +151,6 @@
 .logo-name {
   font-size: 2.75rem;
   font-weight: 800;
-  font-style: italic;
   color: var(--branco);
   letter-spacing: -0.02em;
   line-height: 1;
@@ -174,13 +172,12 @@
   width: 48px;
   height: 3px;
   background: rgba(255, 255, 255, 0.4);
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
 }
 
 .brand-slogan {
   font-size: 1.6rem;
   font-weight: 700;
-  font-style: italic;
   color: rgba(255, 255, 255, 0.92);
   line-height: 1.35;
   letter-spacing: -0.01em;
@@ -224,8 +221,8 @@
 .mobile-logo-bars .bar {
   display: block;
   height: 4px;
-  background: var(--azul-sebrae);
-  transform: skewX(-8deg);
+  background: var(--cor-primaria);
+  transform: skewX(-6deg);
 }
 
 .mobile-logo-bars .bar-1 { width: 28px; }
@@ -235,8 +232,7 @@
 .mobile-logo-name {
   font-size: 1.25rem;
   font-weight: 800;
-  font-style: italic;
-  color: var(--azul-sebrae);
+  color: var(--cor-primaria);
   letter-spacing: -0.01em;
   text-transform: uppercase;
 }
@@ -326,9 +322,9 @@
 }
 
 .field-input:focus {
-  border-color: var(--azul-sebrae);
+  border-color: var(--cor-primaria);
   background: var(--branco);
-  box-shadow: 0 0 0 3px var(--sombra-azul);
+  box-shadow: 0 0 0 3px var(--sombra-primaria);
 }
 
 .toggle-password {
@@ -348,7 +344,7 @@
 }
 
 .toggle-password:hover {
-  color: var(--azul-sebrae);
+  color: var(--cor-primaria);
 }
 
 .toggle-password svg {
@@ -384,7 +380,7 @@
 .btn-login {
   width: 100%;
   height: 50px;
-  background: var(--azul-sebrae);
+  background: var(--cor-primaria);
   color: var(--branco);
   border: none;
   border-radius: 8px;
@@ -397,12 +393,12 @@
   transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
   transform: skewX(-3deg);
   margin-top: 0.25rem;
-  box-shadow: 0 4px 14px var(--sombra-azul);
+  box-shadow: 0 4px 14px var(--sombra-primaria);
 }
 
 .btn-login:hover:not(:disabled) {
-  background: var(--azul-escuro);
-  box-shadow: 0 6px 20px var(--sombra-azul);
+  background: var(--cor-escura);
+  box-shadow: 0 6px 20px var(--sombra-primaria);
 }
 
 .btn-login:active:not(:disabled) {
@@ -458,12 +454,12 @@
 }
 
 .form-tab:hover {
-  color: var(--azul-sebrae);
+  color: var(--cor-primaria);
 }
 
 .form-tab.active {
-  color: var(--azul-sebrae);
-  border-bottom-color: var(--azul-sebrae);
+  color: var(--cor-primaria);
+  border-bottom-color: var(--cor-primaria);
 }
 
 /* ─────────────────────────────────────────────
@@ -510,9 +506,9 @@
 }
 
 .field-select:focus {
-  border-color: var(--azul-sebrae);
+  border-color: var(--cor-primaria);
   background: var(--branco);
-  box-shadow: 0 0 0 3px var(--sombra-azul);
+  box-shadow: 0 0 0 3px var(--sombra-primaria);
 }
 
 /* ─────────────────────────────────────────────

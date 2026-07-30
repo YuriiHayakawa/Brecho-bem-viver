@@ -1,5 +1,5 @@
-# Bazar-Sebrae
-Projeto bazar Sebrae
+# Bazar Interno
+Projeto Bazar Interno
 
 # Iniciar o backend 
 
