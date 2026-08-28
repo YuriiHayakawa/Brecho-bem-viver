@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import HTTPException
@@ -11,12 +11,21 @@ from app.schemas.product_label_schema import ProductLabelDataResponse
 from app.utils.pix import generate_pix_qrcode_base64
 
 
+def utc_now_naive() -> datetime:
+    """Hora atual em UTC, sem tzinfo (a coluna reserved_until é TIMESTAMP sem
+    timezone). Usar isso em vez de datetime.now() evita depender do fuso
+    horário do servidor onde o backend está rodando (ex.: Railway roda em UTC,
+    mas ambientes locais podem estar em outro fuso — misturar as duas
+    referências fazia a reserva de 24h aparecer com horas a mais/menos)."""
+    return datetime.now(timezone.utc).replace(tzinfo=None)
+
+
 def release_expired_reservations(db: Session):
     expired_products = (
         db.query(Product)
         .filter(
             Product.status == "reservada",
-            Product.reserved_until < datetime.now()
+            Product.reserved_until < utc_now_naive()
         )
         .all()
     )
@@ -118,7 +127,7 @@ def reserve_product(db: Session, product_id: int, current_user: User) -> Product
         raise HTTPException(status_code=400, detail="Produto não disponível")
 
     product.status = "reservada"
-    product.reserved_until = datetime.now() + timedelta(hours=24)
+    product.reserved_until = utc_now_naive() + timedelta(hours=24)
     product.reserved_by_user_id = current_user.id
 
     db.commit()

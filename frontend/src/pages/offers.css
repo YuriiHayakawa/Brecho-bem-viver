@@ -280,6 +280,7 @@
 }
 
 .off-badge--pending   { background: #FEF3C7; color: #B45309; }
+.off-badge--countered { background: #DBEAFE; color: #1D4ED8; }
 .off-badge--accepted  { background: #D1FAE5; color: #047857; }
 .off-badge--rejected  { background: #FEE2E2; color: #B91C1C; }
 .off-badge--cancelled { background: #F3F4F6; color: #6B7280; }
@@ -327,6 +328,48 @@
   border-color: #C7D2FE;
 }
 .off-btn--ghost:hover:not(:disabled) { background: #EEF2FF; }
+
+.off-btn--counter {
+  background: #FFFFFF;
+  color: #1D4ED8;
+  border-color: #BFDBFE;
+}
+.off-btn--counter:hover:not(:disabled) { background: #EFF6FF; }
+
+/* ── Aviso de contraproposta pendente ── */
+.off-countered-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: #1D4ED8;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.off-countered-banner svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; }
+
+.off-countered-msg {
+  display: block;
+  margin-top: 0.3rem;
+  font-style: italic;
+  color: #1E40AF;
+}
+
+.off-countered-banner--rejected {
+  color: #6B7280;
+  background: #F3F4F6;
+  border-color: #E5E7EB;
+}
+
+.off-countered-banner--accepted {
+  color: #047857;
+  background: #ECFDF5;
+  border-color: #A7F3D0;
+}
 
 /* ── Reservas: contador ── */
 .off-timer {

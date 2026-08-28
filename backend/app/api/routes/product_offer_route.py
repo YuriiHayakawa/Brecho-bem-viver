@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.api.deps.auth_deps import get_current_user, require_admin
 from app.database import get_db
 from app.models.user import User
-from app.schemas.product_offer_schema import ProductOfferCreate, ProductOfferResponse
+from app.schemas.product_offer_schema import ProductOfferCreate, ProductOfferResponse, CounterOfferCreate
 from app.services import product_offer_service
 
 router = APIRouter()
@@ -97,3 +97,43 @@ def reject_offer(
     current_user: User = Depends(get_current_user)
 ):
     return product_offer_service.reject_offer(db, offer_id, current_user)
+
+
+@router.patch(
+    "/offers/{offer_id}/counter",
+    response_model=ProductOfferResponse,
+    summary="Vendedor envia contraproposta"
+)
+def counter_offer(
+    offer_id: int,
+    data: CounterOfferCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return product_offer_service.counter_offer(db, offer_id, data, current_user)
+
+
+@router.patch(
+    "/offers/{offer_id}/counter/accept",
+    response_model=ProductOfferResponse,
+    summary="Comprador aceita a contraproposta"
+)
+def accept_counter_offer(
+    offer_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return product_offer_service.respond_to_counter(db, offer_id, True, current_user)
+
+
+@router.patch(
+    "/offers/{offer_id}/counter/reject",
+    response_model=ProductOfferResponse,
+    summary="Comprador recusa a contraproposta"
+)
+def reject_counter_offer(
+    offer_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return product_offer_service.respond_to_counter(db, offer_id, False, current_user)

@@ -18,8 +18,17 @@ const GENDERS = [
   { value: 'infantil',  label: 'Infantil' },
 ];
 
-const SIZES = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'XXG', 'Único',
+const ADULT_SIZES = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'XXG', 'Único',
                '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44'];
+
+// Roupa de bebê por sigla + numeração de calçado infantil (16 a 33, antes do 34 adulto)
+const CHILD_SIZES = ['RN', 'P', 'M', 'G',
+               '16', '17', '18', '19', '20', '21', '22', '23', '24', '25',
+               '26', '27', '28', '29', '30', '31', '32', '33'];
+
+function sizesForGender(gender) {
+  return gender === 'infantil' ? CHILD_SIZES : ADULT_SIZES;
+}
 
 export default function NovoProdutoPage() {
   const navigate   = useNavigate();
@@ -44,12 +53,26 @@ export default function NovoProdutoPage() {
   const [error, setError]       = useState('');
   const [progress, setProgress] = useState(''); // mensagem de progresso
 
+  const sizeOptions = sizesForGender(form.gender);
+
   // ── handlers ──────────────────────────────────
   function set(field) {
     return e => {
       const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
       setForm(f => ({ ...f, [field]: value }));
     };
+  }
+
+  // Ao trocar o gênero, a lista de tamanhos muda (infantil tem sigla de bebê +
+  // numeração de calçado infantil). Se o tamanho atual não existir mais na nova
+  // lista, volta pro primeiro tamanho válido.
+  function handleGenderChange(e) {
+    const gender = e.target.value;
+    setForm(f => {
+      const options = sizesForGender(gender);
+      const size = options.includes(f.size) ? f.size : options[0];
+      return { ...f, gender, size };
+    });
   }
 
   function handleImageSelect(e) {
@@ -194,7 +217,7 @@ export default function NovoProdutoPage() {
 
                 <div className="np-field">
                   <label className="np-label">Gênero</label>
-                  <select className="np-select" value={form.gender} onChange={set('gender')}>
+                  <select className="np-select" value={form.gender} onChange={handleGenderChange}>
                     {GENDERS.map(g => (
                       <option key={g.value} value={g.value}>{g.label}</option>
                     ))}
@@ -204,7 +227,7 @@ export default function NovoProdutoPage() {
                 <div className="np-field">
                   <label className="np-label">Tamanho</label>
                   <select className="np-select" value={form.size} onChange={set('size')}>
-                    {SIZES.map(s => (
+                    {sizeOptions.map(s => (
                       <option key={s} value={s}>{s}</option>
                     ))}
                   </select>

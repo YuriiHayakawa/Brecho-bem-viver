@@ -18,6 +18,12 @@ class ProductOffer(Base):
 
     message = Column(Text, nullable=True)
 
+    # Contraproposta do vendedor — preenchidos só quando status vira 'countered'.
+    # offered_price NÃO é sobrescrito: continua sendo o valor original do comprador,
+    # para manter o histórico da negociação visível.
+    counter_price = Column(Numeric(10, 2), nullable=True)
+    counter_message = Column(Text, nullable=True)
+
     status = Column(String(20), nullable=False, server_default=text("'pending'"))
 
     responded_at = Column(TIMESTAMP, nullable=True)
@@ -30,7 +36,7 @@ class ProductOffer(Base):
 
     __table_args__ = (
         CheckConstraint(
-            "status IN ('pending', 'accepted', 'rejected', 'cancelled')",
+            "status IN ('pending', 'accepted', 'rejected', 'cancelled', 'countered')",
             name="check_product_offer_status"
         ),
     )

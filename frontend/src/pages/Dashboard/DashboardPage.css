@@ -742,6 +742,38 @@
   background: rgba(255,255,255,0.22);
   color: #fff;
 }
+/* ── Filtro por vendedor ── */
+.adm-user-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.adm-user-filter-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #6B7280;
+  white-space: nowrap;
+}
+
+.adm-user-select {
+  padding: 0.4rem 1.9rem 0.4rem 0.85rem;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #111827;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+  max-width: 200px;
+  transition: border-color 0.15s;
+}
+.adm-user-select:focus { border-color: #0F766E; }
+
 .adm-chip:hover:not(.active) .adm-chip-badge {
   background: rgba(0,0,0,0.07);
 }
@@ -1149,7 +1181,9 @@
   .adm-header { flex-direction: column; align-items: flex-start; gap: 0.875rem; }
   .adm-search { width: 100%; }
   .adm-search input { width: 100%; }
-  .adm-filters { padding: 0.75rem 1rem; gap: 0.4rem; }
+  .adm-filters { padding: 0.75rem 1rem; gap: 0.4rem; flex-wrap: wrap; }
+  .adm-user-filter { margin-left: 0; width: 100%; }
+  .adm-user-select { flex: 1; max-width: none; }
   .adm-pagination { padding: 0.875rem 1rem; }
   .adm-pagination-center { order: -1; width: 100%; justify-content: center; }
 

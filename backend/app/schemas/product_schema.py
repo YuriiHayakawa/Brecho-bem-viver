@@ -1,7 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_serializer
 
 
 class ProductCreate(BaseModel):
@@ -56,6 +56,17 @@ class ProductResponse(BaseModel):
     user: SellerEmbed | None = None
 
     model_config = {"from_attributes": True}
+
+    # reserved_until é gravado internamente como UTC "sem tzinfo" (coluna
+    # TIMESTAMP sem timezone). Sem marcar isso explicitamente aqui, o JSON sai
+    # sem indicação de fuso e o navegador do usuário interpreta como horário
+    # LOCAL dele — deslocando a contagem da reserva de 24h por horas a mais
+    # (ex.: 27h em vez de 24h para quem está em UTC-3).
+    @field_serializer("reserved_until")
+    def _serialize_reserved_until(self, value: datetime | None) -> datetime | None:
+        if value is not None and value.tzinfo is None:
+            value = value.replace(tzinfo=timezone.utc)
+        return value
 
 
 class ProductUpdate(BaseModel):

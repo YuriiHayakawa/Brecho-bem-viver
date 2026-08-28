@@ -272,9 +272,11 @@ function SaleModal({ product, onClose, onSuccess }) {
       .then(data => {
         if (cancelled || !data) return;
         setOffer(data);
+        // Se a venda veio de uma contraproposta aceita, o valor final é o
+        // da contraproposta (counter_price), não a oferta original do comprador.
         setForm(f => ({
           ...f,
-          sale_value: data.offered_price ?? f.sale_value,
+          sale_value: data.counter_price ?? data.offered_price ?? f.sale_value,
           buyer_name: data.buyer?.name || f.buyer_name,
           buyer_phone: data.buyer?.phone || f.buyer_phone,
         }));
@@ -352,7 +354,7 @@ function SaleModal({ product, onClose, onSuccess }) {
               <div className="sale-nego-item">
                 <span className="sale-nego-lbl">Negociado</span>
                 <span className="sale-nego-new">
-                  {Number(offer.offered_price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  {Number(offer.counter_price ?? offer.offered_price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                 </span>
               </div>
             </div>
