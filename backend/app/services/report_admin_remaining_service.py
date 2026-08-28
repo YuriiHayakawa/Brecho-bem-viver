@@ -55,8 +55,14 @@ def get_admin_remaining_products(
         )
         offers_count_map = {pid: total for pid, total in counts}
 
+        # Valor final negociado: se a oferta foi aceita via contraproposta,
+        # prevalece o valor da contraproposta (counter_price); senão, o valor
+        # originalmente ofertado pelo comprador.
         accepted = (
-            db.query(ProductOffer.product_id, ProductOffer.offered_price)
+            db.query(
+                ProductOffer.product_id,
+                func.coalesce(ProductOffer.counter_price, ProductOffer.offered_price),
+            )
             .filter(
                 ProductOffer.product_id.in_(product_ids),
                 ProductOffer.status == "accepted",

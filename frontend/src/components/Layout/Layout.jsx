@@ -56,7 +56,7 @@ export default function Layout({ children }) {
           <div className="topbar-bars">
             <span /><span /><span />
           </div>
-          <span className="topbar-name">SEBRAE <em>Bazar</em></span>
+          <span className="topbar-name">BAZAR <em>Interno</em></span>
         </div>
       </header>
 

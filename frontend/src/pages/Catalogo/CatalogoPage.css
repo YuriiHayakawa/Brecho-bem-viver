@@ -9,7 +9,7 @@
 
 /* ── Hero ── */
 .catalogo-hero {
-  background: linear-gradient(135deg, #0023A9 0%, #0041D9 55%, #005EB8 100%);
+  background: linear-gradient(135deg, #115E59 0%, #0F766E 55%, #14B8A6 100%);
   padding: 2.5rem 1.5rem 2rem;
   display: flex;
   align-items: center;
@@ -24,7 +24,7 @@
   right: -40px; top: 0;
   width: 200px; height: 100%;
   background: rgba(255,255,255,0.05);
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
 }
 
 .catalogo-hero-bars {
@@ -38,7 +38,7 @@
   display: block;
   height: 6px;
   background: rgba(255,255,255,0.8);
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
   border-radius: 1px;
 }
 .chb.b1 { width: 40px; }
@@ -80,7 +80,7 @@
   gap: 0.5rem;
   padding: 0 1.25rem;
   height: 42px;
-  background: #0041D9;
+  background: #0F766E;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -89,14 +89,14 @@
   font-weight: 700;
   cursor: pointer;
   transform: skewX(-3deg);
-  box-shadow: 0 4px 12px rgba(0,65,217,0.25);
+  box-shadow: 0 4px 12px rgba(15,118,110,0.25);
   transition: background 0.2s, box-shadow 0.2s;
   letter-spacing: 0.02em;
 }
 
 .catalogo-btn-novo:hover {
-  background: #0023A9;
-  box-shadow: 0 6px 18px rgba(0,65,217,0.35);
+  background: #115E59;
+  box-shadow: 0 6px 18px rgba(15,118,110,0.35);
 }
 
 .catalogo-btn-novo svg {
@@ -149,8 +149,8 @@
 }
 
 .catalogo-search-input:focus {
-  border-color: #0041D9;
-  box-shadow: 0 0 0 3px rgba(0,65,217,0.1);
+  border-color: #0F766E;
+  box-shadow: 0 0 0 3px rgba(15,118,110,0.1);
   background: #fff;
 }
 
@@ -174,7 +174,7 @@
 }
 
 .catalogo-filter-select:focus {
-  border-color: #0041D9;
+  border-color: #0F766E;
 }
 
 .catalogo-results-count {
@@ -205,8 +205,8 @@
 
 .catalogo-product-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0,65,217,0.12);
-  border-color: #0041D9;
+  box-shadow: 0 8px 24px rgba(15,118,110,0.12);
+  border-color: #0F766E;
 }
 
 .catalogo-card-image {
@@ -244,8 +244,8 @@
 .catalogo-placeholder-bars span {
   display: block;
   height: 6px;
-  background: rgba(0,65,217,0.2);
-  transform: skewX(-8deg);
+  background: rgba(15,118,110,0.2);
+  transform: skewX(-6deg);
   border-radius: 1px;
 }
 .catalogo-placeholder-bars span:nth-child(1) { width: 36px; }
@@ -296,7 +296,7 @@
 .catalogo-card-category {
   font-size: 0.72rem;
   font-weight: 700;
-  color: #0041D9;
+  color: #0F766E;
   background: #EEF2FF;
   padding: 0.15rem 0.5rem;
   border-radius: 4px;
@@ -340,7 +340,7 @@
 .catalogo-card-price {
   font-size: 1.15rem;
   font-weight: 800;
-  color: #0041D9;
+  color: #0F766E;
 }
 
 .catalogo-card-code {
@@ -405,8 +405,8 @@
 .catalogo-empty-bars span {
   display: block;
   height: 6px;
-  background: #0041D9;
-  transform: skewX(-8deg);
+  background: #0F766E;
+  transform: skewX(-6deg);
   border-radius: 1px;
 }
 
@@ -422,7 +422,7 @@
 
 .catalogo-empty-state button {
   padding: 0.5rem 1.25rem;
-  background: #0041D9;
+  background: #0F766E;
   color: #fff;
   border: none;
   border-radius: 6px;

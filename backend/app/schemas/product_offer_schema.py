@@ -3,9 +3,16 @@ from decimal import Decimal
 
 from pydantic import BaseModel
 
+from app.schemas.product_schema import ProductImageEmbed
+
 
 class ProductOfferCreate(BaseModel):
     offered_price: Decimal
+    message: str | None = None
+
+
+class CounterOfferCreate(BaseModel):
+    counter_price: Decimal
     message: str | None = None
 
 
@@ -15,6 +22,7 @@ class OfferProductEmbed(BaseModel):
     code: str | None
     price: Decimal
     status: str
+    images: list[ProductImageEmbed] = []
 
     model_config = {"from_attributes": True}
 
@@ -40,6 +48,9 @@ class ProductOfferResponse(BaseModel):
 
     message: str | None
     status: str
+
+    counter_price: Decimal | None = None
+    counter_message: str | None = None
 
     responded_at: datetime | None
     created_at: datetime

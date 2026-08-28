@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 from app.models.product import Product
 from app.models.product_offer import ProductOffer
 from app.models.user import User
-from app.schemas.product_offer_schema import ProductOfferCreate, ProductOfferResponse
-from app.services.product_service import release_expired_reservations
+from app.schemas.product_offer_schema import ProductOfferCreate, ProductOfferResponse, CounterOfferCreate
+from app.services.product_service import release_expired_reservations, utc_now_naive
 
 
 def create_offer(
@@ -142,14 +142,114 @@ def accept_offer(db: Session, offer_id: int, current_user: User) -> ProductOffer
 
     product.status = "reservada"
     product.reserved_by_user_id = offer.buyer_user_id
-    product.reserved_until = datetime.now() + timedelta(hours=24)
+    product.reserved_until = utc_now_naive() + timedelta(hours=24)
 
     other_pending_offers = (
         db.query(ProductOffer)
         .filter(
             ProductOffer.product_id == product.id,
             ProductOffer.id != offer.id,
-            ProductOffer.status == "pending"
+            ProductOffer.status.in_(["pending", "countered"])
+        )
+        .all()
+    )
+
+    for other_offer in other_pending_offers:
+        other_offer.status = "rejected"
+        other_offer.responded_at = datetime.now()
+        other_offer.updated_at = datetime.now()
+
+    db.commit()
+    db.refresh(offer)
+
+    return offer
+
+
+def counter_offer(
+    db: Session,
+    offer_id: int,
+    data: CounterOfferCreate,
+    current_user: User
+) -> ProductOfferResponse:
+    offer = db.query(ProductOffer).filter(ProductOffer.id == offer_id).first()
+
+    if not offer:
+        raise HTTPException(status_code=404, detail="Oferta não encontrada")
+
+    if offer.seller_user_id != current_user.id and current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Sem permissão para contrapropor esta oferta")
+
+    if offer.status != "pending":
+        raise HTTPException(status_code=400, detail="Esta oferta não está pendente")
+
+    if data.counter_price <= 0:
+        raise HTTPException(status_code=400, detail="Valor da contraproposta deve ser maior que zero")
+
+    if data.counter_price >= offer.original_price:
+        raise HTTPException(status_code=400, detail="A contraproposta deve ser menor que o valor anunciado")
+
+    offer.counter_price = data.counter_price
+    offer.counter_message = data.message
+    offer.status = "countered"
+    offer.updated_at = datetime.now()
+
+    db.commit()
+    db.refresh(offer)
+
+    return offer
+
+
+def respond_to_counter(
+    db: Session,
+    offer_id: int,
+    accept: bool,
+    current_user: User
+) -> ProductOfferResponse:
+    release_expired_reservations(db)
+
+    offer = db.query(ProductOffer).filter(ProductOffer.id == offer_id).first()
+
+    if not offer:
+        raise HTTPException(status_code=404, detail="Oferta não encontrada")
+
+    if offer.buyer_user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Sem permissão para responder a esta contraproposta")
+
+    if offer.status != "countered":
+        raise HTTPException(status_code=400, detail="Esta oferta não possui contraproposta pendente")
+
+    if not accept:
+        offer.status = "rejected"
+        offer.responded_at = datetime.now()
+        offer.updated_at = datetime.now()
+        db.commit()
+        db.refresh(offer)
+        return offer
+
+    product = offer.product
+
+    if not product:
+        raise HTTPException(status_code=404, detail="Produto não encontrado")
+
+    # Como a contraproposta não bloqueia o produto, ele pode ter sido
+    # reservado/vendido por outro caminho enquanto o comprador decidia.
+    if product.status != "disponivel":
+        raise HTTPException(status_code=400, detail="Produto não está mais disponível")
+
+    offer.status = "accepted"
+    offer.responded_at = datetime.now()
+    offer.updated_at = datetime.now()
+
+    product.status = "reservada"
+    product.reserved_by_user_id = offer.buyer_user_id
+    product.reserved_until = utc_now_naive() + timedelta(hours=24)
+
+    other_pending_offers = (
+        db.query(ProductOffer)
+        .filter(
+            ProductOffer.product_id == product.id,
+            ProductOffer.id != offer.id,
+            ProductOffer.status.in_(["pending", "countered"])
         )
         .all()
     )

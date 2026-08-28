@@ -10,7 +10,7 @@
 /* Hero */
 .sobre-hero {
   position: relative;
-  background: linear-gradient(135deg, #0023A9 0%, #0041D9 55%, #005EB8 100%);
+  background: linear-gradient(135deg, #115E59 0%, #0F766E 55%, #14B8A6 100%);
   overflow: hidden;
   padding: 2.5rem 1.5rem 3rem;
 }
@@ -20,7 +20,7 @@
   top: 0; right: -40px;
   width: 200px; height: 100%;
   background: rgba(255,255,255,0.06);
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
   pointer-events: none;
 }
 
@@ -30,7 +30,7 @@
   top: 0; right: -80px;
   width: 120px; height: 100%;
   background: rgba(255,255,255,0.04);
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
 }
 
 .sobre-hero-inner {
@@ -55,7 +55,7 @@
   height: 6px;
   background: rgba(255,255,255,0.8);
   border-radius: 1px;
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
 }
 
 .sobre-hero-bars span:nth-child(1) { width: 36px; }
@@ -107,9 +107,9 @@
   display: inline-block;
   width: 32px;
   height: 3px;
-  background: #0041D9;
+  background: #0F766E;
   border-radius: 2px;
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
 }
 
 /* Descrição */
@@ -132,7 +132,7 @@
 }
 
 .sobre-descricao-card strong {
-  color: #0041D9;
+  color: #0F766E;
   font-weight: 700;
 }
 
@@ -159,14 +159,14 @@
 
 .sobre-stat:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,65,217,0.1);
+  box-shadow: 0 6px 20px rgba(15,118,110,0.1);
 }
 
 .sobre-stat-valor {
   font-size: 1.875rem;
   font-weight: 800;
   font-style: italic;
-  color: #0041D9;
+  color: #0F766E;
   line-height: 1;
   letter-spacing: -0.02em;
 }
@@ -200,14 +200,14 @@
 
 .pilar-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0,65,217,0.1);
+  box-shadow: 0 8px 24px rgba(15,118,110,0.1);
   border-color: #C7D7FD;
 }
 
 .pilar-icon {
   width: 44px;
   height: 44px;
-  background: linear-gradient(135deg, rgba(0,65,217,0.1), rgba(0,65,217,0.05));
+  background: linear-gradient(135deg, rgba(15,118,110,0.1), rgba(15,118,110,0.05));
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -217,7 +217,7 @@
 .pilar-icon svg {
   width: 24px;
   height: 24px;
-  color: #0041D9;
+  color: #0F766E;
 }
 
 .pilar-titulo {
@@ -240,7 +240,7 @@
   align-items: center;
   gap: 1rem;
   padding: 1.5rem 2rem;
-  background: linear-gradient(135deg, #0041D9, #0023A9);
+  background: linear-gradient(135deg, #0F766E, #115E59);
   border-radius: 12px;
   overflow: hidden;
   position: relative;
@@ -252,7 +252,7 @@
   top: 0; right: -20px;
   width: 80px; height: 100%;
   background: rgba(255,255,255,0.06);
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
 }
 
 .sobre-inst-bars {
@@ -267,7 +267,7 @@
   height: 5px;
   background: rgba(255,255,255,0.75);
   border-radius: 1px;
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
 }
 
 .sobre-inst-bars span:nth-child(1) { width: 28px; }

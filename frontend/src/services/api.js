@@ -308,6 +308,40 @@ export async function rejectOffer(offerId) {
   return data;
 }
 
+// Vendedor envia contraproposta. payload: { counter_price, message? }
+export async function counterOffer(offerId, payload) {
+  const response = await apiFetch(`${BASE_URL}/offers/${offerId}/counter`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao enviar contraproposta');
+  return data;
+}
+
+// Comprador aceita a contraproposta do vendedor
+export async function acceptCounterOffer(offerId) {
+  const response = await apiFetch(`${BASE_URL}/offers/${offerId}/counter/accept`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao aceitar contraproposta');
+  return data;
+}
+
+// Comprador recusa a contraproposta do vendedor
+export async function rejectCounterOffer(offerId) {
+  const response = await apiFetch(`${BASE_URL}/offers/${offerId}/counter/reject`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || 'Erro ao recusar contraproposta');
+  return data;
+}
+
 // Oferta aceita de um produto (admin — usado no registro da venda)
 export async function fetchAcceptedOffer(productId) {
   const response = await apiFetch(`${BASE_URL}/products/${productId}/offers/accepted`, {

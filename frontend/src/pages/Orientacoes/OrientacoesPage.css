@@ -10,7 +10,7 @@
 /* Hero */
 .orientacoes-hero {
   position: relative;
-  background: linear-gradient(135deg, #0023A9 0%, #0041D9 55%, #005EB8 100%);
+  background: linear-gradient(135deg, #115E59 0%, #0F766E 55%, #14B8A6 100%);
   overflow: hidden;
   padding: 2.5rem 1.5rem 3rem;
 }
@@ -22,7 +22,7 @@
   width: 200px;
   height: 100%;
   background: rgba(255,255,255,0.06);
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
   pointer-events: none;
 }
 
@@ -34,7 +34,7 @@
   width: 120px;
   height: 100%;
   background: rgba(255,255,255,0.04);
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
 }
 
 .orientacoes-hero-inner {
@@ -59,7 +59,7 @@
   height: 6px;
   background: rgba(255,255,255,0.8);
   border-radius: 1px;
-  transform: skewX(-8deg);
+  transform: skewX(-6deg);
 }
 
 .orientacoes-hero-bars span:nth-child(1) { width: 36px; }
@@ -119,7 +119,7 @@
   left: 0;
   width: 4px;
   height: 100%;
-  background: #0041D9;
+  background: #0F766E;
   transform: skewY(-4deg);
   transform-origin: top left;
   opacity: 0;
@@ -128,7 +128,7 @@
 
 .orientacao-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 65, 217, 0.12);
+  box-shadow: 0 8px 24px rgba(15, 118, 110, 0.12);
   border-color: #C7D7FD;
 }
 
@@ -139,9 +139,9 @@
 .orientacao-numero {
   font-size: 0.75rem;
   font-weight: 800;
-  color: #0041D9;
+  color: #0F766E;
   letter-spacing: 0.08em;
-  background: rgba(0,65,217,0.08);
+  background: rgba(15,118,110,0.08);
   border-radius: 4px;
   padding: 0.2rem 0.5rem;
   width: fit-content;
@@ -151,7 +151,7 @@
 .orientacao-icon {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, rgba(0,65,217,0.1), rgba(0,65,217,0.05));
+  background: linear-gradient(135deg, rgba(15,118,110,0.1), rgba(15,118,110,0.05));
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -162,7 +162,7 @@
 .orientacao-icon svg {
   width: 22px;
   height: 22px;
-  color: #0041D9;
+  color: #0F766E;
 }
 
 .orientacao-titulo {
@@ -185,15 +185,15 @@
   align-items: flex-start;
   gap: 0.75rem;
   padding: 1.25rem 1.5rem;
-  background: rgba(0,65,217,0.05);
-  border: 1px solid rgba(0,65,217,0.15);
+  background: rgba(15,118,110,0.05);
+  border: 1px solid rgba(15,118,110,0.15);
   border-radius: 10px;
 }
 
 .orientacoes-footer-note svg {
   width: 20px;
   height: 20px;
-  color: #0041D9;
+  color: #0F766E;
   flex-shrink: 0;
   margin-top: 1px;
 }

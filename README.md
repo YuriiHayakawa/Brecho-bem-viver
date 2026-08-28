@@ -1,5 +1,5 @@
-# Bazar-Sebrae
-Projeto bazar Sebrae
+# Bazar Interno
+Projeto Bazar Interno
 
 # Iniciar o backend 
 
@@ -12,3 +12,5 @@ uvicorn app.main:app --reload --port 8000
 cd frontend
 npm install
 npm run dev
+
+<!-- trigger pipeline -->

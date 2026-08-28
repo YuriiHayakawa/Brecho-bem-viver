@@ -90,14 +90,14 @@ function LabelModal({ productId, productName, onClose }) {
             {/* ── A etiqueta em si (prévia no modal) ── */}
             <div className="label-card">
 
-              {/* Topo azul Sebrae */}
+              {/* Topo — marca */}
               <div className="label-top">
                 <div className="label-brand-bars">
                   <span /><span /><span /><span />
                 </div>
                 <div className="label-brand-text">
-                  <span className="label-brand-name">SEBRAE</span>
-                  <span className="label-brand-sub">Bazar</span>
+                  <span className="label-brand-name">BAZAR</span>
+                  <span className="label-brand-sub">Interno</span>
                 </div>
                 {data.product_code && (
                   <span className="label-code">#{data.product_code}</span>
@@ -142,7 +142,7 @@ function LabelModal({ productId, productName, onClose }) {
               <div className="lp-page">
                 <div className="lp-card">
 
-                  {/* Header azul Sebrae */}
+                  {/* Header — marca */}
                   <div className="lp-header">
                     <div className="lp-header-diag" />
                     <div className="lp-header-inner">
@@ -151,8 +151,8 @@ function LabelModal({ productId, productName, onClose }) {
                           <span /><span /><span /><span />
                         </div>
                         <div>
-                          <p className="lp-brand-name">SEBRAE</p>
-                          <p className="lp-brand-sub">Bazar Solidário</p>
+                          <p className="lp-brand-name">BAZAR</p>
+                          <p className="lp-brand-sub">Interno Solidário</p>
                         </div>
                       </div>
                       {data.product_code && (
@@ -215,7 +215,7 @@ function LabelModal({ productId, productName, onClose }) {
                       <span /><span /><span /><span />
                     </div>
                     <p className="lp-footer-text">
-                      Bazar Solidário Sebrae · Adquira com propósito e apoie o empreendedorismo
+                      Bazar Interno Solidário · Adquira com propósito e apoie quem está do seu lado
                     </p>
                   </div>
 
@@ -272,9 +272,11 @@ function SaleModal({ product, onClose, onSuccess }) {
       .then(data => {
         if (cancelled || !data) return;
         setOffer(data);
+        // Se a venda veio de uma contraproposta aceita, o valor final é o
+        // da contraproposta (counter_price), não a oferta original do comprador.
         setForm(f => ({
           ...f,
-          sale_value: data.offered_price ?? f.sale_value,
+          sale_value: data.counter_price ?? data.offered_price ?? f.sale_value,
           buyer_name: data.buyer?.name || f.buyer_name,
           buyer_phone: data.buyer?.phone || f.buyer_phone,
         }));
@@ -352,7 +354,7 @@ function SaleModal({ product, onClose, onSuccess }) {
               <div className="sale-nego-item">
                 <span className="sale-nego-lbl">Negociado</span>
                 <span className="sale-nego-new">
-                  {Number(offer.offered_price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                  {Number(offer.counter_price ?? offer.offered_price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                 </span>
               </div>
             </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchMyReport, fetchAdminSummary, fetchAdminRemainingProducts } from '../../services/api';
+import { fetchMyReport, fetchAdminSummary, fetchAdminRemainingProducts, fetchAllUsers } from '../../services/api';
 import PageHero from '../../components/PageHero/PageHero';
 import './DashboardPage.css';
 
@@ -64,7 +64,7 @@ function DonutRing({ total, sold, active }) {
           <circle
             cx="90" cy="90" r={R}
             fill="none"
-            stroke="#0041D9"
+            stroke="#0F766E"
             strokeWidth={SW}
             strokeLinecap="round"
             strokeDasharray={`${ready ? soldArc : 0} ${C}`}
@@ -123,9 +123,13 @@ function AdminDashboard() {
   const [allProducts, setAllProducts] = useState([]);
   const [loadProd, setLoadProd] = useState(true);
 
+  // ── Usuários (para o filtro por vendedor) ──
+  const [users, setUsers] = useState([]);
+
   // ── Filtros ──
   const [search, setSearch]           = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [sellerFilter, setSellerFilter] = useState(''); // '' = todos os vendedores
 
   // ── Paginação ──
   const [page, setPage]       = useState(1);
@@ -145,10 +149,17 @@ function AdminDashboard() {
       .finally(() => setLoadProd(false));
   }, []);
 
+  useEffect(() => {
+    fetchAllUsers()
+      .then(setUsers)
+      .catch(() => setUsers([]));
+  }, []);
+
   // Filtro client-side
   const filtered = (() => {
     let r = allProducts;
     if (statusFilter) r = r.filter(p => p.status === statusFilter);
+    if (sellerFilter) r = r.filter(p => p.seller_id === Number(sellerFilter));
     if (search.trim()) {
       const t = search.trim().toLowerCase();
       r = r.filter(p =>
@@ -161,15 +172,31 @@ function AdminDashboard() {
     return r;
   })();
 
-  // Reset para pag 1 ao filtrar
-  useEffect(() => { setPage(1); }, [search, statusFilter]);
+  // Vendedores ordenados por nome, para o dropdown do filtro
+  const sortedUsers = [...users].sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
 
-  // Contagens por status
+  // Usuário selecionado no filtro que ainda não tem nenhum produto cadastrado
+  // (independente de busca/status — olha o total real dele em allProducts)
+  const selectedSeller = sellerFilter
+    ? users.find(u => u.id === Number(sellerFilter))
+    : null;
+  const sellerHasNoProducts = Boolean(
+    selectedSeller && !allProducts.some(p => p.seller_id === selectedSeller.id)
+  );
+
+  // Reset para pag 1 ao filtrar
+  useEffect(() => { setPage(1); }, [search, statusFilter, sellerFilter]);
+
+  // Contagens por status — escopadas ao vendedor filtrado (quando houver)
+  const sellerScopedProducts = sellerFilter
+    ? allProducts.filter(p => p.seller_id === Number(sellerFilter))
+    : allProducts;
+
   const counts = {
-    total:      allProducts.length,
-    disponivel: allProducts.filter(p => p.status === 'disponivel').length,
-    reservada:  allProducts.filter(p => p.status === 'reservada').length,
-    vendida:    allProducts.filter(p => p.status === 'vendida').length,
+    total:      sellerScopedProducts.length,
+    disponivel: sellerScopedProducts.filter(p => p.status === 'disponivel').length,
+    reservada:  sellerScopedProducts.filter(p => p.status === 'reservada').length,
+    vendida:    sellerScopedProducts.filter(p => p.status === 'vendida').length,
   };
 
   // Paginação
@@ -324,7 +351,7 @@ function AdminDashboard() {
           {/* Filtros de status — chips */}
           <div className="adm-filters">
             {[
-              { key: '',           label: 'Todos',      count: counts.total,      color: '#0041D9' },
+              { key: '',           label: 'Todos',      count: counts.total,      color: '#0F766E' },
               { key: 'disponivel', label: 'Disponível', count: counts.disponivel, color: '#059669' },
               { key: 'reservada',  label: 'Reservado',  count: counts.reservada,  color: '#D97706' },
               { key: 'vendida',    label: 'Vendido',    count: counts.vendida,    color: '#4338CA' },
@@ -340,6 +367,22 @@ function AdminDashboard() {
                 <span className="adm-chip-badge">{f.count}</span>
               </button>
             ))}
+
+            {/* Filtro por vendedor */}
+            <div className="adm-user-filter">
+              <label htmlFor="adm-user-select" className="adm-user-filter-label">Vendedor</label>
+              <select
+                id="adm-user-select"
+                className="adm-user-select"
+                value={sellerFilter}
+                onChange={e => setSellerFilter(e.target.value)}
+              >
+                <option value="">Todos</option>
+                {sortedUsers.map(u => (
+                  <option key={u.id} value={u.id}>{u.name}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {/* Tabela */}
@@ -375,9 +418,13 @@ function AdminDashboard() {
                             <path d="M21 21l-4.35-4.35M17 11A6 6 0 111 11a6 6 0 0116 0z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                           </svg>
                         </div>
-                        <p className="adm-empty-title">Nenhum produto encontrado</p>
+                        <p className="adm-empty-title">
+                          {sellerHasNoProducts ? `${selectedSeller.name} ainda não tem produtos cadastrados` : 'Nenhum produto encontrado'}
+                        </p>
                         <p className="adm-empty-sub">
-                          {search ? `Sem resultados para "${search}"` : 'Tente ajustar os filtros'}
+                          {sellerHasNoProducts
+                            ? 'Tente selecionar outro vendedor ou limpar o filtro.'
+                            : search ? `Sem resultados para "${search}"` : 'Tente ajustar os filtros'}
                         </p>
                       </div>
                     </td>
@@ -573,7 +620,7 @@ export default function DashboardPage() {
                 <div className="db-empty-ring">
                   <svg viewBox="0 0 100 100">
                     <circle cx="50" cy="50" r="38" fill="none" stroke="#E5E7EB" strokeWidth="10"/>
-                    <circle cx="50" cy="50" r="38" fill="none" stroke="#0041D9" strokeWidth="10"
+                    <circle cx="50" cy="50" r="38" fill="none" stroke="#0F766E" strokeWidth="10"
                       strokeDasharray="60 179" strokeDashoffset="47" strokeLinecap="round" opacity="0.25"/>
                   </svg>
                 </div>
@@ -665,7 +712,7 @@ export default function DashboardPage() {
                       </div>
                       <p className="db-big-num db-big-num--rose">{fmtBRL(report.total_expected_donation)}</p>
                       <p className="db-donation-desc">
-                        Uma parte do valor de cada venda realizada no Bazar Sebrae é destinada a instituições sociais parceiras.
+                        Uma parte do valor de cada venda realizada no Bazar Interno é destinada a instituições sociais parceiras.
                         Esse é o total que suas vendas já contribuíram para essa causa.
                       </p>
                     </div>

@@ -58,7 +58,7 @@ def generate_pix_payload(
     pix_key_type: str,
     seller_name: str,
     city: str = "SAO PAULO",
-    description: str = "Bazar Sebrae",
+    description: str = "Bazar Interno",
 ) -> str:
     key = _format_pix_key(pix_key, pix_key_type)
 

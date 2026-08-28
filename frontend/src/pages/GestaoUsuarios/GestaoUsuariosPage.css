@@ -88,7 +88,7 @@
   box-sizing: border-box;
 }
 
-.gu-search:focus { border-color: #0041D9; }
+.gu-search:focus { border-color: #0F766E; }
 
 .gu-filter-select {
   padding: 0.6rem 0.75rem;
@@ -101,7 +101,7 @@
   cursor: pointer;
 }
 
-.gu-filter-select:focus { border-color: #0041D9; }
+.gu-filter-select:focus { border-color: #0F766E; }
 
 .gu-count {
   font-size: 0.8rem;
@@ -158,13 +158,13 @@
   box-shadow: 0 8px 24px rgba(16, 24, 40, 0.08);
 }
 
-.gu-card--admin    { border-left-color: #0041D9; }
+.gu-card--admin    { border-left-color: #0F766E; }
 .gu-card--vendedor { border-left-color: #10B981; }
 .gu-card--user      { border-left-color: #CBD5E1; }
 
 .gu-card--self {
-  background: rgba(0, 65, 217, 0.025);
-  border-color: rgba(0, 65, 217, 0.16);
+  background: rgba(15, 118, 110, 0.025);
+  border-color: rgba(15, 118, 110, 0.16);
 }
 
 /* Topo: identidade + badge de papel */
@@ -186,7 +186,7 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0041D9, #0023A9);
+  background: linear-gradient(135deg, #0F766E, #115E59);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -215,8 +215,8 @@
 .gu-self-badge {
   font-size: 0.62rem;
   font-weight: 700;
-  background: rgba(0, 65, 217, 0.08);
-  color: #0041D9;
+  background: rgba(15, 118, 110, 0.08);
+  color: #0F766E;
   padding: 0.1rem 0.4rem;
   border-radius: 999px;
   letter-spacing: 0.03em;
@@ -253,7 +253,7 @@
   flex-shrink: 0;
 }
 
-.gu-role--admin    { background: rgba(0, 65, 217, 0.08); color: #0041D9; }
+.gu-role--admin    { background: rgba(15, 118, 110, 0.08); color: #0F766E; }
 .gu-role--vendedor { background: rgba(16, 185, 129, 0.10); color: #059669; }
 .gu-role--user     { background: #F3F4F6; color: #374151; }
 
@@ -349,9 +349,9 @@
 .gu-role-select:hover { border-color: #D1D5DB; }
 
 .gu-role-select:focus {
-  border-color: #0041D9;
+  border-color: #0F766E;
   background: #fff;
-  box-shadow: 0 0 0 4px rgba(0, 65, 217, 0.10);
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.10);
 }
 
 .gu-role-select:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -359,7 +359,7 @@
 .gu-spinner {
   width: 16px;
   height: 16px;
-  color: #0041D9;
+  color: #0F766E;
   animation: gu-spin 0.8s linear infinite;
   flex-shrink: 0;
 }
@@ -393,7 +393,7 @@
 }
 
 .gu-btn-edit svg { width: 13px; height: 13px; }
-.gu-btn-edit:hover { border-color: #0041D9; background: #fff; color: #0041D9; }
+.gu-btn-edit:hover { border-color: #0F766E; background: #fff; color: #0F766E; }
 
 /* ── Modal ── */
 .gu-modal-overlay {
@@ -488,7 +488,7 @@
 }
 
 .gu-input:focus,
-.gu-select:focus { border-color: #0041D9; }
+.gu-select:focus { border-color: #0F766E; }
 
 .gu-modal-error {
   display: flex;
@@ -535,7 +535,7 @@
   padding: 0.6rem 1.25rem;
   border: none;
   border-radius: 8px;
-  background: #0041D9;
+  background: #0F766E;
   color: #fff;
   font-size: 0.875rem;
   font-weight: 600;
