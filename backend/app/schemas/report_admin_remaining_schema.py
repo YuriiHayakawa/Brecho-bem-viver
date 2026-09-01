@@ -21,6 +21,10 @@ class AdminRemainingProductItem(BaseModel):
     negotiated_value: Decimal | None = None  # valor da oferta aceita
     final_value: Decimal | None = None       # venda registrada, senão valor negociado
 
+    # Comprador: nome de quem comprou (venda registrada) ou, se ainda não
+    # vendido, de quem está com a reserva ativa no momento
+    buyer_name: str | None = None
+
     model_config = {
         "from_attributes": True
     }

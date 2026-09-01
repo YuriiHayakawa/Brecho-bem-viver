@@ -36,13 +36,6 @@ const PILARES = [
   },
 ];
 
-const STATS = [
-  { valor: '200+', rotulo: 'Produtos cadastrados' },
-  { valor: '50+',  rotulo: 'Vendedores ativos' },
-  { valor: '100%', rotulo: 'Via PIX instantâneo' },
-  { valor: 'Zero', rotulo: 'Taxa de comissão' },
-];
-
 export default function SobrePage() {
   return (
     <main className="sobre-page">
@@ -66,16 +59,6 @@ export default function SobrePage() {
                 simples, direta e sem intermediários.
               </p>
             </div>
-          </section>
-
-          {/* Stats */}
-          <section className="sobre-stats">
-            {STATS.map(({ valor, rotulo }) => (
-              <div className="sobre-stat" key={rotulo}>
-                <span className="sobre-stat-valor">{valor}</span>
-                <span className="sobre-stat-rotulo">{rotulo}</span>
-              </div>
-            ))}
           </section>
 
           {/* Pilares */}

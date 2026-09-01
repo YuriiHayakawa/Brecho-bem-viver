@@ -393,6 +393,7 @@ function AdminDashboard() {
                   <th>Código</th>
                   <th>Produto</th>
                   <th>Vendedor</th>
+                  <th>Comprador</th>
                   <th>Preço</th>
                   <th>Valor final</th>
                   <th>Status</th>
@@ -404,14 +405,14 @@ function AdminDashboard() {
                 {loadProd ? (
                   [...Array(8)].map((_, i) => (
                     <tr key={i} className="adm-sk-row">
-                      {[44, 200, 130, 70, 70, 80, 70, 28].map((w, j) => (
+                      {[44, 200, 130, 100, 70, 70, 80, 70, 28].map((w, j) => (
                         <td key={j}><div className="adm-cell-sk" style={{ width: w }} /></td>
                       ))}
                     </tr>
                   ))
                 ) : paginated.length === 0 ? (
                   <tr>
-                    <td colSpan={8}>
+                    <td colSpan={9}>
                       <div className="adm-empty">
                         <div className="adm-empty-icon">
                           <svg viewBox="0 0 24 24" fill="none">
@@ -464,6 +465,15 @@ function AdminDashboard() {
                           <span className="adm-seller-avatar">{sellerInitials(p.seller_name)}</span>
                           <span className="adm-seller-name">{p.seller_name}</span>
                         </div>
+                      </td>
+                      <td>
+                        {p.buyer_name ? (
+                          <span className="adm-cell-buyer" title={p.status === 'vendida' ? 'Comprador da venda' : 'Reserva ativa'}>
+                            {p.buyer_name}
+                          </span>
+                        ) : (
+                          <span className="adm-cell-buyer adm-cell-buyer--empty">—</span>
+                        )}
                       </td>
                       <td>
                         <span className="adm-cell-price">

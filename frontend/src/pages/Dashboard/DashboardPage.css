@@ -921,6 +921,18 @@
 
 .adm-offer-badge svg { width: 12px; height: 12px; }
 
+/* Comprador (venda registrada ou reserva ativa) */
+.adm-cell-buyer {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.adm-cell-buyer--empty {
+  color: #D9CFB8;
+}
+
 /* Valor final (venda ou negociado) */
 .adm-cell-final {
   font-size: 0.875rem;
