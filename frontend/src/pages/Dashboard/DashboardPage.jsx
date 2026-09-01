@@ -64,7 +64,7 @@ function DonutRing({ total, sold, active }) {
           <circle
             cx="90" cy="90" r={R}
             fill="none"
-            stroke="#0F766E"
+            stroke="#3E5C43"
             strokeWidth={SW}
             strokeLinecap="round"
             strokeDasharray={`${ready ? soldArc : 0} ${C}`}
@@ -324,10 +324,10 @@ function AdminDashboard() {
           {/* Filtros de status — chips */}
           <div className="adm-filters">
             {[
-              { key: '',           label: 'Todos',      count: counts.total,      color: '#0F766E' },
+              { key: '',           label: 'Todos',      count: counts.total,      color: '#3E5C43' },
               { key: 'disponivel', label: 'Disponível', count: counts.disponivel, color: '#059669' },
               { key: 'reservada',  label: 'Reservado',  count: counts.reservada,  color: '#D97706' },
-              { key: 'vendida',    label: 'Vendido',    count: counts.vendida,    color: '#4338CA' },
+              { key: 'vendida',    label: 'Vendido',    count: counts.vendida,    color: '#A65A36' },
             ].map(f => (
               <button
                 key={f.key}
@@ -573,7 +573,7 @@ export default function DashboardPage() {
                 <div className="db-empty-ring">
                   <svg viewBox="0 0 100 100">
                     <circle cx="50" cy="50" r="38" fill="none" stroke="#E5E7EB" strokeWidth="10"/>
-                    <circle cx="50" cy="50" r="38" fill="none" stroke="#0F766E" strokeWidth="10"
+                    <circle cx="50" cy="50" r="38" fill="none" stroke="#3E5C43" strokeWidth="10"
                       strokeDasharray="60 179" strokeDashoffset="47" strokeLinecap="round" opacity="0.25"/>
                   </svg>
                 </div>
@@ -665,7 +665,7 @@ export default function DashboardPage() {
                       </div>
                       <p className="db-big-num db-big-num--rose">{fmtBRL(report.total_expected_donation)}</p>
                       <p className="db-donation-desc">
-                        Uma parte do valor de cada venda realizada no Bazar Interno é destinada a instituições sociais parceiras.
+                        Uma parte do valor de cada venda realizada no Brechó Bem Viver é destinada a instituições sociais parceiras.
                         Esse é o total que suas vendas já contribuíram para essa causa.
                       </p>
                     </div>

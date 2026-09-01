@@ -1,4 +1,5 @@
 import PageHero from '../../components/PageHero/PageHero';
+import { LogoMark } from '../../components/Logo/Logo';
 import './SobrePage.css';
 
 const PILARES = [
@@ -46,7 +47,7 @@ export default function SobrePage() {
   return (
     <main className="sobre-page">
 
-        <PageHero title="Sobre o Bazar Interno" subtitle="Uma iniciativa que une empreendedorismo, sustentabilidade e comunidade." />
+        <PageHero title="Sobre o Brechó Bem Viver" subtitle="Desapega. Compartilha. Transforma. Uma iniciativa que une sustentabilidade, acolhimento e comunidade." />
 
         <div className="sobre-content">
 
@@ -54,7 +55,7 @@ export default function SobrePage() {
           <section className="sobre-section sobre-descricao-section">
             <div className="sobre-descricao-card">
               <p>
-                O <strong>Bazar Interno</strong> é uma plataforma interna de compra e venda de
+                O <strong>Brechó Bem Viver</strong> é uma plataforma interna de compra e venda de
                 roupas, acessórios e outros itens entre colaboradores e empreendedores conectados
                 à empresa. Surgiu da necessidade de criar um espaço seguro, transparente e
                 organizado para essas trocas.
@@ -93,13 +94,11 @@ export default function SobrePage() {
 
           {/* Rodapé institucional */}
           <section className="sobre-institucional">
-            <div className="sobre-inst-bars">
-              <span /><span /><span />
-            </div>
+            <LogoMark size={34} />
             <div>
-              <p className="sobre-inst-nome">BAZAR INTERNO</p>
+              <p className="sobre-inst-nome">Brechó Bem Viver</p>
               <p className="sobre-inst-slogan">
-                Economia colaborativa e sustentabilidade entre colegas
+                Sustentável para o planeta. Leve para você. Bom para todos.
               </p>
             </div>
           </section>

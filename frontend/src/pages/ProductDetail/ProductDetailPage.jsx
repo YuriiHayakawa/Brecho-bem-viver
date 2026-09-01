@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useToast } from '../../contexts/ToastContext';
 import { fetchProduct, reserveProduct, fetchProductLabelData, createSale, createOffer, fetchAcceptedOffer } from '../../services/api';
+import { LogoMark } from '../../components/Logo/Logo';
 import './ProductDetailPage.css';
 
 
@@ -92,12 +93,10 @@ function LabelModal({ productId, productName, onClose }) {
 
               {/* Topo — marca */}
               <div className="label-top">
-                <div className="label-brand-bars">
-                  <span /><span /><span /><span />
-                </div>
+                <LogoMark size={28} />
                 <div className="label-brand-text">
-                  <span className="label-brand-name">BAZAR</span>
-                  <span className="label-brand-sub">Interno</span>
+                  <span className="label-brand-name">Brechó</span>
+                  <span className="label-brand-sub">Bem Viver</span>
                 </div>
                 {data.product_code && (
                   <span className="label-code">#{data.product_code}</span>
@@ -147,12 +146,10 @@ function LabelModal({ productId, productName, onClose }) {
                     <div className="lp-header-diag" />
                     <div className="lp-header-inner">
                       <div className="lp-brand-group">
-                        <div className="lp-bars">
-                          <span /><span /><span /><span />
-                        </div>
+                        <LogoMark size={30} />
                         <div>
-                          <p className="lp-brand-name">BAZAR</p>
-                          <p className="lp-brand-sub">Interno Solidário</p>
+                          <p className="lp-brand-name">Brechó Bem Viver</p>
+                          <p className="lp-brand-sub">Desapega. Compartilha. Transforma.</p>
                         </div>
                       </div>
                       {data.product_code && (
@@ -215,7 +212,7 @@ function LabelModal({ productId, productName, onClose }) {
                       <span /><span /><span /><span />
                     </div>
                     <p className="lp-footer-text">
-                      Bazar Interno Solidário · Adquira com propósito e apoie quem está do seu lado
+                      Brechó Bem Viver · Desapega. Compartilha. Transforma.
                     </p>
                   </div>
 

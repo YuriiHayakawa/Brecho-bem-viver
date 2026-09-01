@@ -4,7 +4,7 @@
 .layout {
   display: flex;
   min-height: 100vh;
-  background: #F3F4F6;
+  background: #F5EFE3;
   font-family: 'Barlow', system-ui, -apple-system, sans-serif;
 }
 
@@ -16,18 +16,18 @@
 }
 
 .layout.sb-expanded .layout-content {
-  margin-left: var(--sb-expanded, 240px);
+  margin-left: calc(var(--sb-expanded, 240px) + var(--sb-margin, 14px) * 2);
 }
 
 .layout.sb-collapsed .layout-content {
-  margin-left: var(--sb-collapsed, 68px);
+  margin-left: calc(var(--sb-collapsed, 68px) + var(--sb-margin, 14px) * 2);
 }
 
 /* ── Overlay mobile ── */
 .layout-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(44, 70, 49, 0.45);
   z-index: 199;
   backdrop-filter: blur(2px);
   animation: overlay-in 0.2s ease;
@@ -57,8 +57,8 @@
     right: 0;
     height: var(--sb-topbar, 56px);
     background: #fff;
-    border-bottom: 2px solid #0F766E;
-    box-shadow: 0 2px 12px rgba(15,118,110,0.08);
+    border-bottom: 2px solid #3E5C43;
+    box-shadow: 0 2px 12px rgba(62, 92, 67,0.08);
     padding: 0 1rem;
     z-index: 198;
   }
@@ -74,7 +74,7 @@
     height: 36px;
     border-radius: 8px;
     background: none;
-    border: 1.5px solid #E5E7EB;
+    border: 1.5px solid #E8DFCB;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -85,9 +85,9 @@
   }
 
   .topbar-hamburger:hover {
-    background: rgba(15,118,110,0.06);
-    border-color: #0F766E;
-    color: #0F766E;
+    background: rgba(62, 92, 67,0.06);
+    border-color: #3E5C43;
+    color: #3E5C43;
   }
 
   .topbar-hamburger svg {
@@ -101,38 +101,20 @@
     gap: 0.5rem;
   }
 
-  .topbar-bars {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  .topbar-bars span {
-    display: block;
-    height: 3px;
-    background: #0F766E;
-    border-radius: 1px;
-    transform: skewX(-6deg);
-  }
-
-  .topbar-bars span:nth-child(1) { width: 18px; }
-  .topbar-bars span:nth-child(2) { width: 28px; }
-  .topbar-bars span:nth-child(3) { width: 22px; }
-
   .topbar-name {
-    font-size: 1rem;
-    font-weight: 800;
-    color: #0F766E;
+    font-family: 'Fraunces', 'Barlow', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #2C4631;
     letter-spacing: -0.01em;
-    text-transform: uppercase;
   }
 
   .topbar-name em {
+    font-family: 'Caveat', 'Barlow', cursive;
     font-style: normal;
-    font-weight: 600;
-    color: #6B7280;
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: #C97A56;
+    font-size: 1.15rem;
     margin-left: 4px;
   }
 }

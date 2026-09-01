@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginUser, registerUser, fetchCurrentUser } from '../../services/api';
 import { UNITS } from '../../constants/units';
+import { LogoMark } from '../../components/Logo/Logo';
 import './LoginPage.css';
 
 const PIX_TYPES = [
@@ -55,32 +56,23 @@ export default function LoginPage() {
       {/* Painel esquerdo — identidade visual */}
       <div className="login-brand">
         <div className="brand-content">
-          <div className="brand-bars top-bars">
-            <span className="bar bar-1" /><span className="bar bar-2" />
-            <span className="bar bar-3" /><span className="bar bar-4" />
+          <div className="brand-logo">
+            <LogoMark size={64} tone="light" />
+            <div className="logo-text">
+              <span className="logo-name">Brechó</span>
+              <span className="logo-subtitle">Bem Viver</span>
+            </div>
           </div>
 
-          <div className="brand-logo">
-            <div className="logo-symbol">
-              <span className="logo-bar s1" /><span className="logo-bar s2" />
-              <span className="logo-bar s3" /><span className="logo-bar s4" />
-            </div>
-            <div className="logo-text">
-              <span className="logo-name">BAZAR</span>
-              <span className="logo-subtitle">Interno</span>
-            </div>
-          </div>
+          <p className="brand-tagline">
+            Desapega<span>.</span> Compartilha<span>.</span> Transforma<span>.</span>
+          </p>
 
           <div className="brand-divider" />
 
           <p className="brand-slogan">
-            Trocar, vender<br />e apoiar quem<br />está do seu lado.
+            Cada peça carrega uma história.<br />Agora, pode fazer parte da sua.
           </p>
-
-          <div className="brand-bars bottom-bars">
-            <span className="bar bar-4" /><span className="bar bar-3" />
-            <span className="bar bar-2" /><span className="bar bar-1" />
-          </div>
         </div>
         <div className="brand-diagonal" />
       </div>
@@ -90,10 +82,8 @@ export default function LoginPage() {
         <div className="login-form-container">
           {/* Logo mobile */}
           <div className="mobile-logo">
-            <div className="mobile-logo-bars">
-              <span className="bar bar-1" /><span className="bar bar-2" /><span className="bar bar-3" />
-            </div>
-            <span className="mobile-logo-name">Bazar Interno</span>
+            <LogoMark size={32} />
+            <span className="mobile-logo-name">Brechó Bem Viver</span>
           </div>
 
           {/* Abas login / cadastro */}
@@ -183,7 +173,7 @@ function LoginForm() {
       </form>
 
       <p className="form-footer">
-        Um espaço interno de compra,<br />venda e trocas entre colegas
+        Sustentável para o planeta. Leve para você.<br />Bom para todos.
       </p>
     </>
   );
