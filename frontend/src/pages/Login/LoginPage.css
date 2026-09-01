@@ -2,16 +2,18 @@
    TOKENS — Identidade Visual
    ───────────────────────────────────────────── */
 :root {
-  --cor-primaria:   #0F766E;
-  --cor-escura:     #115E59;
-  --cor-media:      #14B8A6;
+  --cor-primaria:   #3E5C43;
+  --cor-escura:     #2C4631;
+  --cor-media:      #86A06A;
+  --cor-accent:     #C97A56;
   --branco:         #FFFFFF;
+  --cor-creme:      #F5EFE3;
   --cinza-texto:    #4B5563;
-  --cinza-borda:    #E5E7EB;
-  --cinza-fundo:    #F9FAFB;
+  --cinza-borda:    #E5DECB;
+  --cinza-fundo:    #FFFFFF;
   --erro:           #DC2626;
   --erro-fundo:     #FEF2F2;
-  --sombra-primaria: rgba(15, 118, 110, 0.25);
+  --sombra-primaria: rgba(62, 92, 67, 0.25);
 }
 
 /* ─────────────────────────────────────────────
@@ -86,34 +88,6 @@
 }
 
 /* ─────────────────────────────────────────────
-   BARRAS GRÁFICAS DA MARCA
-   ───────────────────────────────────────────── */
-.brand-bars {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.brand-bars .bar {
-  display: block;
-  height: 7px;
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 1px;
-  transform: skewX(-6deg);
-  transform-origin: left center;
-}
-
-.top-bars .bar-1 { width: 52px; }
-.top-bars .bar-2 { width: 80px; }
-.top-bars .bar-3 { width: 64px; }
-.top-bars .bar-4 { width: 96px; }
-
-.bottom-bars .bar-4 { width: 96px; opacity: 0.5; }
-.bottom-bars .bar-3 { width: 64px; opacity: 0.4; }
-.bottom-bars .bar-2 { width: 80px; opacity: 0.3; }
-.bottom-bars .bar-1 { width: 52px; opacity: 0.2; }
-
-/* ─────────────────────────────────────────────
    LOGO
    ───────────────────────────────────────────── */
 .brand-logo {
@@ -122,52 +96,44 @@
   gap: 1.25rem;
 }
 
-.logo-symbol {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  padding: 0.5rem 0;
-}
-
-.logo-bar {
-  display: block;
-  height: 6px;
-  background: var(--branco);
-  border-radius: 1px;
-  transform: skewX(-6deg);
-}
-
-.logo-bar.s1 { width: 36px; }
-.logo-bar.s2 { width: 54px; }
-.logo-bar.s3 { width: 44px; }
-.logo-bar.s4 { width: 62px; }
-
 .logo-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0;
 }
 
 .logo-name {
-  font-size: 2.75rem;
-  font-weight: 800;
+  font-family: 'Fraunces', 'Barlow', serif;
+  font-size: 2.5rem;
+  font-weight: 600;
   color: var(--branco);
-  letter-spacing: -0.02em;
-  line-height: 1;
-  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
 }
 
 .logo-subtitle {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.75);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-family: 'Caveat', 'Barlow', cursive;
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #F2C4A5;
+  line-height: 1;
+  margin-top: -0.15rem;
 }
 
 /* ─────────────────────────────────────────────
-   DIVISOR E SLOGAN
+   TAGLINE E SLOGAN
    ───────────────────────────────────────────── */
+.brand-tagline {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: 0.01em;
+}
+
+.brand-tagline span {
+  color: #F2C4A5;
+}
+
 .brand-divider {
   width: 48px;
   height: 3px;
@@ -176,10 +142,10 @@
 }
 
 .brand-slogan {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.92);
-  line-height: 1.35;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
   letter-spacing: -0.01em;
 }
 
@@ -188,7 +154,7 @@
    ───────────────────────────────────────────── */
 .login-form-panel {
   flex: 1;
-  background: var(--branco);
+  background: var(--cor-creme);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -209,32 +175,15 @@
 .mobile-logo {
   display: none;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.625rem;
 }
-
-.mobile-logo-bars {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.mobile-logo-bars .bar {
-  display: block;
-  height: 4px;
-  background: var(--cor-primaria);
-  transform: skewX(-6deg);
-}
-
-.mobile-logo-bars .bar-1 { width: 28px; }
-.mobile-logo-bars .bar-2 { width: 40px; }
-.mobile-logo-bars .bar-3 { width: 32px; }
 
 .mobile-logo-name {
-  font-size: 1.25rem;
-  font-weight: 800;
+  font-family: 'Fraunces', 'Barlow', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
   color: var(--cor-primaria);
   letter-spacing: -0.01em;
-  text-transform: uppercase;
 }
 
 /* ─────────────────────────────────────────────
@@ -293,7 +242,7 @@
   left: 0.875rem;
   width: 18px;
   height: 18px;
-  color: #9CA3AF;
+  color: #A69B87;
   pointer-events: none;
   flex-shrink: 0;
 }
@@ -313,11 +262,11 @@
 }
 
 .field-input::placeholder {
-  color: #9CA3AF;
+  color: #A69B87;
 }
 
 .field-input:hover {
-  border-color: #D1D5DB;
+  border-color: #D9CFB8;
   background: var(--branco);
 }
 
@@ -335,7 +284,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #9CA3AF;
+  color: #A69B87;
   padding: 0;
   display: flex;
   align-items: center;
@@ -447,7 +396,7 @@
   font-family: inherit;
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #9CA3AF;
+  color: #A69B87;
   cursor: pointer;
   letter-spacing: 0.01em;
   transition: color 0.2s, border-color 0.2s;
@@ -493,7 +442,7 @@
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 6px solid #9CA3AF;
+  border-top: 6px solid #A69B87;
   pointer-events: none;
 }
 
@@ -555,7 +504,7 @@
 .form-footer {
   text-align: center;
   font-size: 0.8rem;
-  color: #9CA3AF;
+  color: #A69B87;
   line-height: 1.6;
   padding-top: 0.5rem;
   border-top: 1px solid var(--cinza-borda);

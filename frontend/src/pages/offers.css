@@ -4,7 +4,7 @@
    ───────────────────────────────────────────── */
 .off-page {
   min-height: 100vh;
-  background: #F3F4F6;
+  background: #F5EFE3;
   font-family: 'Barlow', system-ui, -apple-system, sans-serif;
 }
 
@@ -24,7 +24,7 @@
 
 .off-stat {
   background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  border: 1px solid #E8DFCB;
   border-radius: 12px;
   padding: 0.9rem 1rem;
   display: flex;
@@ -48,7 +48,7 @@
 .off-stat--yellow .off-stat-val { color: #D97706; }
 .off-stat--green  .off-stat-val { color: #059669; }
 .off-stat--red    .off-stat-val { color: #DC2626; }
-.off-stat--blue   .off-stat-val { color: #0F766E; }
+.off-stat--blue   .off-stat-val { color: #3E5C43; }
 
 /* ── Filtros / chips ── */
 .off-filters {
@@ -64,7 +64,7 @@
   gap: 0.4rem;
   padding: 0.4rem 0.85rem;
   border-radius: 999px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid #E8DFCB;
   background: #FFFFFF;
   color: #4B5563;
   font-size: 0.82rem;
@@ -76,13 +76,13 @@
 .off-chip:hover { border-color: #C7CDD6; }
 
 .off-chip.active {
-  background: #0F766E;
-  border-color: #0F766E;
+  background: #3E5C43;
+  border-color: #3E5C43;
   color: #FFFFFF;
 }
 
 .off-chip-badge {
-  background: rgba(0,0,0,0.06);
+  background: rgba(44, 70, 49,0.06);
   border-radius: 999px;
   padding: 0.05rem 0.45rem;
   font-size: 0.72rem;
@@ -100,7 +100,7 @@
 
 .off-card {
   background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  border: 1px solid #E8DFCB;
   border-radius: 14px;
   padding: 1rem;
   display: flex;
@@ -109,7 +109,7 @@
 }
 
 .off-card:hover {
-  border-color: #D1D5DB;
+  border-color: #D9CFB8;
   box-shadow: 0 4px 16px rgba(17,24,39,0.06);
 }
 
@@ -164,7 +164,7 @@
 .off-card-code {
   font-size: 0.72rem;
   font-weight: 700;
-  color: #0F766E;
+  color: #3E5C43;
   background: #EAF0FF;
   padding: 0.1rem 0.45rem;
   border-radius: 5px;
@@ -181,7 +181,7 @@
   text-overflow: ellipsis;
 }
 
-.off-card-name:hover { color: #0F766E; }
+.off-card-name:hover { color: #3E5C43; }
 
 .off-card-person {
   font-size: 0.82rem;
@@ -209,7 +209,7 @@
 .off-price-lbl {
   font-size: 0.68rem;
   font-weight: 600;
-  color: #9CA3AF;
+  color: #A69B87;
   text-transform: uppercase;
   letter-spacing: 0.4px;
 }
@@ -217,7 +217,7 @@
 .off-price-old {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #9CA3AF;
+  color: #A69B87;
   text-decoration: line-through;
 }
 
@@ -228,7 +228,7 @@
 }
 
 .off-price-arrow {
-  color: #9CA3AF;
+  color: #A69B87;
   display: flex;
   align-items: center;
 }
@@ -238,8 +238,8 @@
 .off-card-msg {
   font-size: 0.85rem;
   color: #4B5563;
-  background: #F9FAFB;
-  border-left: 3px solid #E5E7EB;
+  background: #FAF6EC;
+  border-left: 3px solid #E8DFCB;
   padding: 0.5rem 0.7rem;
   border-radius: 6px;
   margin-top: 0.5rem;
@@ -257,7 +257,7 @@
 
 .off-card-date {
   font-size: 0.76rem;
-  color: #9CA3AF;
+  color: #A69B87;
   font-weight: 500;
 }
 
@@ -324,10 +324,10 @@
 
 .off-btn--ghost {
   background: #FFFFFF;
-  color: #0F766E;
-  border-color: #C7D2FE;
+  color: #3E5C43;
+  border-color: #EFC2A2;
 }
-.off-btn--ghost:hover:not(:disabled) { background: #EEF2FF; }
+.off-btn--ghost:hover:not(:disabled) { background: #FBEEE4; }
 
 .off-btn--counter {
   background: #FFFFFF;
@@ -406,12 +406,12 @@
   text-align: center;
   padding: 3.5rem 1.5rem;
   background: #FFFFFF;
-  border: 1px dashed #D1D5DB;
+  border: 1px dashed #D9CFB8;
   border-radius: 14px;
   color: #6B7280;
 }
 
-.off-empty svg { width: 44px; height: 44px; margin-bottom: 0.75rem; color: #9CA3AF; }
+.off-empty svg { width: 44px; height: 44px; margin-bottom: 0.75rem; color: #A69B87; }
 
 .off-empty-title {
   font-size: 1.05rem;

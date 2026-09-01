@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../Navbar/Navbar';
+import { LogoMark } from '../Logo/Logo';
 import './Layout.css';
 
 export default function Layout({ children }) {
@@ -53,10 +54,8 @@ export default function Layout({ children }) {
         </button>
 
         <div className="topbar-brand">
-          <div className="topbar-bars">
-            <span /><span /><span />
-          </div>
-          <span className="topbar-name">BAZAR <em>Interno</em></span>
+          <LogoMark size={26} />
+          <span className="topbar-name">Brechó <em>Bem Viver</em></span>
         </div>
       </header>
 

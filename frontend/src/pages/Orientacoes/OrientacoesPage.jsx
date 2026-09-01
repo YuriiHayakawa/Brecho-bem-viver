@@ -78,7 +78,7 @@ export default function OrientacoesPage() {
   return (
     <main className="orientacoes-page">
 
-        <PageHero title="Orientações" subtitle="Como participar do Bazar Interno como vendedor" />
+        <PageHero title="Orientações" subtitle="Como participar do Brechó Bem Viver como vendedor" />
 
         {/* Cards */}
         <div className="orientacoes-content">
@@ -102,7 +102,7 @@ export default function OrientacoesPage() {
             </svg>
             <p>
               Em caso de dúvidas, entre em contato com a organização do evento.
-              O Bazar Interno promove o empreendedorismo com responsabilidade e transparência.
+              O Brechó Bem Viver promove o empreendedorismo com responsabilidade e transparência.
             </p>
           </div>
         </div>

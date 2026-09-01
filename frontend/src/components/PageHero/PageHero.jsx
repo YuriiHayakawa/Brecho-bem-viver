@@ -1,3 +1,4 @@
+import { LogoMark } from '../Logo/Logo';
 import './PageHero.css';
 
 export default function PageHero({ title, subtitle, eyebrow, right, children }) {
@@ -8,8 +9,8 @@ export default function PageHero({ title, subtitle, eyebrow, right, children }) 
         {children ?? (
           <>
             <div className="page-hero-left">
-              <div className="page-hero-bars">
-                <span /><span /><span /><span />
+              <div className="page-hero-mark-wrap">
+                <LogoMark size={30} tone="light" className="page-hero-mark" />
               </div>
               <div>
                 {eyebrow && <p className="page-hero-eyebrow">{eyebrow}</p>}

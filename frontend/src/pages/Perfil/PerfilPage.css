@@ -3,14 +3,14 @@
    ───────────────────────────────────────────── */
 .perfil-page {
   min-height: calc(100vh - 64px);
-  background: #F9FAFB;
+  background: #F5EFE3;
   font-family: 'Barlow', system-ui, -apple-system, sans-serif;
 }
 
 /* Hero */
 .perfil-hero {
   position: relative;
-  background: linear-gradient(135deg, #115E59 0%, #0F766E 55%, #14B8A6 100%);
+  background: linear-gradient(135deg, #2C4631 0%, #3E5C43 55%, #86A06A 100%);
   overflow: hidden;
   padding: 3rem 1.5rem 3.5rem;
 }
@@ -118,8 +118,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background: rgba(15, 118, 110, 0.08);
-  color: #0F766E;
+  background: rgba(62, 92, 67, 0.08);
+  color: #3E5C43;
 }
 
 .perfil-card-icon svg {
@@ -128,8 +128,8 @@
 }
 
 .perfil-card--pix .perfil-card-icon {
-  background: rgba(124, 58, 237, 0.10);
-  color: #7C3AED;
+  background: rgba(201, 122, 86, 0.12);
+  color: #C97A56;
 }
 
 .perfil-card-header h2 {
@@ -166,7 +166,7 @@
 .data-label {
   font-size: 0.7rem;
   font-weight: 600;
-  color: #9CA3AF;
+  color: #A69B87;
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -206,7 +206,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: #0F766E;
+  background: #3E5C43;
   color: #fff;
   border: none;
   border-radius: 12px;
@@ -216,9 +216,9 @@
   font-weight: 700;
   cursor: pointer;
   transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
-  box-shadow: 0 4px 12px rgba(15,118,110,0.18);
+  box-shadow: 0 4px 12px rgba(62, 92, 67,0.18);
 }
-.perfil-btn-edit:hover { background: #115E59; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(15,118,110,0.24); }
+.perfil-btn-edit:hover { background: #2C4631; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(62, 92, 67,0.24); }
 .perfil-btn-edit svg { width: 16px; height: 16px; }
 
 /* ── Campos de edição ── */
@@ -242,7 +242,7 @@
 .perfil-field-edit > span {
   font-size: 0.7rem;
   font-weight: 600;
-  color: #9CA3AF;
+  color: #A69B87;
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -256,16 +256,16 @@
   font-size: 0.9rem;
   font-weight: 600;
   color: #1F2937;
-  background: #F9FAFB;
+  background: #FAF6EC;
   outline: none;
   cursor: text;
   transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
 }
 
 .perfil-field-edit input:focus {
-  border-color: #0F766E;
+  border-color: #3E5C43;
   background: #fff;
-  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.10);
+  box-shadow: 0 0 0 4px rgba(62, 92, 67, 0.10);
 }
 
 /* ── Dropdown customizado (Unidade / Tipo de chave) — sempre abre para baixo ── */
@@ -286,20 +286,20 @@
   font-size: 0.9rem;
   font-weight: 600;
   color: #1F2937;
-  background: #F9FAFB;
+  background: #FAF6EC;
   cursor: pointer;
   text-align: left;
   transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
 }
 
 .app-dropdown-trigger:hover {
-  border-color: #D1D5DB;
+  border-color: #D9CFB8;
 }
 
 .app-dropdown-trigger.open {
-  border-color: #0F766E;
+  border-color: #3E5C43;
   background: #fff;
-  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.10);
+  box-shadow: 0 0 0 4px rgba(62, 92, 67, 0.10);
 }
 
 .app-dropdown-trigger span {
@@ -309,14 +309,14 @@
 }
 
 .app-dropdown-placeholder {
-  color: #9CA3AF;
+  color: #A69B87;
   font-weight: 500;
 }
 
 .app-dropdown-chevron {
   width: 16px;
   height: 16px;
-  color: #9CA3AF;
+  color: #A69B87;
   flex-shrink: 0;
   transition: transform 0.18s ease;
 }
@@ -334,7 +334,7 @@
   max-height: 260px;
   overflow-y: auto;
   background: #fff;
-  border: 1px solid #E5E7EB;
+  border: 1px solid #E8DFCB;
   border-radius: 12px;
   box-shadow: 0 12px 32px rgba(16, 24, 40, 0.14);
   padding: 0.4rem;
@@ -357,8 +357,8 @@
 }
 
 .app-dropdown-option.selected {
-  background: rgba(15, 118, 110, 0.08);
-  color: #0F766E;
+  background: rgba(62, 92, 67, 0.08);
+  color: #3E5C43;
   font-weight: 600;
 }
 
@@ -379,7 +379,7 @@
 
 .perfil-btn-cancel {
   padding: 0.7rem 1.35rem;
-  border: 1.5px solid #E5E7EB;
+  border: 1.5px solid #E8DFCB;
   border-radius: 12px;
   background: #fff;
   font-family: inherit;
@@ -389,22 +389,22 @@
   cursor: pointer;
   transition: border-color 0.18s, color 0.18s;
 }
-.perfil-btn-cancel:hover { border-color: #9CA3AF; color: #374151; }
+.perfil-btn-cancel:hover { border-color: #A69B87; color: #374151; }
 
 .perfil-btn-save {
   padding: 0.7rem 1.5rem;
   border: none;
   border-radius: 12px;
-  background: #0F766E;
+  background: #3E5C43;
   font-family: inherit;
   font-size: 0.875rem;
   font-weight: 700;
   color: #fff;
   cursor: pointer;
   transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
-  box-shadow: 0 4px 12px rgba(15,118,110,0.18);
+  box-shadow: 0 4px 12px rgba(62, 92, 67,0.18);
 }
-.perfil-btn-save:hover:not(:disabled) { background: #115E59; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(15,118,110,0.24); }
+.perfil-btn-save:hover:not(:disabled) { background: #2C4631; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(62, 92, 67,0.24); }
 .perfil-btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
 
 /* Responsivo */
