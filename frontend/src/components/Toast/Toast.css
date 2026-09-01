@@ -50,7 +50,7 @@
 
 .toast--success .toast-icon { background: rgba(16, 185, 129, 0.10); color: #10B981; }
 .toast--error   .toast-icon { background: rgba(220, 38, 38, 0.08); color: #DC2626; }
-.toast--info    .toast-icon { background: rgba(15, 118, 110, 0.08); color: #0F766E; }
+.toast--info    .toast-icon { background: rgba(62, 92, 67, 0.08); color: #3E5C43; }
 
 /* Texto */
 .toast-message {
@@ -71,7 +71,7 @@
   background: transparent;
   border: none;
   border-radius: 8px;
-  color: #9CA3AF;
+  color: #A69B87;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }

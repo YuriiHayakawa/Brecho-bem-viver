@@ -45,6 +45,8 @@ def get_admin_remaining_products(
     negotiated_map: dict[int, object] = {}
     # Valor da venda registrada por produto
     sale_value_map: dict[int, object] = {}
+    # Nome do comprador registrado na venda, por produto
+    sale_buyer_map: dict[int, object] = {}
 
     if product_ids:
         counts = (
@@ -72,11 +74,12 @@ def get_admin_remaining_products(
         negotiated_map = {pid: price for pid, price in accepted}
 
         sales = (
-            db.query(Sale.id_product, Sale.sale_value)
+            db.query(Sale.id_product, Sale.sale_value, Sale.buyer_name)
             .filter(Sale.id_product.in_(product_ids))
             .all()
         )
-        sale_value_map = {pid: value for pid, value in sales}
+        sale_value_map = {pid: value for pid, value, _ in sales}
+        sale_buyer_map = {pid: buyer_name for pid, _, buyer_name in sales}
 
     result = []
 
@@ -87,6 +90,16 @@ def get_admin_remaining_products(
 
         # Valor final: venda registrada tem prioridade; senão, valor negociado
         final_value = sale_value if sale_value is not None else negotiated_value
+
+        # Comprador: se já foi vendido, o nome registrado na venda; senão,
+        # se está reservado, quem está segurando a reserva agora (cobre tanto
+        # reserva direta quanto reserva originada de oferta aceita).
+        if product.status == "vendida":
+            buyer_name = sale_buyer_map.get(product.id)
+        elif product.status == "reservada" and product.reserved_by:
+            buyer_name = product.reserved_by.name
+        else:
+            buyer_name = None
 
         result.append(
             AdminRemainingProductItem(
@@ -103,6 +116,7 @@ def get_admin_remaining_products(
                 has_offers=offers_count > 0,
                 negotiated_value=negotiated_value,
                 final_value=final_value,
+                buyer_name=buyer_name,
             )
         )
 

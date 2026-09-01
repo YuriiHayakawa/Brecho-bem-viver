@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { LogoMark } from '../Logo/Logo';
 import './Navbar.css';
 
 const NAV_ITEMS = [
@@ -151,12 +152,10 @@ export default function Navbar({ collapsed, onToggle, mobileOpen, onCloseMobile 
       {/* ── Cabeçalho ── */}
       <div className="sb-head">
         <button className="sb-logo" onClick={() => go('/dashboard')}>
-          <div className="sb-bars">
-            <span /><span /><span /><span />
-          </div>
+          <LogoMark size={32} className="sb-mark" />
           <div className="sb-brand">
-            <span className="sb-name">BAZAR</span>
-            <span className="sb-sub">Interno</span>
+            <span className="sb-name">Brechó</span>
+            <span className="sb-sub">Bem Viver</span>
           </div>
         </button>
 
@@ -171,11 +170,7 @@ export default function Navbar({ collapsed, onToggle, mobileOpen, onCloseMobile 
       </div>
 
       {/* ── Separador decorativo ── */}
-      <div className="sb-divider">
-        <span className="sb-divider-bar d1" />
-        <span className="sb-divider-bar d2" />
-        <span className="sb-divider-bar d3" />
-      </div>
+      <div className="sb-divider" />
 
       {/* ── Navegação ── */}
       <nav className="sb-nav">
@@ -191,7 +186,6 @@ export default function Navbar({ collapsed, onToggle, mobileOpen, onCloseMobile 
                 >
                   <span className="sb-item-icon">{item.icon}</span>
                   <span className="sb-item-label">{item.label}</span>
-                  {active && <span className="sb-item-bar" />}
                 </button>
               </li>
             );
@@ -217,7 +211,6 @@ export default function Navbar({ collapsed, onToggle, mobileOpen, onCloseMobile 
                     >
                       <span className="sb-item-icon">{item.icon}</span>
                       <span className="sb-item-label">{item.label}</span>
-                      {active && <span className="sb-item-bar" />}
                     </button>
                   </li>
                 );

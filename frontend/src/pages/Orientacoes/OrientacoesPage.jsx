@@ -4,21 +4,21 @@ import './OrientacoesPage.css';
 const ORIENTACOES = [
   {
     numero: '01',
-    titulo: 'Cadastre seus produtos',
+    titulo: 'Explore o catálogo',
     descricao:
-      'Adicione seus itens ao bazar com fotos, descrição, tamanho, categoria e preço. Quanto mais completo o cadastro, maiores as chances de venda.',
+      'Navegue pelos produtos disponíveis e use os filtros de categoria, gênero, tamanho e status, ou busque direto por nome ou marca.',
     icon: (
-      <svg viewBox="0 0 24 24" fill="none">
-        <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M12 8v8M8 12h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <svg viewBox="0 0 20 20" fill="none">
+        <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M13 13l3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     ),
   },
   {
     numero: '02',
-    titulo: 'Aguarde a reserva',
+    titulo: 'Reserve por 24 horas',
     descricao:
-      'Compradores podem reservar seu produto por até 24 horas. Durante esse período, o item fica indisponível para outros compradores.',
+      'Encontrou a peça certa? Reserve na página do produto e ela fica separada só pra você por 24 horas, sem risco de outra pessoa levar.',
     icon: (
       <svg viewBox="0 0 24 24" fill="none">
         <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
@@ -28,47 +28,86 @@ const ORIENTACOES = [
   },
   {
     numero: '03',
-    titulo: 'Confirme o pagamento via PIX',
+    titulo: 'Ou negocie um valor',
     descricao:
-      'O comprador realiza o pagamento diretamente via PIX para a sua chave cadastrada. Confirme o recebimento antes de entregar o produto.',
+      'Prefere pagar menos? Envie uma oferta abaixo do preço anunciado. O vendedor pode aceitar, recusar ou propor um valor final — aí é só aceitar ou recusar.',
     icon: (
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M12 3L16 7H13V17H16L12 21L8 17H11V7H8L12 3Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
   },
   {
     numero: '04',
-    titulo: 'Realize a entrega',
+    titulo: 'Pague com PIX',
     descricao:
-      'Combine o local e horário de entrega com o comprador. O bazar acontece em um ambiente presencial — trate tudo com respeito e cordialidade.',
+      'Na página do produto aparece o QR Code (ou a chave) PIX do vendedor. Escaneie, pague o valor combinado e combine onde retirar o item.',
     icon: (
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M3 12l9-9 9 9M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M10 2L14 6H11V14H14L10 18L6 14H9V6H6L10 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
       </svg>
     ),
   },
   {
     numero: '05',
-    titulo: 'Preços e negociação',
+    titulo: 'Anuncie seus produtos',
     descricao:
-      'Os preços são sugeridos pelo vendedor, mas o valor final pode ser negociado presencialmente. O QR Code PIX permite que o comprador insira o valor combinado.',
+      'Cadastre nome, descrição, categoria, tamanho, marca e preço, e adicione fotos — a primeira vira a capa do anúncio. Simples e rápido.',
     icon: (
-      <svg viewBox="0 0 24 24" fill="none">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-4H9l3-3 3 3h-2v4z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-        <path d="M12 7v1M12 16v1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <svg viewBox="0 0 20 20" fill="none">
+        <rect x="2" y="4" width="16" height="13" rx="2" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="10" cy="10.5" r="3" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M7 4l1-2h4l1 2" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
       </svg>
     ),
   },
   {
     numero: '06',
-    titulo: 'Produtos com defeito',
+    titulo: 'Seja transparente sobre defeitos',
     descricao:
-      'Seja transparente. Se o produto tiver algum defeito, informe no cadastro. A honestidade fortalece a confiança entre os participantes do bazar.',
+      'Se a peça tiver algum defeito, marque essa opção e descreva. Isso não afasta compradores — fortalece a confiança em quem vende.',
     icon: (
-      <svg viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M12 8v4M12 16v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <svg viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M10 7v4M10 13v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
+    numero: '07',
+    titulo: 'Responda as propostas que você recebe',
+    descricao:
+      "Alguém fez uma oferta no seu produto? Em 'Propostas Recebidas' você aceita, recusa ou envia uma contraproposta com o valor que topa.",
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M3 5l7 4 7-4" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+        <rect x="3" y="4" width="14" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+    ),
+  },
+  {
+    numero: '08',
+    titulo: 'Acompanhe tudo pelo Dashboard',
+    descricao:
+      'Veja quantos produtos você já anunciou, quantos vendeu, quanto arrecadou e quanto isso já ajudou a doação para instituições parceiras.',
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none">
+        <rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+        <rect x="11" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+        <rect x="2" y="11" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+        <rect x="11" y="11" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+    ),
+  },
+  {
+    numero: '09',
+    titulo: 'Mantenha seu perfil em dia',
+    descricao:
+      'Sua unidade e sua chave PIX ficam no seu perfil — são elas que aparecem pra quem compra de você, então mantenha tudo atualizado.',
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="7" r="3.5" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -78,7 +117,7 @@ export default function OrientacoesPage() {
   return (
     <main className="orientacoes-page">
 
-        <PageHero title="Orientações" subtitle="Como participar do Bazar Interno como vendedor" />
+        <PageHero title="Orientações" subtitle="Um passo a passo simples pra comprar, vender e negociar no Brechó Bem Viver" />
 
         {/* Cards */}
         <div className="orientacoes-content">
@@ -101,8 +140,9 @@ export default function OrientacoesPage() {
               <path d="M10 9v5M10 7v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
             <p>
-              Em caso de dúvidas, entre em contato com a organização do evento.
-              O Bazar Interno promove o empreendedorismo com responsabilidade e transparência.
+              Ficou alguma dúvida sobre como algo funciona por aqui? A página "Sobre" conta mais sobre a
+              proposta do Brechó Bem Viver — e lembre-se: parte do valor de cada venda ajuda instituições
+              sociais parceiras.
             </p>
           </div>
         </div>

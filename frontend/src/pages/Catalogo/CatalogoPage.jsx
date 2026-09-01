@@ -48,7 +48,7 @@ export default function CatalogoPage() {
 
   return (
     <div className="catalogo-wrapper">
-      <PageHero title="Catálogo do Bazar" subtitle="Encontre peças únicas e ajude quem mais precisa" />
+      <PageHero title="Catálogo do Brechó" subtitle="Encontre peças únicas e ajude quem mais precisa" />
 
       <main className="catalogo-main">
         {/* Barra de ações */}

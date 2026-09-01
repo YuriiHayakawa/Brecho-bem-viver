@@ -3,14 +3,14 @@
    ───────────────────────────────────────────── */
 .np-page {
   min-height: 100vh;
-  background: #F3F4F6;
+  background: #F5EFE3;
   font-family: 'Barlow', system-ui, -apple-system, sans-serif;
 }
 
 /* ── Hero ── */
 .np-hero {
   position: relative;
-  background: linear-gradient(135deg, #115E59 0%, #0F766E 55%, #14B8A6 100%);
+  background: linear-gradient(135deg, #2C4631 0%, #3E5C43 55%, #86A06A 100%);
   overflow: hidden;
   padding: 2.5rem 1.5rem 3rem;
 }
@@ -96,8 +96,8 @@
 .np-section {
   background: #fff;
   border-radius: 12px;
-  border: 1px solid #E5E7EB;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  border: 1px solid #E8DFCB;
+  box-shadow: 0 1px 4px rgba(44, 70, 49,0.04);
   overflow: hidden;
 }
 
@@ -113,7 +113,7 @@
 .np-section-icon {
   width: 36px;
   height: 36px;
-  background: rgba(15,118,110,0.08);
+  background: rgba(62, 92, 67,0.08);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -124,7 +124,7 @@
 .np-section-icon svg {
   width: 18px;
   height: 18px;
-  color: #0F766E;
+  color: #3E5C43;
 }
 
 .np-section-icon--warn {
@@ -144,7 +144,7 @@
 
 .np-section-desc {
   font-size: 0.8rem;
-  color: #9CA3AF;
+  color: #A69B87;
   margin: 0;
 }
 
@@ -185,9 +185,9 @@
   width: 100%;
   padding: 0 0.875rem;
   height: 44px;
-  border: 1.5px solid #E5E7EB;
+  border: 1.5px solid #E8DFCB;
   border-radius: 8px;
-  background: #F9FAFB;
+  background: #FAF6EC;
   font-size: 0.9rem;
   font-family: inherit;
   color: #111827;
@@ -198,22 +198,22 @@
 
 .np-input::placeholder,
 .np-textarea::placeholder {
-  color: #9CA3AF;
+  color: #A69B87;
 }
 
 .np-input:hover,
 .np-select:hover,
 .np-textarea:hover {
-  border-color: #D1D5DB;
+  border-color: #D9CFB8;
   background: #fff;
 }
 
 .np-input:focus,
 .np-select:focus,
 .np-textarea:focus {
-  border-color: #0F766E;
+  border-color: #3E5C43;
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(15,118,110,0.1);
+  box-shadow: 0 0 0 3px rgba(62, 92, 67,0.1);
 }
 
 .np-select {
@@ -279,14 +279,14 @@
   width: 44px;
   height: 24px;
   border-radius: 999px;
-  background: #D1D5DB;
+  background: #D9CFB8;
   position: relative;
   flex-shrink: 0;
   transition: background 0.2s;
 }
 
 .np-toggle.active {
-  background: #0F766E;
+  background: #3E5C43;
 }
 
 .np-toggle-thumb {
@@ -297,7 +297,7 @@
   height: 18px;
   border-radius: 50%;
   background: #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  box-shadow: 0 1px 3px rgba(44, 70, 49,0.2);
   transition: left 0.2s;
 }
 
@@ -308,9 +308,9 @@
 /* ── Drop zone de imagens ── */
 .np-dropzone {
   margin: 0 1.5rem 1.5rem;
-  border: 2px dashed #D1D5DB;
+  border: 2px dashed #D9CFB8;
   border-radius: 10px;
-  background: #F9FAFB;
+  background: #FAF6EC;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -322,18 +322,18 @@
 }
 
 .np-dropzone:hover {
-  border-color: #0F766E;
-  background: #EEF2FF;
+  border-color: #3E5C43;
+  background: #FBEEE4;
 }
 
 .np-dropzone-icon svg {
   width: 40px;
   height: 40px;
-  color: #9CA3AF;
+  color: #A69B87;
 }
 
 .np-dropzone:hover .np-dropzone-icon svg {
-  color: #0F766E;
+  color: #3E5C43;
 }
 
 .np-dropzone-text {
@@ -345,7 +345,7 @@
 
 .np-dropzone-hint {
   font-size: 0.8rem;
-  color: #9CA3AF;
+  color: #A69B87;
   margin: 0;
 }
 
@@ -363,14 +363,14 @@
   height: 120px;
   border-radius: 8px;
   overflow: hidden;
-  border: 2px solid #E5E7EB;
+  border: 2px solid #E8DFCB;
   flex-shrink: 0;
   transition: border-color 0.2s;
 }
 
 .np-image-item.is-cover {
-  border-color: #0F766E;
-  box-shadow: 0 0 0 3px rgba(15,118,110,0.15);
+  border-color: #3E5C43;
+  box-shadow: 0 0 0 3px rgba(62, 92, 67,0.15);
 }
 
 .np-image-item img {
@@ -383,7 +383,7 @@
   position: absolute;
   bottom: 4px;
   left: 4px;
-  background: #0F766E;
+  background: #3E5C43;
   color: #fff;
   font-size: 0.65rem;
   font-weight: 700;
@@ -413,7 +413,7 @@
   height: 24px;
   border-radius: 4px;
   border: none;
-  background: rgba(0,0,0,0.6);
+  background: rgba(44, 70, 49,0.6);
   color: #fff;
   cursor: pointer;
   display: flex;
@@ -425,7 +425,7 @@
 }
 
 .np-img-btn:hover {
-  background: rgba(0,0,0,0.85);
+  background: rgba(44, 70, 49,0.85);
 }
 
 .np-img-btn--remove:hover {
@@ -472,7 +472,7 @@
   padding: 0 1.5rem;
   height: 48px;
   background: #fff;
-  border: 1.5px solid #E5E7EB;
+  border: 1.5px solid #E8DFCB;
   border-radius: 8px;
   font-family: inherit;
   font-size: 0.9375rem;
@@ -483,7 +483,7 @@
 }
 
 .np-btn-cancel:hover:not(:disabled) {
-  border-color: #9CA3AF;
+  border-color: #A69B87;
   color: #374151;
 }
 
@@ -493,7 +493,7 @@
   gap: 0.5rem;
   padding: 0 1.75rem;
   height: 48px;
-  background: #0F766E;
+  background: #3E5C43;
   border: none;
   border-radius: 8px;
   font-family: inherit;
@@ -502,14 +502,14 @@
   color: #fff;
   cursor: pointer;
   transform: skewX(-3deg);
-  box-shadow: 0 4px 14px rgba(15,118,110,0.3);
+  box-shadow: 0 4px 14px rgba(62, 92, 67,0.3);
   transition: background 0.2s, box-shadow 0.2s;
   letter-spacing: 0.02em;
 }
 
 .np-btn-submit:hover:not(:disabled) {
-  background: #115E59;
-  box-shadow: 0 6px 20px rgba(15,118,110,0.35);
+  background: #2C4631;
+  box-shadow: 0 6px 20px rgba(62, 92, 67,0.35);
 }
 
 .np-btn-submit:disabled {

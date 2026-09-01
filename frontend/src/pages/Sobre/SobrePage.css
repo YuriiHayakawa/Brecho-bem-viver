@@ -3,14 +3,14 @@
    ───────────────────────────────────────────── */
 .sobre-page {
   min-height: calc(100vh - 64px);
-  background: #F9FAFB;
+  background: #F5EFE3;
   font-family: 'Barlow', system-ui, -apple-system, sans-serif;
 }
 
 /* Hero */
 .sobre-hero {
   position: relative;
-  background: linear-gradient(135deg, #115E59 0%, #0F766E 55%, #14B8A6 100%);
+  background: linear-gradient(135deg, #2C4631 0%, #3E5C43 55%, #86A06A 100%);
   overflow: hidden;
   padding: 2.5rem 1.5rem 3rem;
 }
@@ -107,7 +107,7 @@
   display: inline-block;
   width: 32px;
   height: 3px;
-  background: #0F766E;
+  background: #3E5C43;
   border-radius: 2px;
   transform: skewX(-6deg);
 }
@@ -116,9 +116,9 @@
 .sobre-descricao-card {
   background: #fff;
   border-radius: 12px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid #E8DFCB;
   padding: 1.75rem 2rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 4px rgba(44, 70, 49,0.04);
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -132,51 +132,8 @@
 }
 
 .sobre-descricao-card strong {
-  color: #0F766E;
+  color: #3E5C43;
   font-weight: 700;
-}
-
-/* Stats */
-.sobre-stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-}
-
-.sobre-stat {
-  background: #fff;
-  border-radius: 12px;
-  border: 1px solid #E5E7EB;
-  padding: 1.25rem 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.3rem;
-  text-align: center;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.sobre-stat:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(15,118,110,0.1);
-}
-
-.sobre-stat-valor {
-  font-size: 1.875rem;
-  font-weight: 800;
-  font-style: italic;
-  color: #0F766E;
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-
-.sobre-stat-rotulo {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #6B7280;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
 /* Pilares */
@@ -189,25 +146,25 @@
 .pilar-card {
   background: #fff;
   border-radius: 12px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid #E8DFCB;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 4px rgba(44, 70, 49,0.04);
   transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
 }
 
 .pilar-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(15,118,110,0.1);
+  box-shadow: 0 8px 24px rgba(62, 92, 67,0.1);
   border-color: #C7D7FD;
 }
 
 .pilar-icon {
   width: 44px;
   height: 44px;
-  background: linear-gradient(135deg, rgba(15,118,110,0.1), rgba(15,118,110,0.05));
+  background: linear-gradient(135deg, rgba(62, 92, 67,0.1), rgba(62, 92, 67,0.05));
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -217,7 +174,7 @@
 .pilar-icon svg {
   width: 24px;
   height: 24px;
-  color: #0F766E;
+  color: #3E5C43;
 }
 
 .pilar-titulo {
@@ -240,7 +197,7 @@
   align-items: center;
   gap: 1rem;
   padding: 1.5rem 2rem;
-  background: linear-gradient(135deg, #0F766E, #115E59);
+  background: linear-gradient(135deg, #3E5C43, #2C4631);
   border-radius: 12px;
   overflow: hidden;
   position: relative;
@@ -255,29 +212,10 @@
   transform: skewX(-6deg);
 }
 
-.sobre-inst-bars {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  flex-shrink: 0;
-}
-
-.sobre-inst-bars span {
-  display: block;
-  height: 5px;
-  background: rgba(255,255,255,0.75);
-  border-radius: 1px;
-  transform: skewX(-6deg);
-}
-
-.sobre-inst-bars span:nth-child(1) { width: 28px; }
-.sobre-inst-bars span:nth-child(2) { width: 44px; }
-.sobre-inst-bars span:nth-child(3) { width: 34px; }
-
 .sobre-inst-nome {
+  font-family: 'Fraunces', 'Barlow', serif;
   font-size: 1.5rem;
-  font-weight: 800;
-  font-style: italic;
+  font-weight: 600;
   color: #fff;
   margin: 0 0 0.15rem;
   letter-spacing: -0.01em;
@@ -292,17 +230,13 @@
 
 /* Responsivo */
 @media (max-width: 700px) {
-  .sobre-stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
   .sobre-pilares {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 480px) {
-  .sobre-stats {
-    grid-template-columns: repeat(2, 1fr);
+  .sobre-diferenciais {
+    grid-template-columns: 1fr;
   }
 }

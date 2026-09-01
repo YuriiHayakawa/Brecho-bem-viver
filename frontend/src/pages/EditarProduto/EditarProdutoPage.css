@@ -2,7 +2,7 @@
 
 /* Hero com gradiente invertido para diferenciar */
 .ep-hero {
-  background: linear-gradient(135deg, #115E59 0%, #0F766E 60%, #1D6FBF 100%) !important;
+  background: linear-gradient(135deg, #2C4631 0%, #3E5C43 60%, #1D6FBF 100%) !important;
 }
 
 /* Skeletons de carregamento */
@@ -15,7 +15,7 @@
 .ep-skeleton {
   height: 80px;
   border-radius: 12px;
-  background: linear-gradient(90deg, #E5E7EB 25%, #F3F4F6 50%, #E5E7EB 75%);
+  background: linear-gradient(90deg, #E8DFCB 25%, #F3F4F6 50%, #E8DFCB 75%);
   background-size: 200% 100%;
   animation: ep-shimmer 1.4s infinite;
 }
@@ -48,7 +48,7 @@
   position: absolute;
   top: 6px;
   left: 6px;
-  background: #0F766E;
+  background: #3E5C43;
   color: #fff;
   font-size: 0.65rem;
   font-weight: 800;

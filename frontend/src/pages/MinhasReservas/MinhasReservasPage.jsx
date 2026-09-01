@@ -110,7 +110,7 @@ export default function MinhasReservasPage() {
                     <div className="off-prices">
                       <div className="off-price-item">
                         <span className="off-price-lbl">Valor</span>
-                        <span className="off-price-new" style={{ color: '#0F766E' }}>{fmtBRL(product.price)}</span>
+                        <span className="off-price-new" style={{ color: '#3E5C43' }}>{fmtBRL(product.price)}</span>
                       </div>
                     </div>
 
