@@ -47,6 +47,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.75rem;
   margin-bottom: 1.5rem;
 }
 
@@ -943,6 +944,18 @@
     gap: 1.5rem;
   }
 
+  /* Botões de ação (dono/admin) descem para a linha de baixo do "Voltar" e
+     quebram linha entre si, em vez de estourar a largura da tela */
+  .detail-topbar {
+    flex-wrap: wrap;
+  }
+
+  /* seletor mais específico: a regra base de .detail-admin-actions vem depois no arquivo */
+  .detail-topbar .detail-admin-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
   .pix-body {
     flex-direction: column;
     align-items: flex-start;
@@ -1230,7 +1243,25 @@
 .detail-admin-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;            /* no celular os botões quebram linha em vez de estourar a tela */
+  justify-content: flex-end;
   gap: 0.6rem;
+}
+
+/* Botão remover anúncio (dono ou admin) */
+.remove-trigger-btn:hover:not(:disabled) {
+  border-color: #DC2626;
+  color: #B91C1C;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.10);
+}
+.remove-trigger-btn:disabled,
+.remove-trigger-btn.is-blocked,
+.remove-trigger-btn.is-blocked:hover:not(:disabled) {
+  opacity: 0.55;
+  cursor: not-allowed;
+  border-color: #E8DFCB;
+  color: #374151;
+  box-shadow: none;
 }
 
 /* Botão registrar venda */

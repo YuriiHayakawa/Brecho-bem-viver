@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchProducts } from '../../services/api';
+import { optimizedImage, IMG_SIZE } from '../../utils/image';
 import PageHero from '../../components/PageHero/PageHero';
 import './CatalogoPage.css';
 
@@ -155,7 +156,7 @@ export default function CatalogoPage() {
 
 function ProductCard({ product, onClick }) {
   const coverImage = product.images?.find(img => img.is_cover) || product.images?.[0];
-  const imageUrl   = coverImage ? coverImage.image_url : null;
+  const imageUrl   = coverImage ? optimizedImage(coverImage.image_url, IMG_SIZE.card) : null;
 
   return (
     <article className="catalogo-product-card" onClick={onClick}>

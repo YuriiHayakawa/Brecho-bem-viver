@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchMyReservations } from '../../services/api';
+import { useToast } from '../../contexts/ToastContext';
+import { fetchMyReservations, cancelReservation } from '../../services/api';
+import { optimizedImage, IMG_SIZE } from '../../utils/image';
 import PageHero from '../../components/PageHero/PageHero';
 import '../offers.css';
 
@@ -25,11 +27,13 @@ function timeLeft(reservedUntil) {
 }
 
 export default function MinhasReservasPage() {
-  const navigate = useNavigate();
+  const navigate  = useNavigate();
+  const showToast = useToast();
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState('');
+  const [busyId, setBusyId]     = useState(null);
   const [, setTick]             = useState(0);
 
   useEffect(() => {
@@ -44,6 +48,20 @@ export default function MinhasReservasPage() {
     const t = setInterval(() => setTick(n => n + 1), 60_000);
     return () => clearInterval(t);
   }, []);
+
+  async function handleCancel(product) {
+    if (!window.confirm(`Cancelar sua reserva de "${product.name}"? A peça volta a ficar disponível para outras pessoas.`)) return;
+    setBusyId(product.id);
+    try {
+      await cancelReservation(product.id);
+      setProducts(prev => prev.filter(p => p.id !== product.id));
+      showToast('Reserva cancelada.');
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      setBusyId(null);
+    }
+  }
 
   return (
     <div className="off-page">
@@ -82,7 +100,7 @@ export default function MinhasReservasPage() {
           <div className="off-list">
             {products.map(product => {
               const cover = product.images?.find(i => i.is_cover) || product.images?.[0];
-              const imgUrl = cover ? cover.image_url : null;
+              const imgUrl = cover ? optimizedImage(cover.image_url, IMG_SIZE.thumb) : null;
               const tl = timeLeft(product.reserved_until);
               const seller = product.user;
               return (
@@ -121,9 +139,21 @@ export default function MinhasReservasPage() {
                           {tl.text}
                         </span>
                       )}
-                      <button className="off-btn off-btn--ghost" onClick={() => navigate(`/products/${product.id}`)}>
-                        {seller?.pix_key ? 'Ver produto e pagar' : 'Ver produto'}
-                      </button>
+                      <div className="off-actions">
+                        {/* Reserva de proposta aceita não pode ser cancelada pelo comprador */}
+                        {!product.reserved_via_offer && (
+                          <button
+                            className="off-btn off-btn--reject"
+                            disabled={busyId === product.id}
+                            onClick={() => handleCancel(product)}
+                          >
+                            {busyId === product.id ? 'Cancelando...' : 'Cancelar reserva'}
+                          </button>
+                        )}
+                        <button className="off-btn off-btn--ghost" onClick={() => navigate(`/products/${product.id}`)}>
+                          {seller?.pix_key ? 'Ver produto e pagar' : 'Ver produto'}
+                        </button>
+                      </div>
                     </div>
 
                     {seller?.pix_key && (

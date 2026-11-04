@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../../contexts/ToastContext';
 import { fetchSentOffers, acceptCounterOffer, rejectCounterOffer } from '../../services/api';
+import { optimizedImage, IMG_SIZE } from '../../utils/image';
 import PageHero from '../../components/PageHero/PageHero';
 import '../offers.css';
 
@@ -141,7 +142,7 @@ export default function MinhasPropostasPage() {
               const st = STATUS[offer.status] || STATUS.pending;
               const busy = busyId === offer.id;
               const cover = p.images?.find(img => img.is_cover) || p.images?.[0];
-              const imgUrl = cover ? cover.image_url : null;
+              const imgUrl = cover ? optimizedImage(cover.image_url, IMG_SIZE.thumb) : null;
               return (
                 <div key={offer.id} className="off-card">
                   {imgUrl

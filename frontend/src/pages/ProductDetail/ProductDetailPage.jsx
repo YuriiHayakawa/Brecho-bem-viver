@@ -1,8 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useToast } from '../../contexts/ToastContext';
-import { fetchProduct, reserveProduct, fetchProductLabelData, createSale, createOffer, fetchAcceptedOffer } from '../../services/api';
+import { fetchProduct, reserveProduct, cancelReservation, deleteProduct, fetchProductLabelData, createSale, createOffer, fetchAcceptedOffer } from '../../services/api';
 import { LogoMark } from '../../components/Logo/Logo';
+import { optimizedImage, IMG_SIZE } from '../../utils/image';
 import './ProductDetailPage.css';
 
 
@@ -638,7 +639,7 @@ function Lightbox({ images, startIndex, productName, onClose }) {
     };
   }, [onClose, prev, next]);
 
-  const url = images[index].image_url;
+  const url = optimizedImage(images[index].image_url, IMG_SIZE.full);
 
   return (
     <div className="lb-overlay" onClick={onClose}>
@@ -693,7 +694,7 @@ function Lightbox({ images, startIndex, productName, onClose }) {
               className={`lb-thumb ${i === index ? 'active' : ''}`}
               onClick={() => setIndex(i)}
             >
-              <img src={img.image_url} alt={`miniatura ${i + 1}`} />
+              <img src={optimizedImage(img.image_url, IMG_SIZE.thumb)} alt={`miniatura ${i + 1}`} />
             </button>
           ))}
         </div>
@@ -720,6 +721,9 @@ export default function ProductDetailPage() {
   const [reserving, setReserving]       = useState(false);
   const [reserveSuccess, setReserveSuccess] = useState(false);
   const [reserveError, setReserveError] = useState('');
+  const [cancelling, setCancelling]     = useState(false);
+  const [cancelError, setCancelError]   = useState('');
+  const [removing, setRemoving]         = useState(false);
   const [pixCopied, setPixCopied]       = useState(false);
   const [labelOpen, setLabelOpen]       = useState(false);
   const [saleOpen, setSaleOpen]         = useState(false);
@@ -750,6 +754,40 @@ export default function ProductDetailPage() {
     }
   }
 
+  async function handleCancelReservation() {
+    if (!window.confirm('Cancelar sua reserva? A peça volta a ficar disponível para outras pessoas.')) return;
+    setCancelling(true);
+    setCancelError('');
+    try {
+      const updated = await cancelReservation(id);
+      setProduct(updated);
+      setReserveSuccess(false);
+      showToast('Reserva cancelada.');
+    } catch (err) {
+      setCancelError(err.message);
+    } finally {
+      setCancelling(false);
+    }
+  }
+
+  async function handleRemove() {
+    // Explica por mensagem (no celular não existe "passar o mouse" para ver a dica do botão)
+    if (product.status === 'reservada') {
+      showToast('Este produto está reservado e não pode ser removido enquanto a reserva estiver ativa.', 'error');
+      return;
+    }
+    if (!window.confirm('Remover este anúncio? Ele sai do catálogo e as propostas em aberto serão canceladas. Essa ação não pode ser desfeita.')) return;
+    setRemoving(true);
+    try {
+      await deleteProduct(id);
+      showToast('Anúncio removido.');
+      navigate(product.id_user === user.id ? '/meus-produtos' : '/dashboard', { replace: true });
+    } catch (err) {
+      showToast(err.message, 'error');
+      setRemoving(false);
+    }
+  }
+
   function handleCopyPix() {
     if (!seller?.pix_key) return;
     navigator.clipboard.writeText(seller.pix_key);
@@ -773,10 +811,13 @@ export default function ProductDetailPage() {
   );
 
   const images          = product.images || [];
-  const activeImageUrl  = images[activeImage] ? images[activeImage].image_url : null;
+  const activeImageUrl  = images[activeImage] ? optimizedImage(images[activeImage].image_url, IMG_SIZE.detail) : null;
   const isReservedByMe  = product.reserved_by_user_id === user.id;
   const isOwner         = product.id_user === user.id;
   const seller          = product.user;
+  // Anúncio removido continua acessível pelo link (inativo e não vendido)
+  const isRemoved       = !product.active && product.status !== 'vendida';
+  const canRemove       = (isOwner || isAdmin) && !isRemoved && product.status !== 'vendida';
 
   return (
     <div className="detail-wrapper">
@@ -823,8 +864,27 @@ export default function ProductDetailPage() {
             Voltar
           </button>
 
-          {isAdmin && (
+          {(isAdmin || canRemove) && (
             <div className="detail-admin-actions">
+              {/* Dono ou admin; reservado fica bloqueado até a reserva terminar */}
+              {canRemove && (
+                <button
+                  className={`label-trigger-btn remove-trigger-btn ${product.status === 'reservada' ? 'is-blocked' : ''}`}
+                  onClick={handleRemove}
+                  disabled={removing}
+                  title={product.status === 'reservada'
+                    ? 'Reservado — não pode ser removido enquanto a reserva estiver ativa'
+                    : 'Remover anúncio'}
+                >
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <path d="M4 6h12M8 6V4h4v2M6 6l1 11h6l1-11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  {removing ? 'Removendo...' : 'Remover anúncio'}
+                </button>
+              )}
+
+              {isAdmin && (
+              <>
               <button className="label-trigger-btn" onClick={() => setLabelOpen(true)}>
                 <svg viewBox="0 0 20 20" fill="none">
                   <path d="M4 4h5.172a2 2 0 011.414.586l5.828 5.828a2 2 0 010 2.828l-3.172 3.172a2 2 0 01-2.828 0L4.586 10.586A2 2 0 014 9.172V4z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
@@ -842,6 +902,8 @@ export default function ProductDetailPage() {
                 </svg>
                 Registrar venda
               </button>
+              </>
+              )}
             </div>
           )}
         </div>
@@ -874,8 +936,9 @@ export default function ProductDetailPage() {
                   <p>Sem imagem</p>
                 </div>
               )}
-              <span className={`detail-status-badge status-${product.status}`}>
-                {STATUS_LABEL[product.status]}
+              {/* Anúncio removido usa o visual cinza de "vendido" com o texto "Removido" */}
+              <span className={`detail-status-badge status-${isRemoved ? 'vendida' : product.status}`}>
+                {isRemoved ? 'Removido' : STATUS_LABEL[product.status]}
               </span>
             </div>
 
@@ -887,7 +950,7 @@ export default function ProductDetailPage() {
                     className={`thumb ${i === activeImage ? 'active' : ''}`}
                     onClick={() => setActiveImage(i)}
                   >
-                    <img src={img.image_url} alt={`Foto ${i + 1}`} />
+                    <img src={optimizedImage(img.image_url, IMG_SIZE.thumb)} alt={`Foto ${i + 1}`} />
                   </button>
                 ))}
               </div>
@@ -945,7 +1008,10 @@ export default function ProductDetailPage() {
             )}
 
             <div className="detail-action">
-              {reserveSuccess || (product.status === 'reservada' && isReservedByMe) ? (
+              {isRemoved ? (
+                <div className="unavailable-badge sold">Este anúncio foi removido</div>
+              ) : reserveSuccess || (product.status === 'reservada' && isReservedByMe) ? (
+                <>
                 <div className="reserve-success">
                   <svg viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd"/>
@@ -955,6 +1021,16 @@ export default function ProductDetailPage() {
                     <p>A reserva é válida por 24 horas.</p>
                   </div>
                 </div>
+                {cancelError && <p className="reserve-error">{cancelError}</p>}
+                {/* Reserva de proposta aceita não pode ser cancelada pelo comprador */}
+                {product.reserved_via_offer ? (
+                  <p className="reserve-notice">Reserva feita a partir de uma proposta aceita — não pode ser cancelada.</p>
+                ) : (
+                  <button className="btn-offer" onClick={handleCancelReservation} disabled={cancelling}>
+                    {cancelling ? 'Cancelando...' : 'Cancelar reserva'}
+                  </button>
+                )}
+                </>
               ) : product.status === 'disponivel' ? (
                 <>
                   {reserveError && <p className="reserve-error">{reserveError}</p>}
@@ -995,7 +1071,7 @@ export default function ProductDetailPage() {
               )}
             </div>
 
-            {seller && (
+            {seller && !isRemoved && (
               <div className="pix-section">
                 <div className="pix-header">
                   <svg viewBox="0 0 24 24" fill="none">

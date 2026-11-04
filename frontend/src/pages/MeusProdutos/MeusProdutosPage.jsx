@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchMyProducts } from '../../services/api';
+import { fetchMyProducts, deleteProduct } from '../../services/api';
+import { useToast } from '../../contexts/ToastContext';
+import { optimizedImage, IMG_SIZE } from '../../utils/image';
 import PageHero from '../../components/PageHero/PageHero';
 import './MeusProdutosPage.css';
 
@@ -8,12 +10,33 @@ const STATUS_LABEL = { disponivel: 'Disponível', reservada: 'Reservado', vendid
 const STATUS_CLASS  = { disponivel: 'mp-status--green', reservada: 'mp-status--yellow', vendida: 'mp-status--gray' };
 
 export default function MeusProdutosPage() {
-  const navigate = useNavigate();
-  const user     = JSON.parse(sessionStorage.getItem('user') || '{}');
+  const navigate  = useNavigate();
+  const showToast = useToast();
+  const user      = JSON.parse(sessionStorage.getItem('user') || '{}');
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState('');
+  const [removingId, setRemovingId] = useState(null);
+
+  async function handleRemove(product) {
+    // Explica por mensagem (no celular não existe "passar o mouse" para ver a dica do botão)
+    if (product.status === 'reservada') {
+      showToast('Este produto está reservado e não pode ser removido enquanto a reserva estiver ativa.', 'error');
+      return;
+    }
+    if (!window.confirm(`Remover o anúncio "${product.name}"? Ele sai do catálogo e as propostas em aberto serão canceladas. Essa ação não pode ser desfeita.`)) return;
+    setRemovingId(product.id);
+    try {
+      await deleteProduct(product.id);
+      setProducts(prev => prev.filter(p => p.id !== product.id));
+      showToast('Anúncio removido.');
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      setRemovingId(null);
+    }
+  }
 
   useEffect(() => {
     if (!user.id) return;
@@ -108,6 +131,8 @@ export default function MeusProdutosPage() {
                 product={product}
                 onView={() => navigate(`/products/${product.id}`)}
                 onEdit={() => navigate(`/editar-produto/${product.id}`)}
+                onRemove={() => handleRemove(product)}
+                removing={removingId === product.id}
               />
             ))}
           </div>
@@ -117,9 +142,9 @@ export default function MeusProdutosPage() {
   );
 }
 
-function ProductRow({ product, onView, onEdit }) {
+function ProductRow({ product, onView, onEdit, onRemove, removing }) {
   const cover = product.images?.find(i => i.is_cover) || product.images?.[0];
-  const imgUrl = cover ? cover.image_url : null;
+  const imgUrl = cover ? optimizedImage(cover.image_url, IMG_SIZE.thumb) : null;
 
   return (
     <div className="mp-row">
@@ -168,6 +193,22 @@ function ProductRow({ product, onView, onEdit }) {
           </svg>
           <span>Editar</span>
         </button>
+        {/* Vendido não pode ser removido; reservado só depois que a reserva terminar */}
+        {product.status !== 'vendida' && (
+          <button
+            onClick={onRemove}
+            className={`mp-btn-remove ${product.status === 'reservada' ? 'mp-btn-remove--blocked' : ''}`}
+            disabled={removing}
+            title={product.status === 'reservada'
+              ? 'Reservado — não pode ser removido enquanto a reserva estiver ativa'
+              : 'Remover anúncio'}
+          >
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="M4 6h12M8 6V4h4v2M6 6l1 11h6l1-11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <span>{removing ? '...' : 'Remover'}</span>
+          </button>
+        )}
       </div>
     </div>
   );

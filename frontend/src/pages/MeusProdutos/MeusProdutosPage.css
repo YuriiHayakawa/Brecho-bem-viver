@@ -370,11 +370,13 @@
   flex-direction: column;
   gap: 1px;
   flex-shrink: 0;
+  min-width: 96px; /* mesma largura com ou sem o botão "Remover" (vendidos não têm) */
   border-left: 1.5px solid #E8DFCB;
 }
 
 .mp-btn-view,
-.mp-btn-edit {
+.mp-btn-edit,
+.mp-btn-remove {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -413,8 +415,27 @@
   color: #2C4631;
 }
 
+.mp-btn-remove {
+  color: #B91C1C;
+  border-top: 1px solid #E8DFCB;
+}
+
+.mp-btn-remove:hover:not(:disabled) {
+  background: #FEF2F2;
+  color: #991B1B;
+}
+
+.mp-btn-remove:disabled,
+.mp-btn-remove--blocked,
+.mp-btn-remove--blocked:hover:not(:disabled) {
+  background: none;
+  color: #C4BBA9;
+  cursor: not-allowed;
+}
+
 .mp-btn-view svg,
-.mp-btn-edit svg {
+.mp-btn-edit svg,
+.mp-btn-remove svg {
   width: 18px;
   height: 18px;
 }
@@ -441,13 +462,19 @@
     padding: 0.75rem;
   }
 
+  .mp-row-actions {
+    min-width: 0;
+  }
+
   .mp-btn-view span,
-  .mp-btn-edit span {
+  .mp-btn-edit span,
+  .mp-btn-remove span {
     display: none;
   }
 
   .mp-btn-view,
-  .mp-btn-edit {
+  .mp-btn-edit,
+  .mp-btn-remove {
     padding: 0 0.75rem;
   }
 }

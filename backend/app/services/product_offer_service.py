@@ -7,7 +7,7 @@ from app.models.product import Product
 from app.models.product_offer import ProductOffer
 from app.models.user import User
 from app.schemas.product_offer_schema import ProductOfferCreate, ProductOfferResponse, CounterOfferCreate
-from app.services.product_service import release_expired_reservations, utc_now_naive
+from app.services.product_service import release_expired_reservations, utc_now_naive, get_product_for_update
 
 
 def create_offer(
@@ -18,7 +18,7 @@ def create_offer(
 ) -> ProductOfferResponse:
     release_expired_reservations(db)
 
-    product = db.query(Product).filter(Product.id == product_id).first()
+    product = get_product_for_update(db, product_id)
 
     if not product:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
@@ -98,15 +98,25 @@ def list_all_offers(db: Session) -> list[ProductOfferResponse]:
 
 
 def get_accepted_offer_for_product(db: Session, product_id: int) -> ProductOfferResponse:
-    offer = (
-        db.query(ProductOffer)
-        .filter(
-            ProductOffer.product_id == product_id,
-            ProductOffer.status == "accepted",
+    release_expired_reservations(db)
+
+    product = db.query(Product).filter(Product.id == product_id).first()
+
+    # Só vale a proposta aceita de quem está com a reserva agora. Uma negociação
+    # antiga (reserva expirou e a peça foi reservada por outra pessoa) não pode
+    # preencher nome/valor no registro da venda.
+    offer = None
+    if product and product.status == "reservada" and product.reserved_by_user_id is not None:
+        offer = (
+            db.query(ProductOffer)
+            .filter(
+                ProductOffer.product_id == product_id,
+                ProductOffer.buyer_user_id == product.reserved_by_user_id,
+                ProductOffer.status == "accepted",
+            )
+            .order_by(ProductOffer.responded_at.desc())
+            .first()
         )
-        .order_by(ProductOffer.responded_at.desc())
-        .first()
-    )
 
     if not offer:
         raise HTTPException(status_code=404, detail="Nenhuma oferta aceita para este produto")
@@ -125,10 +135,13 @@ def accept_offer(db: Session, offer_id: int, current_user: User) -> ProductOffer
     if offer.seller_user_id != current_user.id and current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Sem permissão para aceitar esta oferta")
 
+    # Trava o produto e só então relê a oferta, para validar o status já
+    # atualizado por uma requisição simultânea (ver get_product_for_update)
+    product = get_product_for_update(db, offer.product_id)
+    db.refresh(offer)
+
     if offer.status != "pending":
         raise HTTPException(status_code=400, detail="Esta oferta não está pendente")
-
-    product = offer.product
 
     if not product:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
@@ -179,6 +192,9 @@ def counter_offer(
     if offer.seller_user_id != current_user.id and current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Sem permissão para contrapropor esta oferta")
 
+    get_product_for_update(db, offer.product_id)
+    db.refresh(offer)
+
     if offer.status != "pending":
         raise HTTPException(status_code=400, detail="Esta oferta não está pendente")
 
@@ -215,6 +231,9 @@ def respond_to_counter(
     if offer.buyer_user_id != current_user.id:
         raise HTTPException(status_code=403, detail="Sem permissão para responder a esta contraproposta")
 
+    product = get_product_for_update(db, offer.product_id)
+    db.refresh(offer)
+
     if offer.status != "countered":
         raise HTTPException(status_code=400, detail="Esta oferta não possui contraproposta pendente")
 
@@ -225,8 +244,6 @@ def respond_to_counter(
         db.commit()
         db.refresh(offer)
         return offer
-
-    product = offer.product
 
     if not product:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
@@ -273,6 +290,9 @@ def reject_offer(db: Session, offer_id: int, current_user: User) -> ProductOffer
 
     if offer.seller_user_id != current_user.id and current_user.role != "admin":
         raise HTTPException(status_code=403, detail="Sem permissão para recusar esta oferta")
+
+    get_product_for_update(db, offer.product_id)
+    db.refresh(offer)
 
     if offer.status != "pending":
         raise HTTPException(status_code=400, detail="Esta oferta não está pendente")
