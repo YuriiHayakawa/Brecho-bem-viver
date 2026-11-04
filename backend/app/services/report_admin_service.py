@@ -9,8 +9,10 @@ from app.schemas.report_admin_schema import AdminSummaryResponse
 
 
 def get_admin_summary(db: Session) -> AdminSummaryResponse:
+    # Não conta anúncios removidos (inativos e não vendidos) — mesmo critério do catálogo
     total_products = (
         db.query(func.count(Product.id))
+        .filter((Product.active.is_(True)) | (Product.status == "vendida"))
         .scalar()
     ) or 0
 

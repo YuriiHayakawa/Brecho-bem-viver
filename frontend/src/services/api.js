@@ -1,3 +1,5 @@
+import { compressImage } from '../utils/image';
+
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 // ── Helpers de token ───────────────────────────────────
@@ -10,10 +12,57 @@ function authHeader() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+// ── Helpers de erro ───────────────────────────────────
+// Nome amigável dos campos enviados à API, usado nas mensagens de validação
+const FIELD_LABELS = {
+  name: 'Nome', email: 'E-mail', password: 'Senha', phone: 'Telefone', unit: 'Unidade',
+  pix_key: 'Chave PIX', pix_key_type: 'Tipo de chave PIX', role: 'Permissão',
+  description: 'Descrição', defect_description: 'Descrição do defeito', brand: 'Marca',
+  category: 'Categoria', size: 'Tamanho', gender: 'Gênero', price: 'Preço',
+  offered_price: 'Valor da oferta', counter_price: 'Valor da contraproposta', message: 'Mensagem',
+  sale_value: 'Valor da venda', buyer_name: 'Nome do comprador', buyer_phone: 'Telefone do comprador',
+  product_code: 'Código do produto',
+};
+
+// Converte o corpo de erro da API em uma mensagem legível. Erros de validação
+// do FastAPI (422) chegam como uma lista de objetos — passar isso direto para
+// new Error() exibia "[object Object]" na tela.
+function errorMessage(data, fallback) {
+  const detail = data?.detail;
+  if (typeof detail === 'string' && detail) return detail;
+
+  if (Array.isArray(detail) && detail.length) {
+    const { loc = [], type } = detail[0];
+    const field = loc[loc.length - 1];
+    const label = FIELD_LABELS[field];
+    if (field === 'email') return 'Informe um e-mail válido.';
+    if (label && type === 'missing') return `Preencha o campo "${label}".`;
+    if (label) return `Confira o campo "${label}".`;
+  }
+
+  return fallback;
+}
+
+// Lê o JSON da resposta sem quebrar quando o corpo não é JSON
+// (ex.: página de erro HTML do servidor ou do proxy durante uma instabilidade).
+async function readJson(response) {
+  try {
+    return await response.json();
+  } catch {
+    return {};
+  }
+}
+
 // Wrapper de fetch: em qualquer chamada autenticada que volte 401,
 // encerra a sessão expirada e redireciona para o login.
 async function apiFetch(input, init) {
-  const response = await fetch(input, init);
+  let response;
+  try {
+    response = await fetch(input, init);
+  } catch {
+    // fetch só rejeita quando não chega resposta (sem internet, servidor fora do ar)
+    throw new Error('Não foi possível conectar ao servidor. Verifique sua internet e tente novamente.');
+  }
 
   if (response.status === 401 && init?.headers?.Authorization) {
     sessionStorage.removeItem('token');
@@ -33,8 +82,8 @@ export async function registerUser({ name, email, password, phone, unit, pix_key
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name, email, password, phone, unit, pix_key, pix_key_type }),
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao criar conta');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao criar conta'));
   return data;
 }
 
@@ -45,8 +94,8 @@ export async function loginUser(email, password) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao fazer login');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao fazer login'));
   return data;
 }
 
@@ -55,8 +104,8 @@ export async function fetchCurrentUser() {
   const response = await apiFetch(`${BASE_URL}/auth/me`, {
     headers: { ...authHeader() },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Sessão inválida ou expirada');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Sessão inválida ou expirada'));
   return data;
 }
 
@@ -65,8 +114,8 @@ export async function fetchMyProfile() {
   const response = await apiFetch(`${BASE_URL}/users/me`, {
     headers: { ...authHeader() },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar perfil');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao buscar perfil'));
   return data;
 }
 
@@ -77,8 +126,8 @@ export async function updateMyProfile(payload) {
     headers: { 'Content-Type': 'application/json', ...authHeader() },
     body: JSON.stringify(payload),
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao atualizar perfil');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao atualizar perfil'));
   return data;
 }
 
@@ -87,16 +136,16 @@ export async function fetchMyReport() {
   const response = await apiFetch(`${BASE_URL}/reports/me`, {
     headers: { ...authHeader() },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar relatório');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao buscar relatório'));
   return data;
 }
 
 // ── Produtos ──────────────────────────────────────────
 export async function fetchProducts() {
   const response = await apiFetch(`${BASE_URL}/products/`);
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar produtos');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao buscar produtos'));
   return data;
 }
 
@@ -105,15 +154,15 @@ export async function fetchMyProducts(userId) {
   const response = await apiFetch(`${BASE_URL}/products/?user_id=${userId}`, {
     headers: { ...authHeader() },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar seus produtos');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao buscar seus produtos'));
   return data;
 }
 
 export async function fetchProduct(id) {
   const response = await apiFetch(`${BASE_URL}/products/${id}`);
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Produto não encontrado');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Produto não encontrado'));
   return data;
 }
 
@@ -125,8 +174,8 @@ export async function createProduct(payload) {
     headers: { 'Content-Type': 'application/json', ...authHeader() },
     body: JSON.stringify(safePayload),
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao criar produto');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao criar produto'));
   return data;
 }
 
@@ -136,8 +185,8 @@ export async function updateProduct(id, payload) {
     headers: { 'Content-Type': 'application/json', ...authHeader() },
     body: JSON.stringify(payload),
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao atualizar produto');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao atualizar produto'));
   return data;
 }
 
@@ -147,8 +196,8 @@ export async function deleteProduct(id) {
     headers: { ...authHeader() },
   });
   if (!response.ok) {
-    const data = await response.json();
-    throw new Error(data.detail || 'Erro ao deletar produto');
+    const data = await readJson(response);
+    throw new Error(errorMessage(data, 'Erro ao deletar produto'));
   }
 }
 
@@ -158,8 +207,19 @@ export async function reserveProduct(productId) {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', ...authHeader() },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao reservar produto');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao reservar produto'));
+  return data;
+}
+
+// Comprador desiste da própria reserva (só reservas diretas; as de proposta aceita não podem)
+export async function cancelReservation(productId) {
+  const response = await apiFetch(`${BASE_URL}/products/${productId}/cancel-reservation`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+  });
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao cancelar reserva'));
   return data;
 }
 
@@ -171,15 +231,34 @@ export async function uploadProductImage(productId, file) {
     headers: { ...authHeader() },
     body: formData,
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao enviar imagem');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao enviar imagem'));
   return data;
+}
+
+// Envia várias fotos em sequência (já reduzidas no navegador) sem parar na
+// primeira falha. Retorna { uploaded, failed } — failed com os índices das que
+// não subiram —, para a tela não recriar o produto nem reenviar as que já subiram.
+// onProgress(n, total) é chamado antes de cada foto.
+export async function uploadProductImages(productId, files, onProgress) {
+  const uploaded = [];
+  const failed = [];
+  for (let i = 0; i < files.length; i++) {
+    onProgress?.(i + 1, files.length);
+    try {
+      const file = await compressImage(files[i]);
+      uploaded.push(await uploadProductImage(productId, file));
+    } catch {
+      failed.push(i);
+    }
+  }
+  return { uploaded, failed };
 }
 
 export async function fetchProductImages(productId) {
   const response = await apiFetch(`${BASE_URL}/products/${productId}/images`);
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar imagens');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao buscar imagens'));
   return data;
 }
 
@@ -188,8 +267,8 @@ export async function fetchAdminSummary() {
   const response = await apiFetch(`${BASE_URL}/reports/admin/summary`, {
     headers: { ...authHeader() },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar resumo admin');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao buscar resumo admin'));
   return data;
 }
 
@@ -198,8 +277,8 @@ export async function fetchAdminRemainingProducts(name = '') {
   const response = await apiFetch(`${BASE_URL}/reports/admin/remaining-products${qs}`, {
     headers: { ...authHeader() },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar produtos admin');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao buscar produtos admin'));
   return data;
 }
 
@@ -209,8 +288,8 @@ export async function createSale(payload) {
     headers: { 'Content-Type': 'application/json', ...authHeader() },
     body: JSON.stringify(payload),
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao registrar venda');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao registrar venda'));
   return data;
 }
 
@@ -219,8 +298,8 @@ export async function fetchAllUsers() {
   const response = await apiFetch(`${BASE_URL}/users/`, {
     headers: { ...authHeader() },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar usuários');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao buscar usuários'));
   return data;
 }
 
@@ -230,8 +309,8 @@ export async function updateUserByAdmin(userId, payload) {
     headers: { 'Content-Type': 'application/json', ...authHeader() },
     body: JSON.stringify(payload),
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao atualizar usuário');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao atualizar usuário'));
   return data;
 }
 
@@ -241,8 +320,8 @@ export async function updateUserRole(userId, role) {
     headers: { 'Content-Type': 'application/json', ...authHeader() },
     body: JSON.stringify({ role }),
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao atualizar role');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao atualizar role'));
   return data;
 }
 
@@ -250,8 +329,8 @@ export async function fetchProductLabelData(productId) {
   const response = await apiFetch(`${BASE_URL}/products/${productId}/label-data`, {
     headers: { ...authHeader() },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar dados da etiqueta');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao buscar dados da etiqueta'));
   return data;
 }
 
@@ -263,8 +342,8 @@ export async function createOffer(productId, payload) {
     headers: { 'Content-Type': 'application/json', ...authHeader() },
     body: JSON.stringify(payload),
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao enviar oferta');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao enviar oferta'));
   return data;
 }
 
@@ -273,8 +352,8 @@ export async function fetchSentOffers() {
   const response = await apiFetch(`${BASE_URL}/offers/sent`, {
     headers: { ...authHeader() },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar suas propostas');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao buscar suas propostas'));
   return data;
 }
 
@@ -283,8 +362,8 @@ export async function fetchReceivedOffers() {
   const response = await apiFetch(`${BASE_URL}/offers/received`, {
     headers: { ...authHeader() },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar propostas recebidas');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao buscar propostas recebidas'));
   return data;
 }
 
@@ -293,8 +372,8 @@ export async function acceptOffer(offerId) {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', ...authHeader() },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao aceitar proposta');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao aceitar proposta'));
   return data;
 }
 
@@ -303,8 +382,8 @@ export async function rejectOffer(offerId) {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', ...authHeader() },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao recusar proposta');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao recusar proposta'));
   return data;
 }
 
@@ -315,8 +394,8 @@ export async function counterOffer(offerId, payload) {
     headers: { 'Content-Type': 'application/json', ...authHeader() },
     body: JSON.stringify(payload),
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao enviar contraproposta');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao enviar contraproposta'));
   return data;
 }
 
@@ -326,8 +405,8 @@ export async function acceptCounterOffer(offerId) {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', ...authHeader() },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao aceitar contraproposta');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao aceitar contraproposta'));
   return data;
 }
 
@@ -337,8 +416,8 @@ export async function rejectCounterOffer(offerId) {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', ...authHeader() },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao recusar contraproposta');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao recusar contraproposta'));
   return data;
 }
 
@@ -348,8 +427,8 @@ export async function fetchAcceptedOffer(productId) {
     headers: { ...authHeader() },
   });
   if (response.status === 404) return null; // nenhuma oferta aceita
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar oferta aceita');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao buscar oferta aceita'));
   return data;
 }
 
@@ -359,7 +438,7 @@ export async function fetchMyReservations() {
   const response = await apiFetch(`${BASE_URL}/products/my-reservations`, {
     headers: { ...authHeader() },
   });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.detail || 'Erro ao buscar suas reservas');
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao buscar suas reservas'));
   return data;
 }

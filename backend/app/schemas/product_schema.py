@@ -49,6 +49,9 @@ class ProductResponse(BaseModel):
     code: str | None
     reserved_until: datetime | None
     reserved_by_user_id: int | None
+    # True quando a reserva veio de uma proposta aceita (não pode ser cancelada pelo comprador).
+    # Calculado só no detalhe do produto, na reserva e em "Minhas Reservas".
+    reserved_via_offer: bool = False
     created_at: datetime
     id_user: int
     qr_code_base64: str | None = None

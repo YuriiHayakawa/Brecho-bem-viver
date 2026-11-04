@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { fetchProduct, updateProduct, uploadProductImage } from '../../services/api';
+import { fetchProduct, updateProduct, uploadProductImages } from '../../services/api';
+import { optimizedImage, IMG_SIZE } from '../../utils/image';
 import PageHero from '../../components/PageHero/PageHero';
 import { useToast } from '../../contexts/ToastContext';
 import '../NovoProduto/NovoProdutoPage.css';
@@ -127,9 +128,22 @@ export default function EditarProdutoPage() {
       });
 
       if (newImages.length > 0) {
-        for (let i = 0; i < newImages.length; i++) {
-          setProgress(`Enviando foto ${i + 1} de ${newImages.length}...`);
-          await uploadProductImage(id, newImages[i].file);
+        const { uploaded, failed } = await uploadProductImages(
+          id,
+          newImages.map(img => img.file),
+          (n, total) => setProgress(`Enviando foto ${n} de ${total}...`),
+        );
+
+        // As que subiram passam para "Fotos cadastradas" e só as que falharam
+        // continuam como novas — ao salvar de novo, nada é enviado em duplicidade.
+        if (failed.length > 0) {
+          newImages.forEach((img, i) => {
+            if (!failed.includes(i)) URL.revokeObjectURL(img.preview);
+          });
+          setExistingImages(prev => [...prev, ...uploaded]);
+          setNewImages(newImages.filter((_, i) => failed.includes(i)));
+          setError(`${failed.length} foto(s) não foram enviadas. Clique em "Salvar alterações" para tentar de novo.`);
+          return;
         }
       }
 
@@ -375,7 +389,7 @@ export default function EditarProdutoPage() {
                     .map((img, index) => (
                       <div key={img.id} className={`np-image-item ${img.is_cover ? 'is-cover' : ''}`}>
                         <img
-                          src={img.image_url}
+                          src={optimizedImage(img.image_url, IMG_SIZE.thumb)}
                           alt={`foto ${index + 1}`}
                         />
                         {img.is_cover && <span className="np-cover-badge">Capa</span>}

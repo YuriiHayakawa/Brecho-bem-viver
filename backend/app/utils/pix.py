@@ -5,6 +5,7 @@ Gera QR Code em base64 para uso direto no frontend.
 
 import base64
 import io
+import re
 import unicodedata
 
 import qrcode
@@ -41,11 +42,76 @@ def _crc16(payload: str) -> str:
     return format(crc, "04X")
 
 
+_EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+_EVP_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+
+
+def _only_digits(value: str) -> str:
+    return "".join(filter(str.isdigit, value))
+
+
+def _is_valid_cpf(digits: str) -> bool:
+    if len(digits) != 11 or digits == digits[0] * 11:
+        return False
+
+    # Dígitos verificadores: pesos 10..2 para o 1º e 11..2 para o 2º
+    for n in (9, 10):
+        total = sum(int(d) * w for d, w in zip(digits[:n], range(n + 1, 1, -1)))
+        if (total * 10) % 11 % 10 != int(digits[n]):
+            return False
+
+    return True
+
+
+def normalize_pix_key(pix_key: str, pix_key_type: str) -> str:
+    """Valida e padroniza a chave PIX conforme o tipo, no formato em que é salva
+    no banco. Levanta ValueError com a mensagem para o usuário quando a chave é
+    inválida — uma chave errada gera um QR Code em que o comprador não consegue pagar."""
+    if pix_key_type not in PIX_KEY_TYPE_LABELS:
+        raise ValueError("Tipo de chave PIX inválido")
+
+    key = (pix_key or "").strip()
+
+    if pix_key_type == "cpf":
+        digits = _only_digits(key)
+        if not _is_valid_cpf(digits):
+            raise ValueError("Chave PIX inválida: confira os 11 dígitos do CPF")
+        return digits
+
+    if pix_key_type == "telefone":
+        digits = _only_digits(key)
+        # Aceita o número digitado com o código do país (+55 61 99999-9999)
+        if len(digits) in (12, 13) and digits.startswith("55"):
+            digits = digits[2:]
+        if len(digits) not in (10, 11):
+            raise ValueError("Chave PIX inválida: informe o telefone com DDD")
+        return digits
+
+    if pix_key_type == "email":
+        key = key.lower()
+        if len(key) > 77 or not _EMAIL_RE.match(key):
+            raise ValueError("Chave PIX inválida: informe um e-mail válido")
+        return key
+
+    # aleatoria — aceita colada sem hífens e completa no formato padrão
+    key = key.lower()
+    if re.fullmatch(r"[0-9a-f]{32}", key):
+        key = f"{key[:8]}-{key[8:12]}-{key[12:16]}-{key[16:20]}-{key[20:]}"
+    if not _EVP_RE.match(key):
+        raise ValueError(
+            "Chave PIX inválida: a chave aleatória tem 32 letras e números separados por hífens "
+            "(ex.: 123e4567-e89b-12d3-a456-426614174000)"
+        )
+    return key
+
+
 def _format_pix_key(pix_key: str, pix_key_type: str) -> str:
     if pix_key_type == "telefone":
-        digits = "".join(filter(str.isdigit, pix_key))
+        digits = _only_digits(pix_key)
 
-        if not digits.startswith("55"):
+        # Número nacional (DDD + número) sempre recebe o código do país. Não dá
+        # para decidir olhando se começa com "55": esse também é o DDD de parte do RS.
+        if len(digits) in (10, 11):
             digits = "55" + digits
 
         return "+" + digits

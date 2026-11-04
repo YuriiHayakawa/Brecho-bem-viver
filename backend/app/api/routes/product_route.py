@@ -42,6 +42,15 @@ def reserve_product(
 ):
     return product_service.reserve_product(db, product_id, current_user)
 
+
+@router.patch("/{product_id}/cancel-reservation", response_model=ProductResponse, summary="Cancelar minha reserva")
+def cancel_reservation(
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return product_service.cancel_reservation(db, product_id, current_user)
+
 @router.post("/", response_model=ProductResponse, summary="Criar Produto")
 def create_product(
     product: ProductCreate,

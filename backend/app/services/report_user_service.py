@@ -16,9 +16,13 @@ def get_user_report(db: Session, user_id: int) -> UserReportResponse:
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
+    # Não conta anúncios removidos (inativos e não vendidos) — mesmo critério de "Meus Produtos"
     total_products = (
         db.query(func.count(Product.id))
-        .filter(Product.id_user == user_id)
+        .filter(
+            Product.id_user == user_id,
+            (Product.active.is_(True)) | (Product.status == "vendida"),
+        )
         .scalar()
     ) or 0
 

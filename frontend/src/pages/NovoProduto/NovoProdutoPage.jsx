@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import PageHero from '../../components/PageHero/PageHero';
 import { useNavigate } from 'react-router-dom';
-import { createProduct, uploadProductImage } from '../../services/api';
+import { createProduct, uploadProductImages } from '../../services/api';
 import { useToast } from '../../contexts/ToastContext';
 import './NovoProdutoPage.css';
 
@@ -139,9 +139,21 @@ export default function NovoProdutoPage() {
 
       // 2. Faz upload das imagens em sequência
       if (images.length > 0) {
-        for (let i = 0; i < images.length; i++) {
-          setProgress(`Enviando foto ${i + 1} de ${images.length}...`);
-          await uploadProductImage(product.id, images[i].file);
+        const { failed } = await uploadProductImages(
+          product.id,
+          images.map(img => img.file),
+          (n, total) => setProgress(`Enviando foto ${n} de ${total}...`),
+        );
+
+        // O produto já foi criado: reenviar este formulário criaria um anúncio
+        // duplicado. Leva para a edição dele, onde a pessoa adiciona as fotos que faltaram.
+        if (failed.length > 0) {
+          showToast(
+            `Produto criado, mas ${failed.length} foto(s) não foram enviadas. Adicione novamente aqui.`,
+            'error',
+          );
+          navigate(`/editar-produto/${product.id}`, { replace: true });
+          return;
         }
       }
 

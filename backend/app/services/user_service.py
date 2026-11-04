@@ -1,9 +1,11 @@
 from fastapi import HTTPException
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.models.user import User
 from app.schemas.user_schema import UserUpdate, UserResponse, UserRoleUpdate
 from app.core.security import hash_password
+from app.utils.pix import normalize_pix_key
 from app.models.user import User
 from app.schemas.user_schema import UserCreate, UserResponse
 
@@ -14,28 +16,30 @@ def list_users(db: Session) -> list[UserResponse]:
     return db.query(User).all()
 
 
+def find_user_by_email(db: Session, email: str, exclude_user_id: int | None = None) -> User | None:
+    """Busca usuário pelo e-mail sem diferenciar maiúsculas/minúsculas."""
+    query = db.query(User).filter(func.lower(User.email) == email.lower())
+    if exclude_user_id is not None:
+        query = query.filter(User.id != exclude_user_id)
+    return query.first()
+
+
 def create_user(db: Session, user_data: UserCreate) -> UserResponse:
-    existing_user = db.query(User).filter(User.email == user_data.email).first()
+    existing_user = find_user_by_email(db, user_data.email)
 
     if existing_user:
         raise HTTPException(status_code=400, detail="Email já cadastrado")
 
-    if user_data.pix_key_type in ["cpf", "telefone"]:
-        clean_pix_key = "".join(filter(str.isdigit, user_data.pix_key))
-    else:
-        clean_pix_key = user_data.pix_key.strip()
-
-    if user_data.pix_key_type == "cpf" and len(clean_pix_key) != 11:
-        raise HTTPException(status_code=400, detail="CPF inválido")
-
-    if user_data.pix_key_type == "telefone" and len(clean_pix_key) not in [10, 11]:
-        raise HTTPException(status_code=400, detail="Telefone inválido")
+    try:
+        clean_pix_key = normalize_pix_key(user_data.pix_key, user_data.pix_key_type)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
     hashed_password = hash_password(user_data.password)
 
     new_user = User(
         name=user_data.name,
-        email=user_data.email,
+        email=user_data.email.lower(),
         password_hash=hashed_password,
         phone=user_data.phone,
         unit=user_data.unit,
@@ -53,24 +57,23 @@ def create_user(db: Session, user_data: UserCreate) -> UserResponse:
 def update_current_user(db: Session,current_user: User,data: UserUpdate) -> UserResponse:
     update_data = data.model_dump(exclude_unset=True)
 
-    if "pix_key_type" in update_data and update_data["pix_key_type"] not in ["cpf", "telefone", "email", "aleatoria"]:
-        raise HTTPException(status_code=400, detail="Tipo de chave PIX inválido")
+    if update_data.get("email"):
+        update_data["email"] = update_data["email"].lower()
+        if find_user_by_email(db, update_data["email"], exclude_user_id=current_user.id):
+            raise HTTPException(status_code=400, detail="Email já está em uso por outro usuário")
 
-    if "pix_key" in update_data:
-        pix_key_type = update_data.get("pix_key_type", current_user.pix_key_type)
+    # Valida a combinação chave + tipo sempre que qualquer um dos dois mudar
+    # (trocar só o tipo também precisa revalidar a chave já cadastrada)
+    if "pix_key" in update_data or "pix_key_type" in update_data:
+        pix_key_type = update_data.get("pix_key_type") or current_user.pix_key_type
+        pix_key = update_data.get("pix_key") or current_user.pix_key
 
-        if pix_key_type in ["cpf", "telefone"]:
-            clean_pix_key = "".join(filter(str.isdigit, update_data["pix_key"]))
-        else:
-            clean_pix_key = update_data["pix_key"].strip()
+        try:
+            update_data["pix_key"] = normalize_pix_key(pix_key, pix_key_type)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
 
-        if pix_key_type == "cpf" and len(clean_pix_key) != 11:
-            raise HTTPException(status_code=400, detail="CPF inválido")
-
-        if pix_key_type == "telefone" and len(clean_pix_key) not in [10, 11]:
-            raise HTTPException(status_code=400, detail="Telefone inválido")
-
-        update_data["pix_key"] = clean_pix_key
+        update_data["pix_key_type"] = pix_key_type
 
     for field, value in update_data.items():
         setattr(current_user, field, value)
@@ -91,11 +94,7 @@ def update_user_by_admin(
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
 
-    if data.email and data.email != user.email:
-        conflict = db.query(User).filter(User.email == data.email, User.id != user_id).first()
-        if conflict:
-            raise HTTPException(status_code=400, detail="Email já está em uso por outro usuário")
-
+    # Validação de e-mail duplicado fica em update_current_user (vale para os dois caminhos)
     return update_current_user(db, user, data)
 
 def delete_user_by_admin(db: Session, user_id: int):

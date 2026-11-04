@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, EmailStr
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.api.deps.auth_deps import get_current_user
@@ -17,7 +18,8 @@ class LoginRequest(BaseModel):
 
 @router.post("/login", response_model=TokenResponse, summary="Login")
 def login(data: LoginRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == data.email).first()
+    # Compara sem diferenciar maiúsculas/minúsculas (ex.: "Maria.Silva@..." e "maria.silva@...")
+    user = db.query(User).filter(func.lower(User.email) == data.email.lower()).first()
 
     if not user:
         raise HTTPException(

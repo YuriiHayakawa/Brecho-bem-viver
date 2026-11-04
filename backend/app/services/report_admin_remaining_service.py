@@ -6,6 +6,7 @@ from app.models.product_offer import ProductOffer
 from app.models.sale import Sale
 from app.models.user import User
 from app.schemas.report_admin_remaining_schema import AdminRemainingProductItem
+from app.services.product_service import release_expired_reservations
 
 
 def get_admin_remaining_products(
@@ -13,6 +14,9 @@ def get_admin_remaining_products(
     search: str | None = None,
     status: str | None = None,
 ) -> list[AdminRemainingProductItem]:
+    # Como nas demais leituras: reserva vencida não pode aparecer como "Reservado"
+    release_expired_reservations(db)
+
     query = (
         db.query(Product, User)
         .join(User, User.id == Product.id_user)
@@ -60,18 +64,31 @@ def get_admin_remaining_products(
         # Valor final negociado: se a oferta foi aceita via contraproposta,
         # prevalece o valor da contraproposta (counter_price); senão, o valor
         # originalmente ofertado pelo comprador.
+        # Só conta a negociação de quem está com a reserva agora: uma proposta
+        # aceita antiga (reserva expirou) não é o valor final da peça.
         accepted = (
             db.query(
                 ProductOffer.product_id,
+                ProductOffer.buyer_user_id,
                 func.coalesce(ProductOffer.counter_price, ProductOffer.offered_price),
             )
             .filter(
                 ProductOffer.product_id.in_(product_ids),
                 ProductOffer.status == "accepted",
             )
+            .order_by(ProductOffer.responded_at.asc())  # a mais recente prevalece
             .all()
         )
-        negotiated_map = {pid: price for pid, price in accepted}
+        current_holder = {
+            product.id: product.reserved_by_user_id
+            for product, _ in rows
+            if product.status == "reservada"
+        }
+        negotiated_map = {
+            pid: price
+            for pid, buyer_id, price in accepted
+            if current_holder.get(pid) == buyer_id
+        }
 
         sales = (
             db.query(Sale.id_product, Sale.sale_value, Sale.buyer_name)

@@ -1,9 +1,11 @@
+from datetime import datetime
 from decimal import Decimal
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.models.product import Product
+from app.models.product_offer import ProductOffer
 from app.models.sale import Sale
 from app.schemas.sale_schema import SaleCreate, SaleResponse
 
@@ -34,7 +36,15 @@ def list_sales(db: Session) -> list[SaleResponse]:
 
 
 def create_sale(db: Session, sale_data: SaleCreate) -> SaleResponse:
-    product = db.query(Product).filter(Product.code == sale_data.product_code).first()
+    # Trava o produto até o commit: cliques repetidos em "Confirmar venda" são
+    # processados um de cada vez e os seguintes recebem "Produto já vendido".
+    product = (
+        db.query(Product)
+        .filter(Product.code == sale_data.product_code)
+        .with_for_update()
+        .populate_existing()
+        .first()
+    )
 
     if not product:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
@@ -63,6 +73,20 @@ def create_sale(db: Session, sale_data: SaleCreate) -> SaleResponse:
 
     product.status = "vendida"
     product.active = False
+
+    # Peça vendida: encerra as negociações que ainda estavam em aberto
+    open_offers = (
+        db.query(ProductOffer)
+        .filter(
+            ProductOffer.product_id == product.id,
+            ProductOffer.status.in_(["pending", "countered"]),
+        )
+        .all()
+    )
+    for offer in open_offers:
+        offer.status = "cancelled"
+        offer.responded_at = datetime.now()
+        offer.updated_at = datetime.now()
 
     db.add(new_sale)
     db.commit()
