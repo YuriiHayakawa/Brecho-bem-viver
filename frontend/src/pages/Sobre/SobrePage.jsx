@@ -16,7 +16,7 @@ const PILARES = [
   },
   {
     titulo: 'Empreendedorismo',
-    descricao: 'Empoderar colaboradores e empreendedores a gerar renda extra com seus próprios produtos.',
+    descricao: 'Dar às pessoas colaboradoras uma forma de gerar renda extra com peças que não usam mais.',
     icon: (
       <svg viewBox="0 0 24 24" fill="none">
         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
@@ -40,7 +40,7 @@ export default function SobrePage() {
   return (
     <main className="sobre-page">
 
-        <PageHero title="Sobre o Brechó Bem Viver" subtitle="Desapega. Compartilha. Transforma. Uma iniciativa que une sustentabilidade, acolhimento e comunidade." />
+        <PageHero title="Sobre o Brechó Bem Viver" subtitle="Moda circular começa quando uma peça ganha uma nova história." />
 
         <div className="sobre-content">
 
@@ -49,9 +49,7 @@ export default function SobrePage() {
             <div className="sobre-descricao-card">
               <p>
                 O <strong>Brechó Bem Viver</strong> é uma plataforma interna de compra e venda de
-                roupas, acessórios e outros itens entre colaboradores e empreendedores conectados
-                à empresa. Surgiu da necessidade de criar um espaço seguro, transparente e
-                organizado para essas trocas.
+                roupas, acessórios e outros itens entre pessoas colaboradoras.
               </p>
               <p>
                 Acreditamos que cada peça tem uma nova história para contar. Por isso,

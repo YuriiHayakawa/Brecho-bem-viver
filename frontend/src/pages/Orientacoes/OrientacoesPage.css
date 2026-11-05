@@ -205,6 +205,18 @@
   margin: 0;
 }
 
+/* Link para a página Sobre */
+.orientacoes-footer-note a {
+  color: #3E5C43;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.orientacoes-footer-note a:hover {
+  color: #2C4631;
+}
+
 /* Responsivo */
 @media (max-width: 900px) {
   .orientacoes-grid {

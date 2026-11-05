@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import PageHero from '../../components/PageHero/PageHero';
 import { RESERVAS_ATIVAS } from '../../constants/features';
 import './OrientacoesPage.css';
@@ -87,7 +88,7 @@ const ORIENTACOES = [
   {
     titulo: 'Acompanhe tudo pelo Dashboard',
     descricao:
-      'Veja quantos produtos você já anunciou, quantos vendeu, quanto arrecadou e quanto isso já ajudou a doação para instituições parceiras.',
+      'Veja quantos produtos você já anunciou, quantos vendeu e quanto arrecadou.',
     icon: (
       <svg viewBox="0 0 20 20" fill="none">
         <rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
@@ -137,9 +138,8 @@ export default function OrientacoesPage() {
               <path d="M10 9v5M10 7v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
             <p>
-              Ficou alguma dúvida sobre como algo funciona por aqui? A página "Sobre" conta mais sobre a
-              proposta do Brechó Bem Viver — e lembre-se: parte do valor de cada venda ajuda instituições
-              sociais parceiras.
+              Ficou alguma dúvida sobre como algo funciona por aqui? A página <Link to="/sobre">Sobre</Link> conta
+              mais sobre a proposta do Brechó Bem Viver.
             </p>
           </div>
         </div>
