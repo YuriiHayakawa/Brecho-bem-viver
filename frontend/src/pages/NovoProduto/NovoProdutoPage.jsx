@@ -3,32 +3,8 @@ import PageHero from '../../components/PageHero/PageHero';
 import { useNavigate } from 'react-router-dom';
 import { createProduct, uploadProductImages } from '../../services/api';
 import { useToast } from '../../contexts/ToastContext';
+import { CATEGORIES, GENDERS, sizesForGender } from '../../constants/products';
 import './NovoProdutoPage.css';
-
-const CATEGORIES = [
-  'Camisetas', 'Calças', 'Vestidos', 'Saias', 'Shorts',
-  'Jaquetas', 'Casacos', 'Blazers', 'Acessórios',
-  'Calçados', 'Bolsas', 'Roupas infantis', 'Outros',
-];
-
-const GENDERS = [
-  { value: 'feminino',  label: 'Feminino' },
-  { value: 'masculino', label: 'Masculino' },
-  { value: 'unissex',   label: 'Unissex' },
-  { value: 'infantil',  label: 'Infantil' },
-];
-
-const ADULT_SIZES = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'XXG', 'Único',
-               '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44'];
-
-// Roupa de bebê por sigla + numeração de calçado infantil (16 a 33, antes do 34 adulto)
-const CHILD_SIZES = ['RN', 'P', 'M', 'G',
-               '16', '17', '18', '19', '20', '21', '22', '23', '24', '25',
-               '26', '27', '28', '29', '30', '31', '32', '33'];
-
-function sizesForGender(gender) {
-  return gender === 'infantil' ? CHILD_SIZES : ADULT_SIZES;
-}
 
 export default function NovoProdutoPage() {
   const navigate   = useNavigate();

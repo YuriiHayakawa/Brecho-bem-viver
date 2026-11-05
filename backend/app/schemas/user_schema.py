@@ -39,3 +39,12 @@ class UserUpdate(BaseModel):
 
 class UserRoleUpdate(BaseModel):
     role: str
+
+
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str
+
+
+class TemporaryPasswordResponse(BaseModel):
+    temporary_password: str

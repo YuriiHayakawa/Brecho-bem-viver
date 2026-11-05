@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LogoMark } from '../Logo/Logo';
+import { RESERVAS_ATIVAS } from '../../constants/features';
 import './Navbar.css';
 
 const NAV_ITEMS = [
@@ -55,6 +56,7 @@ const NAV_ITEMS = [
     key: 'minhas-reservas',
     label: 'Minhas Reservas',
     path: '/minhas-reservas',
+    enabled: RESERVAS_ATIVAS,
     icon: (
       <svg viewBox="0 0 20 20" fill="none">
         <path d="M4 7h12l-1 9H5L4 7z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
@@ -175,7 +177,8 @@ export default function Navbar({ collapsed, onToggle, mobileOpen, onCloseMobile 
       {/* ── Navegação ── */}
       <nav className="sb-nav">
         <ul>
-          {NAV_ITEMS.map(item => {
+          {/* enabled: false = funcionalidade desligada em constants/features.js */}
+          {NAV_ITEMS.filter(item => item.enabled !== false).map(item => {
             const active = location.pathname === item.path;
             return (
               <li key={item.key}>

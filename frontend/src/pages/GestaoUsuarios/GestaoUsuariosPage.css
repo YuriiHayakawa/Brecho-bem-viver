@@ -548,6 +548,43 @@
 .gu-btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
 .gu-btn-save .gu-spinner { color: #fff; }
 
+.gu-btn-edit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Senha temporária ── */
+.gu-temp-text {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.gu-temp-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  background: #FAF6EC;
+  border: 1.5px dashed #E8DFCB;
+  border-radius: 10px;
+}
+
+.gu-temp-pass {
+  flex: 1;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #111827;
+  user-select: all;
+  word-break: break-all;
+}
+
+.gu-temp-hint {
+  margin: 0.9rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #6B7280;
+}
+
 /* ── Responsive ── */
 @media (max-width: 640px) {
   .gu-stats {
