@@ -154,8 +154,11 @@ export async function fetchMyReport() {
 }
 
 // ── Produtos ──────────────────────────────────────────
+// As rotas de produto exigem login (trazem a chave PIX dos vendedores)
 export async function fetchProducts() {
-  const response = await apiFetch(`${BASE_URL}/products/`);
+  const response = await apiFetch(`${BASE_URL}/products/`, {
+    headers: { ...authHeader() },
+  });
   const data = await readJson(response);
   if (!response.ok) throw new Error(errorMessage(data, 'Erro ao buscar produtos'));
   return data;
@@ -172,7 +175,9 @@ export async function fetchMyProducts(userId) {
 }
 
 export async function fetchProduct(id) {
-  const response = await apiFetch(`${BASE_URL}/products/${id}`);
+  const response = await apiFetch(`${BASE_URL}/products/${id}`, {
+    headers: { ...authHeader() },
+  });
   const data = await readJson(response);
   if (!response.ok) throw new Error(errorMessage(data, 'Produto não encontrado'));
   return data;
@@ -268,7 +273,9 @@ export async function uploadProductImages(productId, files, onProgress) {
 }
 
 export async function fetchProductImages(productId) {
-  const response = await apiFetch(`${BASE_URL}/products/${productId}/images`);
+  const response = await apiFetch(`${BASE_URL}/products/${productId}/images`, {
+    headers: { ...authHeader() },
+  });
   const data = await readJson(response);
   if (!response.ok) throw new Error(errorMessage(data, 'Erro ao buscar imagens'));
   return data;

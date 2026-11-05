@@ -15,7 +15,11 @@ router = APIRouter()
     response_model=list[ProductImageResponse],
     summary="Listar imagens de um produto"
 )
-def list_product_images(product_id: int, db: Session = Depends(get_db)):
+def list_product_images(
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     return product_image_service.list_product_images(db, product_id)
 
 
