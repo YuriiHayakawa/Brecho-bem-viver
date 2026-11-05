@@ -1,8 +1,8 @@
 # 🛍️ Brechó Bem Viver
 
-> **Marketplace interno para colaboradores comprarem, venderem e trocarem roupas e acessórios usados — conectando reutilização, praticidade e impacto social.**
+> **Marketplace interno para pessoas colaboradoras comprarem, venderem e trocarem roupas e acessórios usados — conectando reutilização, praticidade e impacto social.**
 
-O **Brechó Bem Viver** é uma plataforma de marketplace desenvolvida para uso interno entre colaboradores, permitindo anunciar, descobrir, reservar, negociar e comprar produtos usados.
+O **Brechó Bem Viver** é uma plataforma de marketplace desenvolvida para uso interno entre pessoas colaboradoras, permitindo anunciar, descobrir, negociar e comprar produtos usados.
 
 Além de facilitar a reutilização de peças, o projeto possui uma proposta social: **parte do valor das vendas é destinada a instituições sociais parceiras.**
 
@@ -17,11 +17,11 @@ Cada colaborador pode:
 * 📦 Cadastrar produtos para venda
 * 📸 Adicionar múltiplas fotos aos anúncios
 * 🔎 Pesquisar e filtrar produtos
-* ❤️ Reservar produtos por 24 horas
+* ❤️ Reservar produtos por 24 horas *(desativado na 1ª edição — ver [Funcionalidades configuráveis](#-funcionalidades-configuráveis))*
 * 💬 Fazer propostas de preço
 * 🤝 Negociar através de uma contraproposta
 * 💳 Realizar pagamentos via PIX
-* 👤 Gerenciar seu próprio perfil
+* 👤 Gerenciar seu próprio perfil e alterar a própria senha
 * 📊 Acompanhar seus anúncios e vendas
 
 Administradores possuem recursos adicionais para acompanhar a operação da plataforma e controlar usuários, produtos, vendas e arrecadação para doação.
@@ -38,17 +38,19 @@ Criar um ambiente interno **seguro, simples e confiável** para estimular o cons
 
 | Funcionalidade              | Descrição                                                              |
 | --------------------------- | ---------------------------------------------------------------------- |
-| 🔐 **Cadastro e Login**     | Autenticação utilizando JWT                                            |
-| 🛍️ **Catálogo**            | Visualização dos produtos disponíveis                                  |
-| 🔎 **Busca e filtros**      | Filtros por categoria, gênero, tamanho e status                        |
+| 🔐 **Cadastro e Login**     | Autenticação utilizando JWT (e-mail sem diferenciar maiúsculas)        |
+| 🛍️ **Catálogo**            | Visualização dos produtos disponíveis (exige login)                    |
+| 🔎 **Busca e filtros**      | Busca por nome ou marca; filtros por categoria, gênero e status        |
 | 📦 **Cadastro de produtos** | Criação de anúncios com preço, descrição e características             |
-| 📸 **Múltiplas imagens**    | Uma imagem de capa + galeria de fotos                                  |
+| 📸 **Múltiplas imagens**    | Uma imagem de capa + galeria; fotos reduzidas no navegador antes do envio |
 | ⚠️ **Aviso de defeitos**    | Possibilidade de informar problemas ou avarias da peça                 |
-| ⏱️ **Reserva**              | Reserva automática do produto por 24 horas                             |
+| 🗑️ **Remover anúncio**      | O dono remove o anúncio (bloqueado se reservado ou vendido)            |
+| ⏱️ **Reserva**              | Reserva do produto por 24 horas, com cancelamento pelo comprador — *desativada na 1ª edição* |
 | 💬 **Ofertas**              | Comprador pode enviar uma proposta abaixo do preço anunciado           |
 | 🤝 **Contraproposta**       | Vendedor pode responder com um valor específico                        |
 | 💳 **Pagamento PIX**        | QR Code gerado a partir da chave PIX do vendedor                       |
 | 👤 **Perfil**               | Edição dos dados pessoais, unidade e chave PIX                         |
+| 🔑 **Alterar senha**        | Troca da própria senha no Perfil (senha atual + nova)                  |
 | 📊 **Dashboard pessoal**    | Indicadores de anúncios, vendas, produtos ativos e valores arrecadados |
 
 ### 👑 Para administradores
@@ -61,7 +63,9 @@ Criar um ambiente interno **seguro, simples e confiável** para estimular o cons
 | 💰 **Registro de vendas**       | Registro manual utilizando o código do produto         |
 | ❤️ **Doação estimada**          | Cálculo automático de 10% do valor da venda            |
 | 🏷️ **Etiqueta de produto**     | Geração de etiqueta com nome, preço e QR Code PIX      |
-| 👥 **Gestão de usuários**       | Edição dos dados dos colaboradores                     |
+| 👥 **Gestão de usuários**       | Edição dos dados das pessoas colaboradoras             |
+| 🔑 **Reset de senha**           | Gera uma senha temporária (mostrada uma única vez)     |
+| 🗑️ **Remover anúncios**         | Remove anúncios de qualquer pessoa (mesmas regras do dono) |
 | 🛡️ **Controle de permissões**  | Promoção ou rebaixamento entre usuário e administrador |
 
 ---
@@ -69,53 +73,47 @@ Criar um ambiente interno **seguro, simples e confiável** para estimular o cons
 ## 🔄 Fluxo principal
 
 ```text
-                    ┌─────────────────┐
-                    │   Colaborador   │
-                    └────────┬────────┘
-                             │
-                             ▼
-                    ┌─────────────────┐
-                    │ Cadastra produto│
-                    └────────┬────────┘
-                             │
-                             ▼
-                    ┌─────────────────┐
-                    │     Catálogo    │
-                    └────────┬────────┘
-                             │
-                 ┌───────────┴───────────┐
-                 │                       │
-                 ▼                       ▼
-          ┌─────────────┐         ┌──────────────┐
-          │ Compra direta│         │    Oferta    │
-          └──────┬──────┘         └──────┬───────┘
-                 │                       │
-                 │                ┌──────┴───────┐
-                 │                │              │
-                 │                ▼              ▼
-                 │           ┌─────────┐   ┌────────────┐
-                 │           │ Aceita  │   │Contraprop. │
-                 │           └────┬────┘   └──────┬─────┘
-                 │                │               │
-                 └────────────────┴───────────────┘
-                                  │
-                                  ▼
-                         ┌─────────────────┐
-                         │ Produto reservado│
-                         │      24h        │
-                         └────────┬────────┘
-                                  │
-                                  ▼
-                         ┌─────────────────┐
-                         │ Venda registrada│
-                         │ pelo administrador│
-                         └────────┬────────┘
-                                  │
-                                  ▼
-                         ┌─────────────────┐
-                         │ 10% para doação │
-                         └─────────────────┘
+                     ┌───────────────────────┐
+                     │  Pessoa colaboradora  │
+                     └───────────┬───────────┘
+                                 ▼
+                     ┌───────────────────────┐
+                     │   Cadastra produto    │
+                     └───────────┬───────────┘
+                                 ▼
+                     ┌───────────────────────┐
+                     │       Catálogo        │
+                     └───────────┬───────────┘
+                 ┌───────────────┴───────────────┐
+                 ▼                               ▼
+     ┌───────────────────────┐       ┌───────────────────────┐
+     │     Compra direta     │       │        Oferta         │
+     │  (QR PIX da etiqueta) │       └───────────┬───────────┘
+     └───────────┬───────────┘           ┌───────┴───────┐
+                 │                       ▼               ▼
+                 │                  ┌─────────┐  ┌────────────────┐
+                 │                  │ Aceita  │  │ Contraproposta │
+                 │                  └────┬────┘  │     aceita     │
+                 │                       │       └───────┬────────┘
+                 │                       └───────┬───────┘
+                 │                               ▼
+                 │                   ┌───────────────────────┐
+                 │                   │   Produto reservado   │
+                 │                   │  24h para o comprador │
+                 │                   └───────────┬───────────┘
+                 └───────────────┬───────────────┘
+                                 ▼
+                     ┌───────────────────────┐
+                     │   Venda registrada    │
+                     │  por um administrador │
+                     └───────────┬───────────┘
+                                 ▼
+                     ┌───────────────────────┐
+                     │  Doação sugerida: 10% │
+                     └───────────────────────┘
 ```
+
+> Na 1ª edição o bazar é **presencial**: as peças ficam expostas com a etiqueta, a pessoa paga pelo QR Code PIX e um administrador registra a venda. O botão **Reservar** (compra direta com reserva de 24h) está desativado — ver [Funcionalidades configuráveis](#-funcionalidades-configuráveis).
 
 ---
 
@@ -309,7 +307,12 @@ Doação sugerida = 10% do valor da venda
 
 ### ⏱️ Reserva de 24 horas
 
-Produtos podem ser reservados durante **24 horas**.
+Produtos podem ser reservados durante **24 horas** — pelo botão **Reservar** (reserva direta) ou automaticamente quando o vendedor **aceita uma proposta**.
+
+> Na 1ª edição, a reserva direta está **desativada na interface** (ver [Funcionalidades configuráveis](#-funcionalidades-configuráveis)); a reserva por proposta aceita continua funcionando.
+
+* O comprador pode **cancelar a própria reserva direta**; a reserva originada de proposta aceita **não pode ser cancelada** por ele.
+* Ações simultâneas sobre o mesmo produto (reservar, aceitar proposta, registrar venda…) **travam a linha no banco** (`SELECT ... FOR UPDATE`), evitando que duas pessoas recebam "reservado com sucesso" para a mesma peça.
 
 A aplicação não utiliza um job ou cron dedicado para liberar reservas.
 
@@ -381,7 +384,50 @@ O sistema então:
 4. Registra a venda
 5. Atualiza o status do produto
 
-Quando a venda é originada de uma oferta ou contraproposta aceita, o valor negociado é utilizado como valor da venda.
+Quando a venda é originada de uma oferta ou contraproposta aceita **de quem está com a reserva atual**, o valor negociado é sugerido como valor da venda (negociações antigas, de reservas que já expiraram, são ignoradas).
+
+Ao registrar a venda, as propostas da peça que ainda estavam em aberto (`pending` / `countered`) passam a `cancelled`.
+
+---
+
+### 🗑️ Remoção de anúncio
+
+O dono do anúncio ou um administrador pode removê-lo (o produto fica inativo — o histórico é mantido).
+
+* **Não é permitido** remover peça **vendida** ou **reservada** (o comprador pode já ter pago via PIX).
+* As propostas em aberto da peça passam a `cancelled`.
+* O anúncio removido some do catálogo e dos totais dos dashboards e não pode mais ser reservado.
+
+---
+
+### 🔑 Senhas
+
+Não há "esqueci minha senha" por e-mail. Em vez disso:
+
+* **Admin** — em **Gestão de Usuários**, o botão **Senha** gera uma **senha temporária aleatória** (10 caracteres, sem caracteres ambíguos) para outra pessoa. Ela é mostrada **uma única vez**; no banco fica apenas o hash.
+* **Todo usuário** — em **Perfil → Alterar senha**, troca a própria senha (exige a senha atual; nova senha com no mínimo 6 caracteres).
+
+Endpoints: `POST /users/{id}/reset-password` (admin) e `PUT /users/me/password`.
+
+> Sessões já abertas continuam válidas até expirarem (60 min) depois de um reset.
+
+---
+
+## 🧰 Funcionalidades configuráveis
+
+Algumas funcionalidades da interface podem ser ligadas/desligadas sem apagar código, em:
+
+```text
+frontend/src/constants/features.js
+```
+
+| Chave             | Valor atual | O que controla |
+| ----------------- | :---------: | -------------- |
+| `RESERVAS_ATIVAS` | `false`     | Botão **Reservar**, tela/menu **Minhas Reservas**, botão **Cancelar reserva** e o cartão de reserva em **Orientações**. Com `false`, o link `/minhas-reservas` redireciona para o catálogo. |
+
+O backend da reserva continua completo (endpoints, expiração, cancelamento). Para reativá-la — prevista para a 2ª edição do bazar — basta trocar para `true` e publicar o frontend.
+
+> Mesmo com `RESERVAS_ATIVAS = false`, **proposta aceita continua reservando a peça** por 24h para o comprador.
 
 ---
 
@@ -390,6 +436,8 @@ Quando a venda é originada de uma oferta ou contraproposta aceita, o valor nego
 O sistema utiliza a **chave PIX cadastrada pelo vendedor** para gerar o QR Code de pagamento.
 
 O QR Code pode ser utilizado diretamente no fluxo de compra ou na geração da etiqueta do produto.
+
+A chave é validada no cadastro e na edição do perfil: CPF (com dígitos verificadores), telefone com DDD (aceita `+55`), e-mail ou chave aleatória no formato do Banco Central.
 
 A geração é realizada através de:
 
@@ -402,17 +450,12 @@ Pillow
 
 ## 🖼️ Upload de imagens
 
-Em produção, as imagens dos produtos são armazenadas no:
+As imagens dos produtos são armazenadas no [Cloudinary](https://cloudinary.com/?utm_source=chatgpt.com) **em todos os ambientes** — inclusive no desenvolvimento local, que também precisa das credenciais do Cloudinary no `.env`.
 
-[Cloudinary](https://cloudinary.com/?utm_source=chatgpt.com)
+* **Antes do envio**, o navegador reduz a foto (lado maior até 1600px, JPEG). Se uma foto falhar, o produto já criado não é duplicado.
+* **Na exibição**, as imagens são pedidas já redimensionadas ao Cloudinary (`f_auto,q_auto,w_…`), via `frontend/src/utils/image.js`.
 
-Durante o desenvolvimento local, o backend pode utilizar:
-
-```text
-backend/uploads/
-```
-
-Esse diretório é ignorado pelo Git e não deve ser utilizado como armazenamento permanente em produção.
+> A pasta `backend/uploads/` é legado e não é usada pelo upload atual.
 
 ---
 
@@ -459,6 +502,8 @@ Password: postgres
 ```
 
 Caso utilize uma instalação local do PostgreSQL, configure a variável `DATABASE_URL` de acordo com seu ambiente.
+
+> ⚠️ **Windows:** se você também tiver o PostgreSQL instalado como serviço (ex.: `postgresql-x64-18`), ele e o container do Docker disputam a porta `5432` — só um sobe. Use apenas um dos dois (o projeto usa o container `bazar_sebrae_db`, que sobe sozinho com o Docker Desktop).
 
 ---
 
@@ -684,6 +729,12 @@ Atualmente:
 * a sessão expirada é identificada quando uma requisição autenticada retorna `401`;
 * o usuário precisa realizar login novamente após a expiração da sessão.
 
+Rotas **públicas** (sem login): `POST /auth/login`, `POST /users/` (criar conta) e `/health`. **Todas as demais exigem token** — inclusive listar e ver produtos, porque a resposta traz a chave PIX dos vendedores.
+
+O e-mail é salvo em minúsculas e o login **não diferencia maiúsculas/minúsculas**.
+
+> Erros de regra de negócio usam `400`, nunca `401` — o frontend trata todo `401` como sessão expirada e desloga a pessoa (por exemplo, "senha atual incorreta" responde `400`).
+
 ---
 
 ## ☁️ Deploy
@@ -720,9 +771,12 @@ Branch: main
 ### Imagens
 
 ```text
-Produção → Cloudinary
-Desenvolvimento → backend/uploads/
+Produção e desenvolvimento → Cloudinary
 ```
+
+### Ordem de publicação
+
+Um merge na `main` publica backend (Railway) e frontend (Vercel) ao mesmo tempo. Quando uma mudança altera o contrato da API (ex.: rota que passa a exigir login), o site pode falhar por alguns minutos até os dois terminarem — prefira publicar **fora do horário de uso** e peça um **F5** a quem já estava com o site aberto.
 
 ---
 
@@ -832,7 +886,11 @@ Alterações posteriores precisam ser realizadas através dos scripts SQL de mig
 
 ### Imagens
 
-O armazenamento permanente de imagens em produção é realizado através do Cloudinary.
+O armazenamento de imagens é realizado através do Cloudinary (upload reduzido no navegador; exibição redimensionada pelo Cloudinary).
+
+### Listas fixas do frontend
+
+Categorias (ordem alfabética, "Outros" no fim), gêneros e tamanhos ficam em `frontend/src/constants/products.js`; as unidades, em `frontend/src/constants/units.js`.
 
 ### Reservas
 
