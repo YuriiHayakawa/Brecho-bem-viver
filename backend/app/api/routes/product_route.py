@@ -14,10 +14,12 @@ from app.services import product_service
 router = APIRouter()
 
 
+# Exige login: a resposta traz a chave PIX dos vendedores
 @router.get("/", response_model=list[ProductResponse], summary="Listar produtos")
 def list_products(
     user_id: Optional[int] = Query(None, description="Filtrar por dono do produto"),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     return product_service.list_products(db, user_id)
 
@@ -29,8 +31,13 @@ def list_my_reservations(
     return product_service.list_my_reservations(db, current_user)
 
 
+# Exige login: a resposta traz a chave PIX e o QR Code do vendedor
 @router.get("/{product_id}", response_model=ProductResponse, summary="Detalhe do produto")
-def get_product(product_id: int, db: Session = Depends(get_db)):
+def get_product(
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     return product_service.get_product(db, product_id)
 
 
