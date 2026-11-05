@@ -4,6 +4,7 @@ import { useToast } from '../../contexts/ToastContext';
 import { fetchProduct, reserveProduct, cancelReservation, deleteProduct, fetchProductLabelData, createSale, createOffer, fetchAcceptedOffer } from '../../services/api';
 import { LogoMark } from '../../components/Logo/Logo';
 import { optimizedImage, IMG_SIZE } from '../../utils/image';
+import { RESERVAS_ATIVAS } from '../../constants/features';
 import './ProductDetailPage.css';
 
 
@@ -1021,29 +1022,38 @@ export default function ProductDetailPage() {
                     <p>A reserva é válida por 24 horas.</p>
                   </div>
                 </div>
-                {cancelError && <p className="reserve-error">{cancelError}</p>}
-                {/* Reserva de proposta aceita não pode ser cancelada pelo comprador */}
-                {product.reserved_via_offer ? (
-                  <p className="reserve-notice">Reserva feita a partir de uma proposta aceita — não pode ser cancelada.</p>
-                ) : (
-                  <button className="btn-offer" onClick={handleCancelReservation} disabled={cancelling}>
-                    {cancelling ? 'Cancelando...' : 'Cancelar reserva'}
-                  </button>
+                {/* Com reservas desligadas, a peça só chega aqui por proposta aceita (não cancelável) */}
+                {RESERVAS_ATIVAS && (
+                  <>
+                    {cancelError && <p className="reserve-error">{cancelError}</p>}
+                    {/* Reserva de proposta aceita não pode ser cancelada pelo comprador */}
+                    {product.reserved_via_offer ? (
+                      <p className="reserve-notice">Reserva feita a partir de uma proposta aceita — não pode ser cancelada.</p>
+                    ) : (
+                      <button className="btn-offer" onClick={handleCancelReservation} disabled={cancelling}>
+                        {cancelling ? 'Cancelando...' : 'Cancelar reserva'}
+                      </button>
+                    )}
+                  </>
                 )}
                 </>
               ) : product.status === 'disponivel' ? (
                 <>
-                  {reserveError && <p className="reserve-error">{reserveError}</p>}
-                  <button className="btn-reserve" onClick={handleReserve} disabled={reserving || isOwner}>
-                    {reserving ? (
-                      <span className="btn-loading">
-                        <svg className="spinner" viewBox="0 0 24 24" fill="none">
-                          <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeDasharray="60" strokeDashoffset="15"/>
-                        </svg>
-                        Reservando...
-                      </span>
-                    ) : 'Reservar produto'}
-                  </button>
+                  {RESERVAS_ATIVAS && (
+                    <>
+                      {reserveError && <p className="reserve-error">{reserveError}</p>}
+                      <button className="btn-reserve" onClick={handleReserve} disabled={reserving || isOwner}>
+                        {reserving ? (
+                          <span className="btn-loading">
+                            <svg className="spinner" viewBox="0 0 24 24" fill="none">
+                              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeDasharray="60" strokeDashoffset="15"/>
+                            </svg>
+                            Reservando...
+                          </span>
+                        ) : 'Reservar produto'}
+                      </button>
+                    </>
+                  )}
                   {!isOwner && (
                     <button className="btn-offer" onClick={() => setOfferOpen(true)}>
                       <svg viewBox="0 0 20 20" fill="none">
@@ -1054,9 +1064,13 @@ export default function ProductDetailPage() {
                     </button>
                   )}
                   <p className="reserve-notice">
-                    {isOwner
-                      ? 'Você é o vendedor deste produto — não é possível reservar ou ofertar nele.'
-                      : 'A reserva é válida por 24 horas · ou negocie um valor fazendo uma oferta'}
+                    {RESERVAS_ATIVAS
+                      ? (isOwner
+                          ? 'Você é o vendedor deste produto — não é possível reservar ou ofertar nele.'
+                          : 'A reserva é válida por 24 horas · ou negocie um valor fazendo uma oferta')
+                      : (isOwner
+                          ? 'Você é o vendedor deste produto — não é possível fazer oferta nele.'
+                          : 'Pague pelo QR Code PIX abaixo e avise um admin para registrar a venda · ou negocie um valor fazendo uma oferta')}
                   </p>
                 </>
               ) : product.status === 'reservada' ? (

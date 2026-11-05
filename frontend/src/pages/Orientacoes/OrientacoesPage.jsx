@@ -1,12 +1,14 @@
 import PageHero from '../../components/PageHero/PageHero';
+import { RESERVAS_ATIVAS } from '../../constants/features';
 import './OrientacoesPage.css';
 
+// enabled: false esconde o cartão (funcionalidade desligada em constants/features.js).
+// A numeração dos cartões é calculada pela posição na tela.
 const ORIENTACOES = [
   {
-    numero: '01',
     titulo: 'Explore o catálogo',
     descricao:
-      'Navegue pelos produtos disponíveis e use os filtros de categoria, gênero, tamanho e status, ou busque direto por nome ou marca.',
+      'Navegue pelos produtos disponíveis e use os filtros de categoria, gênero e status, ou busque direto por nome ou marca.',
     icon: (
       <svg viewBox="0 0 20 20" fill="none">
         <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" strokeWidth="1.5" />
@@ -15,7 +17,7 @@ const ORIENTACOES = [
     ),
   },
   {
-    numero: '02',
+    enabled: RESERVAS_ATIVAS,
     titulo: 'Reserve por 24 horas',
     descricao:
       'Encontrou a peça certa? Reserve na página do produto e ela fica separada só pra você por 24 horas, sem risco de outra pessoa levar.',
@@ -27,8 +29,7 @@ const ORIENTACOES = [
     ),
   },
   {
-    numero: '03',
-    titulo: 'Ou negocie um valor',
+    titulo: RESERVAS_ATIVAS ? 'Ou negocie um valor' : 'Negocie um valor',
     descricao:
       'Prefere pagar menos? Envie uma oferta abaixo do preço anunciado. O vendedor pode aceitar, recusar ou propor um valor final — aí é só aceitar ou recusar.',
     icon: (
@@ -38,10 +39,11 @@ const ORIENTACOES = [
     ),
   },
   {
-    numero: '04',
     titulo: 'Pague com PIX',
-    descricao:
-      'Na página do produto aparece o QR Code (ou a chave) PIX do vendedor. Escaneie, pague o valor combinado e combine onde retirar o item.',
+    descricao: RESERVAS_ATIVAS
+      ? 'Na página do produto aparece o QR Code (ou a chave) PIX do vendedor. Escaneie, pague o valor combinado e combine onde retirar o item.'
+      // Bazar presencial: a peça fica exposta com a etiqueta e o admin registra a venda
+      : 'Escolheu a peça no bazar? Escaneie o QR Code PIX da etiqueta (ou da página do produto), pague o valor combinado e avise um admin para registrar a venda.',
     icon: (
       <svg viewBox="0 0 20 20" fill="none">
         <path d="M10 2L14 6H11V14H14L10 18L6 14H9V6H6L10 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
@@ -49,7 +51,6 @@ const ORIENTACOES = [
     ),
   },
   {
-    numero: '05',
     titulo: 'Anuncie seus produtos',
     descricao:
       'Cadastre nome, descrição, categoria, tamanho, marca e preço, e adicione fotos — a primeira vira a capa do anúncio. Simples e rápido.',
@@ -62,7 +63,6 @@ const ORIENTACOES = [
     ),
   },
   {
-    numero: '06',
     titulo: 'Seja transparente sobre defeitos',
     descricao:
       'Se a peça tiver algum defeito, marque essa opção e descreva. Isso não afasta compradores — fortalece a confiança em quem vende.',
@@ -74,7 +74,6 @@ const ORIENTACOES = [
     ),
   },
   {
-    numero: '07',
     titulo: 'Responda as propostas que você recebe',
     descricao:
       "Alguém fez uma oferta no seu produto? Em 'Propostas Recebidas' você aceita, recusa ou envia uma contraproposta com o valor que topa.",
@@ -86,7 +85,6 @@ const ORIENTACOES = [
     ),
   },
   {
-    numero: '08',
     titulo: 'Acompanhe tudo pelo Dashboard',
     descricao:
       'Veja quantos produtos você já anunciou, quantos vendeu, quanto arrecadou e quanto isso já ajudou a doação para instituições parceiras.',
@@ -100,7 +98,6 @@ const ORIENTACOES = [
     ),
   },
   {
-    numero: '09',
     titulo: 'Mantenha seu perfil em dia',
     descricao:
       'Sua unidade e sua chave PIX ficam no seu perfil — são elas que aparecem pra quem compra de você, então mantenha tudo atualizado.',
@@ -122,9 +119,9 @@ export default function OrientacoesPage() {
         {/* Cards */}
         <div className="orientacoes-content">
           <div className="orientacoes-grid">
-            {ORIENTACOES.map((item) => (
-              <div className="orientacao-card" key={item.numero}>
-                <div className="orientacao-numero">{item.numero}</div>
+            {ORIENTACOES.filter(item => item.enabled !== false).map((item, index) => (
+              <div className="orientacao-card" key={item.titulo}>
+                <div className="orientacao-numero">{String(index + 1).padStart(2, '0')}</div>
                 <div className="orientacao-icon">{item.icon}</div>
                 <div className="orientacao-body">
                   <h3 className="orientacao-titulo">{item.titulo}</h3>

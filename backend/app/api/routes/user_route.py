@@ -4,7 +4,9 @@ from sqlalchemy.orm import Session
 from app.api.deps.auth_deps import get_current_user, require_admin
 from app.database import get_db
 from app.models.user import User
-from app.schemas.user_schema import UserCreate, UserResponse, UserUpdate, UserRoleUpdate
+from app.schemas.user_schema import (
+    UserCreate, UserResponse, UserUpdate, UserRoleUpdate, PasswordChange, TemporaryPasswordResponse,
+)
 from app.services import user_service
 
 router = APIRouter()
@@ -35,6 +37,29 @@ def update_me(
     current_user: User = Depends(get_current_user)
 ):
     return user_service.update_current_user(db, current_user, data)
+
+
+@router.put("/me/password", summary="Alterar minha senha")
+def change_my_password(
+    data: PasswordChange,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return user_service.change_own_password(db, current_user, data)
+
+
+@router.post(
+    "/{user_id}/reset-password",
+    response_model=TemporaryPasswordResponse,
+    summary="Admin gerar senha temporária para um usuário"
+)
+def reset_user_password(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    temporary_password = user_service.reset_password_by_admin(db, user_id, current_user)
+    return TemporaryPasswordResponse(temporary_password=temporary_password)
 
 
 @router.put("/{user_id}", response_model=UserResponse, summary="Admin atualizar usuário")

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { fetchMyProfile, updateMyProfile } from '../../services/api';
+import { fetchMyProfile, updateMyProfile, changeMyPassword } from '../../services/api';
 import PageHero from '../../components/PageHero/PageHero';
 import { useToast } from '../../contexts/ToastContext';
 import { UNITS } from '../../constants/units';
@@ -127,6 +127,8 @@ export default function PerfilPage() {
               </button>
             </div>
 
+            <PasswordCard />
+
           </div>
         ) : (
           /* ── Modo edição ── */
@@ -221,6 +223,96 @@ export default function PerfilPage() {
         )}
       </div>
     </main>
+  );
+}
+
+// Cartão "Senha": troca da própria senha (ex.: depois de receber uma senha
+// temporária gerada por um admin em Gestão de Usuários)
+function PasswordCard() {
+  const showToast = useToast();
+  const [open, setOpen]     = useState(false);
+  const [form, setForm]     = useState({ current: '', next: '', confirm: '' });
+  const [saving, setSaving] = useState(false);
+  const [error, setError]   = useState('');
+
+  function close() {
+    setOpen(false);
+    setForm({ current: '', next: '', confirm: '' });
+    setError('');
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError('');
+    if (form.next.length < 6)       return setError('A nova senha deve ter pelo menos 6 caracteres.');
+    if (form.next !== form.confirm) return setError('A confirmação não confere com a nova senha.');
+
+    setSaving(true);
+    try {
+      await changeMyPassword(form.current, form.next);
+      showToast('Senha alterada com sucesso!');
+      close();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const set = field => e => setForm(f => ({ ...f, [field]: e.target.value }));
+
+  return (
+    <section className="perfil-card perfil-card--full">
+      <div className="perfil-card-header">
+        <span className="perfil-card-icon">
+          <svg viewBox="0 0 20 20" fill="none">
+            <rect x="4" y="9" width="12" height="9" rx="2" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M7 9V6a3 3 0 016 0v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        </span>
+        <h2>Senha</h2>
+      </div>
+
+      {!open ? (
+        <div className="perfil-pwd-row">
+          <p className="perfil-pwd-hint">
+            Recebeu uma senha temporária de um admin? Troque por uma senha só sua.
+          </p>
+          <button type="button" className="perfil-btn-cancel" onClick={() => setOpen(true)}>
+            Alterar senha
+          </button>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="perfil-fields perfil-fields--edit">
+            <label className="perfil-field-edit">
+              <span>Senha atual</span>
+              <input type="password" value={form.current} onChange={set('current')} autoComplete="current-password" required />
+            </label>
+            <label className="perfil-field-edit">
+              <span>Nova senha</span>
+              <input type="password" value={form.next} onChange={set('next')} autoComplete="new-password"
+                placeholder="Mínimo 6 caracteres" required />
+            </label>
+            <label className="perfil-field-edit">
+              <span>Confirmar nova senha</span>
+              <input type="password" value={form.confirm} onChange={set('confirm')} autoComplete="new-password" required />
+            </label>
+          </div>
+
+          {error && <p className="perfil-save-error">{error}</p>}
+
+          <div className="perfil-form-actions">
+            <button type="button" className="perfil-btn-cancel" onClick={close} disabled={saving}>
+              Cancelar
+            </button>
+            <button type="submit" className="perfil-btn-save" disabled={saving}>
+              {saving ? 'Salvando...' : 'Salvar nova senha'}
+            </button>
+          </div>
+        </form>
+      )}
+    </section>
   );
 }
 

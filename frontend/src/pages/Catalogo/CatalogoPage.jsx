@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchProducts } from '../../services/api';
 import { optimizedImage, IMG_SIZE } from '../../utils/image';
+import { sortCategories } from '../../constants/products';
 import PageHero from '../../components/PageHero/PageHero';
 import './CatalogoPage.css';
 
@@ -32,7 +33,8 @@ export default function CatalogoPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const categories = ['Todas', ...new Set(products.map(p => p.category))];
+  // Só as categorias que têm produto, em ordem alfabética ("Outros" no fim)
+  const categories = ['Todas', ...sortCategories(new Set(products.map(p => p.category)))];
 
   const STATUS_ORDER = { disponivel: 0, reservada: 1, vendida: 2 };
 

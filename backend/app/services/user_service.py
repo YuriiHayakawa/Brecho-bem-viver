@@ -3,8 +3,8 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.models.user import User
-from app.schemas.user_schema import UserUpdate, UserResponse, UserRoleUpdate
-from app.core.security import hash_password
+from app.schemas.user_schema import UserUpdate, UserResponse, UserRoleUpdate, PasswordChange
+from app.core.security import hash_password, verify_password, generate_temporary_password
 from app.utils.pix import normalize_pix_key
 from app.models.user import User
 from app.schemas.user_schema import UserCreate, UserResponse
@@ -121,3 +121,49 @@ def update_user_role(db: Session, user_id: int, data: UserRoleUpdate) -> UserRes
     db.commit()
     db.refresh(user)
     return user
+
+
+# Mesmo mínimo exigido no cadastro (tela de criar conta)
+MIN_PASSWORD_LENGTH = 6
+
+
+def reset_password_by_admin(db: Session, user_id: int, current_admin: User) -> str:
+    """Gera uma senha temporária para o usuário e devolve em texto puro — ela é
+    mostrada uma única vez ao admin, que repassa à pessoa (só o hash fica salvo)."""
+    user = db.query(User).filter(User.id == user_id).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+
+    if user.id == current_admin.id:
+        raise HTTPException(
+            status_code=400,
+            detail="Para trocar a sua própria senha, use \"Alterar senha\" no Perfil",
+        )
+
+    temporary_password = generate_temporary_password()
+    user.password_hash = hash_password(temporary_password)
+    db.commit()
+
+    return temporary_password
+
+
+def change_own_password(db: Session, current_user: User, data: PasswordChange):
+    # 400 (e não 401) na senha atual errada: o frontend trata todo 401 como
+    # sessão expirada e deslogaria a pessoa
+    if not verify_password(data.current_password, current_user.password_hash):
+        raise HTTPException(status_code=400, detail="Senha atual incorreta")
+
+    if len(data.new_password) < MIN_PASSWORD_LENGTH:
+        raise HTTPException(
+            status_code=400,
+            detail=f"A nova senha deve ter pelo menos {MIN_PASSWORD_LENGTH} caracteres",
+        )
+
+    if data.new_password == data.current_password:
+        raise HTTPException(status_code=400, detail="A nova senha deve ser diferente da atual")
+
+    current_user.password_hash = hash_password(data.new_password)
+    db.commit()
+
+    return {"message": "Senha alterada com sucesso"}

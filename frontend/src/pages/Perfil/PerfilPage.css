@@ -407,6 +407,29 @@
 .perfil-btn-save:hover:not(:disabled) { background: #2C4631; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(62, 92, 67,0.24); }
 .perfil-btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
 
+/* ── Cartão de senha ── */
+.perfil-card--full {
+  grid-column: 1 / -1;
+}
+
+.perfil-pwd-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.perfil-pwd-hint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #6B7280;
+}
+
+.perfil-card--full .perfil-form-actions {
+  margin-top: 1rem;
+}
+
 /* Responsivo */
 @media (max-width: 640px) {
   .perfil-hero-inner {

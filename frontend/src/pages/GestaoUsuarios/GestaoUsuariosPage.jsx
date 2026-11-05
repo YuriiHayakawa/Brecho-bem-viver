@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchAllUsers, updateUserRole, updateUserByAdmin } from '../../services/api';
+import { fetchAllUsers, updateUserRole, updateUserByAdmin, resetUserPassword } from '../../services/api';
 import PageHero from '../../components/PageHero/PageHero';
 import { useToast } from '../../contexts/ToastContext';
 import './GestaoUsuariosPage.css';
@@ -30,6 +30,11 @@ export default function GestaoUsuariosPage() {
   const [editForm, setEditForm]   = useState({});
   const [saving, setSaving]       = useState(false);
   const [editError, setEditError] = useState('');
+
+  // reset de senha
+  const [resettingId, setResettingId] = useState(null);
+  const [tempPassword, setTempPassword] = useState(null); // { user, password }
+  const [copied, setCopied]           = useState(false);
 
   useEffect(() => {
     if (currentUser.role !== 'admin') { navigate('/dashboard'); return; }
@@ -62,6 +67,30 @@ export default function GestaoUsuariosPage() {
     } finally {
       setUpdatingRole(null);
       setTimeout(() => setRoleFeedback(null), 2500);
+    }
+  }
+
+  // ── Reset de senha ───────────────────────────────────
+  async function handleResetPassword(user) {
+    if (!window.confirm(`Gerar uma nova senha temporária para ${user.name}? A senha atual deixa de funcionar na hora.`)) return;
+    setResettingId(user.id);
+    try {
+      const data = await resetUserPassword(user.id);
+      setCopied(false);
+      setTempPassword({ user, password: data.temporary_password });
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      setResettingId(null);
+    }
+  }
+
+  async function handleCopyTempPassword() {
+    try {
+      await navigator.clipboard.writeText(tempPassword.password);
+      setCopied(true);
+    } catch {
+      showToast('Não foi possível copiar. Anote a senha manualmente.', 'error');
     }
   }
 
@@ -199,6 +228,8 @@ export default function GestaoUsuariosPage() {
                 roleFeedback={roleFeedback?.id === u.id ? roleFeedback.ok : null}
                 onRoleChange={handleRoleChange}
                 onEdit={() => openEdit(u)}
+                onResetPassword={() => handleResetPassword(u)}
+                isResetting={resettingId === u.id}
               />
             ))}
           </div>
@@ -279,11 +310,43 @@ export default function GestaoUsuariosPage() {
           </div>
         </div>
       )}
+
+      {/* ── Modal da senha temporária ──
+          Não fecha ao clicar fora: a senha só é mostrada uma vez. */}
+      {tempPassword && (
+        <div className="gu-modal-overlay">
+          <div className="gu-modal" role="dialog" aria-labelledby="gu-temp-title">
+            <div className="gu-modal-header">
+              <h2 className="gu-modal-title" id="gu-temp-title">Nova senha temporária</h2>
+            </div>
+            <div className="gu-modal-form">
+              <p className="gu-temp-text">
+                Senha de <strong>{tempPassword.user.name}</strong> ({tempPassword.user.email}):
+              </p>
+              <div className="gu-temp-box">
+                <code className="gu-temp-pass">{tempPassword.password}</code>
+                <button type="button" className="gu-btn-cancel" onClick={handleCopyTempPassword}>
+                  {copied ? 'Copiada!' : 'Copiar'}
+                </button>
+              </div>
+              <p className="gu-temp-hint">
+                Anote ou copie agora — ela <strong>não será mostrada de novo</strong>. Repasse à pessoa
+                e peça para ela trocar em <strong>Perfil → Alterar senha</strong> depois de entrar.
+              </p>
+              <div className="gu-modal-actions">
+                <button type="button" className="gu-btn-save" onClick={() => setTempPassword(null)}>
+                  Já anotei
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function UserRow({ user, isSelf, isUpdatingRole, roleFeedback, onRoleChange, onEdit }) {
+function UserRow({ user, isSelf, isUpdatingRole, roleFeedback, onRoleChange, onEdit, onResetPassword, isResetting }) {
   const initials = user.name
     ? user.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
     : 'U';
@@ -350,6 +413,17 @@ function UserRow({ user, isSelf, isUpdatingRole, roleFeedback, onRoleChange, onE
           </svg>
           Editar
         </button>
+
+        {/* A própria senha o admin troca no Perfil */}
+        {!isSelf && (
+          <button className="gu-btn-edit" onClick={onResetPassword} disabled={isResetting} title="Gerar senha temporária">
+            <svg viewBox="0 0 20 20" fill="none">
+              <rect x="4" y="9" width="12" height="9" rx="2" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M7 9V6a3 3 0 016 0v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+            {isResetting ? '...' : 'Senha'}
+          </button>
+        )}
 
         {!isSelf && (
           <div className="gu-role-select-wrap">

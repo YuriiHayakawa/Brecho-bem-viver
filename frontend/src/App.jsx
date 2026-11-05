@@ -15,6 +15,7 @@ import GestaoUsuariosPage   from './pages/GestaoUsuarios/GestaoUsuariosPage';
 import MinhasPropostasPage    from './pages/MinhasPropostas/MinhasPropostasPage';
 import PropostasRecebidasPage from './pages/PropostasRecebidas/PropostasRecebidasPage';
 import MinhasReservasPage     from './pages/MinhasReservas/MinhasReservasPage';
+import { RESERVAS_ATIVAS }    from './constants/features';
 
 function ProtectedRoute({ children }) {
   const token = sessionStorage.getItem('token');
@@ -54,8 +55,11 @@ function App() {
         <Route path="/propostas-recebidas" element={
           <ProtectedRoute><PropostasRecebidasPage /></ProtectedRoute>
         } />
+        {/* Reservas desativadas: link antigo/favorito leva ao catálogo */}
         <Route path="/minhas-reservas" element={
-          <ProtectedRoute><MinhasReservasPage /></ProtectedRoute>
+          RESERVAS_ATIVAS
+            ? <ProtectedRoute><MinhasReservasPage /></ProtectedRoute>
+            : <Navigate to="/catalogo" replace />
         } />
         <Route path="/perfil" element={
           <ProtectedRoute><PerfilPage /></ProtectedRoute>

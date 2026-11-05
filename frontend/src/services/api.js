@@ -131,6 +131,18 @@ export async function updateMyProfile(payload) {
   return data;
 }
 
+// Troca da própria senha (ex.: depois de receber uma senha temporária do admin)
+export async function changeMyPassword(currentPassword, newPassword) {
+  const response = await apiFetch(`${BASE_URL}/users/me/password`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+    body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+  });
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao alterar senha'));
+  return data;
+}
+
 // ── Relatórios ────────────────────────────────────────
 export async function fetchMyReport() {
   const response = await apiFetch(`${BASE_URL}/reports/me`, {
@@ -322,6 +334,17 @@ export async function updateUserRole(userId, role) {
   });
   const data = await readJson(response);
   if (!response.ok) throw new Error(errorMessage(data, 'Erro ao atualizar role'));
+  return data;
+}
+
+// Admin gera uma senha temporária para o usuário. Retorna { temporary_password }
+export async function resetUserPassword(userId) {
+  const response = await apiFetch(`${BASE_URL}/users/${userId}/reset-password`, {
+    method: 'POST',
+    headers: { ...authHeader() },
+  });
+  const data = await readJson(response);
+  if (!response.ok) throw new Error(errorMessage(data, 'Erro ao redefinir senha'));
   return data;
 }
 
