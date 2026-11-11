@@ -2,8 +2,9 @@
 
 // Ordem alfabética, com "Outros" sempre no fim
 export const CATEGORIES = [
-  'Acessórios', 'Blazers', 'Bolsas', 'Brinquedos', 'Calçados', 'Calças',
-  'Camisetas', 'Casacos', 'Jaquetas', 'Saias', 'Shorts', 'Vestidos',
+  'Acessórios', 'Blazers', 'Blusas', 'Bolsas', 'Brinquedos', 'Calçados',
+  'Calças', 'Camisas', 'Camisetas', 'Casacos', 'Conjuntos', 'Jaquetas',
+  'Moda praia', 'Saias', 'Shorts', 'Vestidos',
   'Outros',
 ];
 
