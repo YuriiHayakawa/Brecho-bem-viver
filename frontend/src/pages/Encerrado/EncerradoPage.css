@@ -1,0 +1,155 @@
+/* Página de encerramento — mesmo visual do painel de marca da tela de login */
+.enc-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  overflow: hidden;
+  font-family: 'Barlow', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, #2C4631 0%, #3E5C43 50%, #86A06A 100%);
+  color: #FFFFFF;
+}
+
+/* Faixa diagonal decorativa */
+.enc-diagonal {
+  position: absolute;
+  top: 0;
+  right: 12%;
+  width: 140px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  transform: skewX(-6deg);
+  pointer-events: none;
+}
+
+.enc-content {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  text-align: center;
+}
+
+.enc-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.enc-logo-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+}
+
+.enc-logo-name {
+  font-family: 'Fraunces', 'Barlow', serif;
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.enc-logo-sub {
+  font-family: 'Caveat', 'Barlow', cursive;
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #F2C4A5;
+}
+
+.enc-tagline {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: 0.01em;
+}
+
+.enc-tagline span {
+  color: #F2C4A5;
+}
+
+.enc-divider {
+  width: 56px;
+  height: 2px;
+  margin: 2rem auto;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.enc-title {
+  margin: 0 0 1rem;
+  font-family: 'Fraunces', 'Barlow', serif;
+  font-size: 1.9rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.enc-message {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.enc-footer {
+  margin: 2.5rem 0 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Crédito de desenvolvimento */
+/* Itens em blocos: em tela estreita descem para a linha de baixo inteiros,
+   sem quebrar o nome/telefone no meio */
+.enc-credit {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0.6rem 0 0;
+  font-size: 0.92rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.enc-credit strong {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.enc-credit-item {
+  white-space: nowrap;
+}
+
+/* Separador "·" antes de cada item, exceto o primeiro */
+.enc-credit-item + .enc-credit-item::before {
+  content: '·';
+  margin: 0 0.45rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-decoration: none;
+  display: inline-block;
+}
+
+.enc-credit a {
+  color: #F2C4A5;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.enc-credit a:hover {
+  color: #FFFFFF;
+}
+
+@media (max-width: 480px) {
+  .enc-logo-name { font-size: 2rem; }
+  .enc-logo-sub  { font-size: 1.7rem; }
+  .enc-title     { font-size: 1.5rem; }
+  .enc-message   { font-size: 1rem; }
+  .enc-diagonal  { right: -40px; }
+
+  /* No celular: um item por linha, sem o separador "·" */
+  .enc-credit { flex-direction: column; align-items: center; line-height: 1.7; }
+  .enc-credit-item + .enc-credit-item::before { content: none; }
+}

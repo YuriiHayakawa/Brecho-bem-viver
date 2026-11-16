@@ -15,7 +15,8 @@ import GestaoUsuariosPage   from './pages/GestaoUsuarios/GestaoUsuariosPage';
 import MinhasPropostasPage    from './pages/MinhasPropostas/MinhasPropostasPage';
 import PropostasRecebidasPage from './pages/PropostasRecebidas/PropostasRecebidasPage';
 import MinhasReservasPage     from './pages/MinhasReservas/MinhasReservasPage';
-import { RESERVAS_ATIVAS }    from './constants/features';
+import EncerradoPage          from './pages/Encerrado/EncerradoPage';
+import { RESERVAS_ATIVAS, BAZAR_ENCERRADO } from './constants/features';
 
 function ProtectedRoute({ children }) {
   const token = sessionStorage.getItem('token');
@@ -24,6 +25,10 @@ function ProtectedRoute({ children }) {
 }
 
 function App() {
+  // Bazar encerrado: qualquer endereço mostra só a página de encerramento,
+  // sem nenhuma chamada à API (o backend pode estar desligado)
+  if (BAZAR_ENCERRADO) return <EncerradoPage />;
+
   return (
     <ToastProvider>
     <BrowserRouter>
