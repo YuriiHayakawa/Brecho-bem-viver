@@ -2,17 +2,85 @@
 
 > **Marketplace interno para pessoas colaboradoras comprarem, venderem e trocarem roupas e acessórios usados — conectando reutilização, praticidade e impacto social.**
 
-O **Brechó Bem Viver** é uma plataforma de marketplace desenvolvida para uso interno entre pessoas colaboradoras, permitindo anunciar, descobrir, negociar e comprar produtos usados.
+![Status](https://img.shields.io/badge/status-1ª%20edição%20concluída-3E5C43)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-Python-009688?logo=fastapi&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
 
-Além de facilitar a reutilização de peças, o projeto possui uma proposta social: **parte do valor das vendas é destinada a instituições sociais parceiras.**
+O **Brechó Bem Viver** é uma plataforma web criada para um **bazar solidário real** entre pessoas colaboradoras de uma empresa. Cada pessoa anuncia as peças que não usa mais; quem compra paga direto ao vendedor pelo **QR Code PIX** da peça, e **parte do valor das vendas é destinada a instituições sociais parceiras**.
+
+Desenvolvido por **Yuri Hayakawa** · [LinkedIn](https://www.linkedin.com/in/yuri-hayakawa-b8a445307/)
+
+<p align="center">
+  <img src="docs/screenshots/02-catalogo.png" alt="Catálogo do Brechó Bem Viver" width="900">
+</p>
+
+---
+
+## 📈 A 1ª edição em números
+
+A primeira edição aconteceu em **novembro de 2026**, como bazar presencial, com o sistema em produção:
+
+| Indicador | Resultado |
+| --- | --- |
+| 👥 Pessoas cadastradas | **63** (42 anunciaram peças) |
+| 👗 Peças anunciadas | **835** — com **1.148 fotos** |
+| 🛍️ Peças vendidas | **247** em 4 dias |
+| 💰 Total vendido | **R$ 8.686,86** |
+| 💚 Doação sugerida (10%) | **R$ 868,70** |
+| 🎟️ Ticket médio | **R$ 35,17** por peça |
+
+---
+
+## 🖼️ Telas
+
+> Prints gerados com **dados fictícios** (pessoas, peças e chave PIX de exemplo).
+
+| | |
+| :---: | :---: |
+| <img src="docs/screenshots/01-login.png" alt="Login" width="420"> | <img src="docs/screenshots/03-produto.png" alt="Página do produto com QR Code PIX" width="420"> |
+| **Login e cadastro** | **Produto, oferta e pagamento PIX** |
+| <img src="docs/screenshots/04-propostas.png" alt="Propostas recebidas" width="420"> | <img src="docs/screenshots/05-dashboard-admin.png" alt="Dashboard do administrador" width="420"> |
+| **Negociação: propostas e contrapropostas** | **Dashboard do administrador** |
+| <img src="docs/screenshots/06-celular.png" alt="Versão para celular" width="420"> | <img src="docs/screenshots/07-encerramento.png" alt="Página de encerramento" width="420"> |
+| **Versão para celular** | **Página de encerramento da edição** |
+
+---
+
+## 🧠 Destaques técnicos
+
+* **Concorrência na abertura do bazar** — reservar, aceitar proposta e registrar venda travam a linha do produto no banco (`SELECT ... FOR UPDATE`): duas pessoas nunca recebem "reservado com sucesso" para a mesma peça, e cliques repetidos em "Confirmar venda" não geram erro.
+* **PIX no padrão BR Code (EMV)** — payload e QR Code gerados no backend, com CRC16 validado contra o exemplo oficial do Banco Central; chaves validadas no cadastro (CPF com dígitos verificadores, telefone com DDD, e-mail e chave aleatória no formato do BACEN).
+* **Imagens leves de ponta a ponta** — as fotos são reduzidas no próprio navegador antes do upload (uma foto de ~13 MB vira ~750 KB) e exibidas já redimensionadas pelo Cloudinary (`f_auto,q_auto,w_…`): cerca de **98% menos banda** no catálogo, sem estourar o plano gratuito.
+* **Segurança** — JWT em todas as rotas de dados (a chave PIX dos vendedores não fica exposta publicamente), login sem diferenciar maiúsculas/minúsculas, reset de senha por senha temporária (só o hash é salvo) e convenção `400` × `401` para não deslogar a pessoa por erro de regra de negócio.
+* **Funcionalidades liga/desliga** — chaves em `frontend/src/constants/features.js`: a reserva foi desligada na edição presencial sem apagar código, e a página de encerramento roda **sem backend** (o build descarta o resto do app: 345 KB → 147 KB).
+* **Validação antes de cada deploy** — cada mudança foi testada com scripts contra a API e com a interface real em Chrome headless (inclusive em larguras de celular) antes de ir para produção.
+
+---
+
+## 📌 Status atual
+
+🏁 **1ª edição concluída (novembro de 2026).** Para não manter custos até a próxima edição:
+
+* o **site continua no ar**, mostrando apenas a [página de encerramento](docs/screenshots/07-encerramento.png) (`BAZAR_ENCERRADO = true`);
+* o **backend e o banco de dados foram desligados** e as fotos removidas do Cloudinary — um relatório final (sem dados sensíveis) foi entregue à organização do bazar.
+
+### Como reabrir para a próxima edição
+
+1. **Backend + banco:** criar um projeto no Railway (ou outro provedor) apontando para este repositório, com **Root Directory `backend`** e um PostgreSQL — as tabelas são criadas automaticamente na primeira execução.
+2. **Variáveis do backend:** `DATABASE_URL`, `SECRET_KEY`, `CLOUDINARY_*` e `ALLOWED_ORIGINS` com o endereço do site (ver [Variáveis de ambiente](#-variáveis-de-ambiente)).
+3. **Frontend (Vercel):** atualizar `VITE_API_URL` com o endereço do novo backend.
+4. **Reabrir a interface:** em `frontend/src/constants/features.js`, trocar `BAZAR_ENCERRADO` para `false` (e, se quiser a reserva de volta, `RESERVAS_ATIVAS` para `true`).
+5. **Primeiro administrador:** criar a conta pelo site e promovê-la no banco com `UPDATE users SET role = 'admin' WHERE email = '...';` — os demais admins são promovidos pela tela **Usuários**.
+6. Revisar a lista de unidades em `frontend/src/constants/units.js`.
 
 ---
 
 ## ✨ Sobre o projeto
 
-O Brechó Bem Viver transforma o tradicional bazar de colaboradores em uma experiência digital completa.
+O Brechó Bem Viver transforma o tradicional bazar entre pessoas colaboradoras em uma experiência digital completa.
 
-Cada colaborador pode:
+Cada pessoa colaboradora pode:
 
 * 📦 Cadastrar produtos para venda
 * 📸 Adicionar múltiplas fotos aos anúncios
@@ -496,14 +564,14 @@ O ambiente disponibiliza:
 ```text
 Host: localhost
 Port: 5432
-Database: bazar_sebrae
+Database: brecho_bem_viver
 User: postgres
 Password: postgres
 ```
 
 Caso utilize uma instalação local do PostgreSQL, configure a variável `DATABASE_URL` de acordo com seu ambiente.
 
-> ⚠️ **Windows:** se você também tiver o PostgreSQL instalado como serviço (ex.: `postgresql-x64-18`), ele e o container do Docker disputam a porta `5432` — só um sobe. Use apenas um dos dois (o projeto usa o container `bazar_sebrae_db`, que sobe sozinho com o Docker Desktop).
+> ⚠️ **Windows:** se você também tiver o PostgreSQL instalado como serviço (ex.: `postgresql-x64-18`), ele e o container do Docker disputam a porta `5432` — só um sobe. Use apenas um dos dois (o projeto usa o container `brecho_bem_viver_db`, que sobe sozinho com o Docker Desktop).
 
 ---
 
@@ -922,9 +990,9 @@ O QR Code é gerado utilizando a chave PIX cadastrada pelo vendedor.
 
 ## 🧪 Status do projeto
 
-> 🚧 **Em desenvolvimento**
+> 🏁 **1ª edição concluída (novembro de 2026)** — servidores desligados até a próxima edição.
 
-O projeto possui backend e frontend estruturados, com os principais fluxos de marketplace, negociação, reservas, vendas, administração e integração com PIX implementados.
+O sistema foi usado em produção durante todo o bazar, com os fluxos de catálogo, negociação, vendas, administração e pagamento via PIX. Veja [Status atual](#-status-atual) para o estado da infraestrutura e o passo a passo para reabrir.
 
 ---
 

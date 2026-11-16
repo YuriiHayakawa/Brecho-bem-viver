@@ -1,10 +1,10 @@
 services:
   db:
     image: postgres:16-alpine
-    container_name: bazar_sebrae_db
+    container_name: brecho_bem_viver_db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: bazar_sebrae
+      POSTGRES_DB: brecho_bem_viver
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
@@ -12,7 +12,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d bazar_sebrae"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d brecho_bem_viver"]
       interval: 10s
       timeout: 5s
       retries: 5
